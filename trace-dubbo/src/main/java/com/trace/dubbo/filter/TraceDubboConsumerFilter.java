@@ -10,7 +10,7 @@ import org.apache.dubbo.rpc.RpcException;
 import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
 import com.trace.core.TraceContext;
-import com.trace.core.consts.TraceConsts;
+import com.trace.core.constants.TraceConstants;
 
 /**
  * @author dengxiaolin
@@ -25,7 +25,7 @@ public class TraceDubboConsumerFilter implements Filter {
         Span span = TraceContext.get();
         if (span != null) {
             ConsumerContext consumerContext = ConsumerContext.of(span);
-            invocation.setAttachment(TraceConsts.CONSUMER_CONTEXT, consumerContext);
+            invocation.setAttachment(TraceConstants.CONSUMER_CONTEXT, consumerContext);
         }
 
         return invoker.invoke(invocation);

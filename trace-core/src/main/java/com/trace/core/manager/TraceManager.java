@@ -7,7 +7,7 @@ import com.trace.core.Span;
 import com.trace.core.TraceCollector;
 import com.trace.core.TraceConfig;
 import com.trace.core.TraceContext;
-import com.trace.core.consts.TraceConsts;
+import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.utils.NetworkUtils;
 
@@ -35,9 +35,7 @@ public class TraceManager {
 
     public static void endSpan() {
         Span span = TraceContext.pop();
-        if (span.isRoot()) {
-            TraceCollector.getInstance().collect(span);
-        }
+        TraceCollector.getInstance().collect(span);
     }
 
 
@@ -46,8 +44,8 @@ public class TraceManager {
         String rootSpanId = consumerContext.getConsumerChildId();
         span.setId(rootSpanId);
 
-        if (TraceConsts.DUMMY_SPAN_ID.equals(rootSpanId)) {
-            rootSpanId = TraceConsts.HEAD_SPAN_ID;
+        if (TraceConstants.DUMMY_SPAN_ID.equals(rootSpanId)) {
+            rootSpanId = TraceConstants.HEAD_SPAN_ID;
             span.setId(rootSpanId);
             span.setTraceId(buildTranceId());
         }

@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.trace.core.consts.TraceConsts;
+import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
 
@@ -71,7 +71,7 @@ public class TraceFilter implements Filter {
                 filterChain.doFilter(servletRequest, servletResponse);
             }
             else {
-                TraceManager.startSpan(TraceConsts.DUMMY_CONSUMER_CONTEXT, ServiceType.HTTP, path);
+                TraceManager.startSpan(TraceConstants.DUMMY_CONSUMER_CONTEXT, ServiceType.HTTP, path);
                 try {
                     filterChain.doFilter(servletRequest, servletResponse);
                 }

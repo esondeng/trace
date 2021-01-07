@@ -1,4 +1,4 @@
-package com.trace.core.consts;
+package com.trace.core.constants;
 
 import com.trace.core.ConsumerContext;
 
@@ -6,7 +6,7 @@ import com.trace.core.ConsumerContext;
  * @author dengxiaolin
  * @since 2021/01/07
  */
-public class TraceConsts {
+public class TraceConstants {
     public static final String APPKEY_CONFIG_FILE_NAME = "application.properties";
     public static final String APP_KEY_PROP_NAME = "dubbo.application.name";
 

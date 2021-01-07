@@ -43,6 +43,13 @@ public class Span {
 
     private Span parent;
     private List<Span> children;
+    private List<String> errorMessages;
+
+
+    /**
+     * 是否被收集过
+     */
+    private volatile boolean collected;
 
     /**
      * 生成下一级span的id
@@ -71,6 +78,13 @@ public class Span {
             children = new LinkedList<>();
         }
         children.add(childSpan);
+    }
+
+    public void addErrorMessage(String errorMessage) {
+        if (errorMessages == null) {
+            errorMessages = new LinkedList<>();
+        }
+        errorMessages.add(errorMessage);
     }
 
     @Override

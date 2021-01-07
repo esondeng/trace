@@ -1,13 +1,16 @@
 package com.trace.core.enums;
 
+import com.eson.common.core.enums.EnumBase;
+
 /**
  * @author dengxiaolin
  * @since 2021/01/06
  */
-public enum ServiceType {
+public enum ServiceType implements EnumBase {
     HTTP(0, "http"),
     DUBBO(1, "dubbo"),
-    INNER_CALL(1, "innerCall");
+    INNER_CALL(2, "innerCall"),
+    ASYNC(3, "async");
 
     private int id;
 
@@ -18,10 +21,12 @@ public enum ServiceType {
         this.message = message;
     }
 
+    @Override
     public int id() {
         return id;
     }
 
+    @Override
     public String message() {
         return message;
     }

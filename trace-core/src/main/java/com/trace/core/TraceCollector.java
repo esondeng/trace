@@ -67,9 +67,15 @@ public class TraceCollector {
             return;
         }
 
+        if (span.getParent() != null && !span.getParent().isCollected()) {
+            return;
+        }
+
         if (!queue.offer(span)) {
             FAIL_COUNTER.incrementAndGet();
         }
+        span.setCollected(true);
+
     }
 
     private TraceCollector() {
