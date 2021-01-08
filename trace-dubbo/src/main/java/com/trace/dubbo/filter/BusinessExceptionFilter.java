@@ -1,5 +1,8 @@
 package com.trace.dubbo.filter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.rpc.Filter;
@@ -15,6 +18,8 @@ import org.slf4j.LoggerFactory;
 
 import com.eson.common.core.exception.BusinessException;
 import com.eson.common.core.exception.ServiceException;
+import com.trace.core.Span;
+import com.trace.core.TraceContext;
 
 /**
  * @author dengxiaolin
@@ -54,15 +59,20 @@ public class BusinessExceptionFilter implements Filter, Filter.Listener {
                     if (!isRpcException) {
                         // rpcException 需要返回调用方
                         // 其他异常消费者不关心提供者的错误堆栈
-                        String methodMsg = "";
                         StackTraceElement[] stackTraceElements = exception.getStackTrace();
+                        List<String> errorStack = new ArrayList<>();
+
                         if (stackTraceElements != null && stackTraceElements.length > 0) {
-                            methodMsg = stackTraceElements[0].toString();
+                            int maxErrorNum = Math.min(stackTraceElements.length, 3);
+                            for (int i = 0; i < maxErrorNum; i++) {
+                                errorStack.add(stackTraceElements[i].toString());
+                            }
                         }
 
                         ServiceException serviceException = new ServiceException(exception.getMessage())
                                 .setInterfacePath(invoker.getInterface().getCanonicalName() + "." + invocation.getMethodName())
-                                .setErrorPlace(methodMsg);
+                                .setErrorStack(errorStack);
+
                         if (exception instanceof BusinessException) {
                             BusinessException bex = (BusinessException) exception;
                             serviceException.setTrivial(bex.isTrivial());
@@ -70,6 +80,11 @@ public class BusinessExceptionFilter implements Filter, Filter.Listener {
                         }
 
                         appResponse.setException(serviceException);
+
+                        Span span = TraceContext.get();
+                        if (span != null) {
+                            span.setErrorMessages(new ArrayList<>(errorStack));
+                        }
                     }
                 }
             }
