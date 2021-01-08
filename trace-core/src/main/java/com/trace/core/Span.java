@@ -4,6 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -80,16 +82,9 @@ public class Span {
         children.add(childSpan);
     }
 
-    public void addErrorMessage(String errorMessage) {
-        if (errorMessages == null) {
-            errorMessages = new LinkedList<>();
-        }
-        errorMessages.add(errorMessage);
-    }
-
     @Override
     public String toString() {
-        return "id = " + id
+        String content = "id = " + id
                 + " name = " + name
                 + " traceId = " + traceId
                 + " clientAppKey = " + clientAppKey
@@ -99,5 +94,14 @@ public class Span {
                 + " start = " + start
                 + " end = " + end
                 + " cost = " + cost;
+
+        if (CollectionUtils.isNotEmpty(errorMessages)) {
+            return content + " error = " + String.join(";", errorMessages);
+        }
+        else {
+            return content;
+        }
+
+
     }
 }
