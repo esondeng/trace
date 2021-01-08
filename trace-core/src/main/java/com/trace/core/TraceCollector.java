@@ -10,6 +10,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -162,7 +164,12 @@ public class TraceCollector {
             interval = interval * 2;
         }
 
-        spans.forEach(span -> log.info(span.toString()));
+        spans.forEach(span -> {
+            log.info(span.toString());
+            if (CollectionUtils.isNotEmpty(span.getChildren())) {
+                span.getChildren().forEach(t -> log.info(t.toString()));
+            }
+        });
         return true;
     }
 

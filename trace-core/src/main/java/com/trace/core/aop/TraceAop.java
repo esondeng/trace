@@ -18,7 +18,7 @@ import com.trace.core.manager.TraceManager;
 @Aspect
 public class TraceAop {
 
-    @Pointcut("@annotation(com.trace.core.annotion.Tracing) || within(com.trace.core.annotion.Tracing)")
+    @Pointcut("@annotation(com.trace.core.annotion.Tracing)")
     public void methodPointcut() {
 
     }
