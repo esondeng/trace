@@ -1,3 +1,3 @@
-exception=com.dubbo.example.product.filter.BusinessExceptionFilter
+exception=com.trace.dubbo.filter.BusinessExceptionFilter
 traceConsumer=com.trace.dubbo.filter.TraceDubboConsumerFilter
 traceProvider=com.trace.dubbo.filter.TraceDubboProviderFilter
