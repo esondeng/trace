@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 
 import com.eson.common.core.exception.BusinessException;
 import com.eson.common.core.exception.ServiceException;
+import com.trace.core.Span;
+import com.trace.core.TraceContext;
 
 /**
  * @author dengxiaolin
@@ -72,6 +74,11 @@ public class BusinessExceptionFilter implements Filter, Filter.Listener {
                         }
 
                         appResponse.setException(serviceException);
+
+                        Span span = TraceContext.get();
+                        if (span != null) {
+                            span.fillErrors(exception);
+                        }
                     }
                 }
             }

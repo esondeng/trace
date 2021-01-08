@@ -32,7 +32,7 @@ public class ConsumerContext implements Serializable {
         consumerContext.setConsumerChildId(span.nextChildId());
 
         consumerContext.setClientAppKey(span.getAppKey());
-        consumerContext.setClientIp(span.getClientIp());
+        consumerContext.setClientIp(span.getIp());
 
         return consumerContext;
     }
