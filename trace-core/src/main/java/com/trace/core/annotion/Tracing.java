@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
  * @since 2021/01/08
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface TraceMethod {
+@Target({ElementType.METHOD, ElementType.TYPE})
+public @interface Tracing {
 }
