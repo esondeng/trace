@@ -2,14 +2,17 @@ package com.trace.core.manager;
 
 import java.util.UUID;
 
+import com.eson.common.core.constants.Constants;
 import com.eson.common.core.utils.IpUtils;
-import com.trace.core.ChildContext;
+import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
 import com.trace.core.TraceCollector;
 import com.trace.core.TraceConfig;
 import com.trace.core.TraceContext;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
+import com.trace.core.function.ThrowRunnable;
+import com.trace.core.function.ThrowSupplier;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,71 +23,172 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TraceManager {
 
-    public static void startSpan(ChildContext childContext, ServiceType serviceType, String name) {
-        Span parentSpan = TraceContext.get();
-        if (parentSpan == null) {
-            parentSpan = buildRootSpan(childContext, serviceType, name);
-            TraceContext.set(parentSpan);
+    /**
+     * 微服务提供者入口
+     */
+    public static <T> T tracingWithReturn(ConsumerContext consumerContext,
+                                          ServiceType serviceType,
+                                          String name,
+                                          ThrowSupplier<T> supplier) {
+        TraceManager.startSpan(consumerContext, serviceType, name);
+        return invoke(supplier);
+    }
+
+    /**
+     * Web端入口
+     */
+    public static <T> T tracingWithReturn(ServiceType serviceType,
+                                          String name,
+                                          ThrowSupplier<T> supplier) {
+        TraceManager.startSpan(serviceType, name);
+        return invoke(supplier);
+
+    }
+
+    private static <T> T invoke(ThrowSupplier<T> supplier) {
+        try {
+            return supplier.get();
         }
-        else {
-            Span childSpan = buildChildSpan(parentSpan, name);
-            TraceContext.set(childSpan);
+        catch (Throwable e) {
+            fillError(e);
+            throw new RuntimeException(e);
+        }
+        finally {
+            TraceManager.endSpan();
         }
     }
 
+    /**
+     * 微服务提供者入口
+     */
+    public static void tracing(ConsumerContext consumerContext,
+                               ServiceType serviceType,
+                               String name,
+                               ThrowRunnable runnable) {
+        TraceManager.startSpan(consumerContext, serviceType, name);
+        invoke(runnable);
+    }
 
-    public static void endSpan() {
+    /**
+     * Web端入口
+     */
+    public static void tracing(ServiceType serviceType,
+                               String name,
+                               ThrowRunnable runnable) {
+        TraceManager.startSpan(serviceType, name);
+        invoke(runnable);
+    }
+
+    private static void invoke(ThrowRunnable runnable) {
+        try {
+            runnable.run();
+        }
+        catch (Throwable e) {
+            fillError(e);
+            throw new RuntimeException(e);
+        }
+        finally {
+            TraceManager.endSpan();
+        }
+    }
+
+    private static void fillError(Throwable e) {
+        Span currentSpan = TraceContext.get();
+        if (currentSpan != null) {
+            currentSpan.fillErrors(e);
+        }
+    }
+
+    private static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
+        Span span = buildSpan(consumerContext, serviceType, name);
+        TraceContext.set(span);
+    }
+
+    private static void startSpan(ServiceType serviceType, String name) {
+        Span parentSpan = TraceContext.get();
+        if (parentSpan == null) {
+            parentSpan = TraceConstants.DUMMY_SPAN;
+        }
+        Span span = buildSpan(parentSpan, serviceType, name);
+        TraceContext.set(span);
+    }
+
+
+    private static void endSpan() {
         Span span = TraceContext.pop();
         TraceCollector.getInstance().collect(span);
     }
 
 
-    private static Span buildRootSpan(ChildContext childContext, ServiceType serviceType, String name) {
+    /**
+     * 微服务提供者场景使用
+     */
+    private static Span buildSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
         Span span = new Span();
-        String rootSpanId = childContext.getConsumerChildId();
-        span.setId(rootSpanId);
-
-        if (TraceConstants.DUMMY_SPAN_ID.equals(rootSpanId)) {
-            rootSpanId = TraceConstants.HEAD_SPAN_ID;
-            span.setId(rootSpanId);
-            span.setTraceId(buildTranceId());
-        }
-        else {
-            span.setClientAppKey(childContext.getClientAppKey());
-            span.setClientIp(childContext.getClientIp());
-            span.setTraceId(childContext.getTraceId());
-        }
-
-        span.setRootSpanId(rootSpanId);
+        span.setName(name);
         span.setServiceType(serviceType.message());
 
-        span.setName(name);
+        String rootSpanId = consumerContext.getConsumerChildId();
+        fillIdInfo(span, rootSpanId);
 
-        span.setAppKey(TraceConfig.getAppKey());
-        span.setIp(IpUtils.getLocalIp());
-        span.setStart(System.currentTimeMillis());
+        span.setClientAppKey(consumerContext.getClientAppKey());
+        span.setClientIp(consumerContext.getClientIp());
+        span.setTraceId(consumerContext.getTraceId());
 
+        fillServerInfo(span);
         return span;
     }
 
-    private static Span buildChildSpan(Span parentSpan, String name) {
+
+    /**
+     * 内部调用使用parentSpan可能是null，标书第一个span
+     */
+    private static Span buildSpan(Span parentSpan, ServiceType serviceType, String name) {
         Span span = new Span();
-        span.setId(parentSpan.nextChildId());
-        span.setTraceId(parentSpan.getTraceId());
-        span.setRootSpanId(parentSpan.getRootSpanId());
         span.setName(name);
+
+        if (parentSpan == TraceConstants.DUMMY_SPAN) {
+            span.setServiceType(serviceType.message());
+            span.setTraceId(buildTranceId());
+
+            fillIdInfo(span, TraceConstants.HEAD_SPAN_ID);
+            fillServerInfo(span);
+
+            return span;
+        }
+        else {
+            fillIdInfo(span, parentSpan.nextChildId());
+            span.setTraceId(parentSpan.getTraceId());
+            span.setStart(System.currentTimeMillis());
+            span.setServiceType(ServiceType.INNER_CALL.message());
+
+            copyFromParent(parentSpan, span);
+
+            span.setParent(parentSpan);
+            parentSpan.addChild(span);
+            return span;
+        }
+    }
+
+
+    private static void fillIdInfo(Span span, String id) {
+        span.setId(id);
+        String[] strs = id.split(Constants.POINT_SPLITTER);
+        span.setDepth(strs.length);
+        span.setOrder(Integer.valueOf(strs[strs.length - 1]));
+    }
+
+    private static void fillServerInfo(Span span) {
+        span.setAppKey(TraceConfig.getAppKey());
+        span.setIp(IpUtils.getLocalIp());
         span.setStart(System.currentTimeMillis());
+    }
 
-        span.setClientAppKey(parentSpan.getClientAppKey());
-        span.setClientIp(parentSpan.getClientIp());
-
+    private static void copyFromParent(Span parentSpan, Span span) {
         span.setAppKey(parentSpan.getAppKey());
         span.setIp(parentSpan.getIp());
-
-        span.setParent(parentSpan);
-        parentSpan.addChild(span);
-
-        return span;
+        span.setClientIp(parentSpan.getClientIp());
+        span.setClientAppKey(parentSpan.getClientAppKey());
     }
 
 

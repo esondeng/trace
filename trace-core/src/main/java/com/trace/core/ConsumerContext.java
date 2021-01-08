@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class ChildContext implements Serializable {
+public class ConsumerContext implements Serializable {
     private String traceId;
 
     /**
@@ -26,14 +26,14 @@ public class ChildContext implements Serializable {
     private String clientAppKey;
     private String clientIp;
 
-    public static ChildContext of(Span span) {
-        ChildContext childContext = new ChildContext();
-        childContext.setTraceId(span.getTraceId());
-        childContext.setConsumerChildId(span.nextChildId());
+    public static ConsumerContext of(Span span) {
+        ConsumerContext consumerContext = new ConsumerContext();
+        consumerContext.setTraceId(span.getTraceId());
+        consumerContext.setConsumerChildId(span.nextChildId());
 
-        childContext.setClientAppKey(span.getAppKey());
-        childContext.setClientIp(span.getClientIp());
+        consumerContext.setClientAppKey(span.getAppKey());
+        consumerContext.setClientIp(span.getClientIp());
 
-        return childContext;
+        return consumerContext;
     }
 }

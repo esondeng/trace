@@ -23,10 +23,12 @@ public class Span {
     private String id;
 
     /**
-     * root span id
-     * 链路第一个rootSpan id是0，第二个JVM的root Span id是1
+     * 方便排序，比如id是0.1， depth是2，order就是1
      */
-    private String rootSpanId;
+    private int depth;
+
+    private int order;
+
     private String traceId;
     private String name;
     private String serviceType;
@@ -70,11 +72,6 @@ public class Span {
         this.end = System.currentTimeMillis();
         this.cost = (int) (end - start);
     }
-
-    public boolean isRoot() {
-        return rootSpanId.equals(id);
-    }
-
 
     public void addChild(Span childSpan) {
         if (children == null) {
