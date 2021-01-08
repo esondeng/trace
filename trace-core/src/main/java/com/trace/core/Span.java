@@ -85,8 +85,8 @@ public class Span {
         List<String> errorStack = new ArrayList<>();
 
         if (stackTraceElements != null && stackTraceElements.length > 0) {
-            // 最多关心前五个
-            int maxErrorNum = Math.min(stackTraceElements.length, 5);
+            // 最多关心前3个
+            int maxErrorNum = Math.min(stackTraceElements.length, 3);
             for (int i = 0; i < maxErrorNum; i++) {
                 errorStack.add(stackTraceElements[i].toString());
             }
