@@ -98,6 +98,8 @@ public class Span {
     @Override
     public String toString() {
         String content = "id = " + id
+                + " depth = " + depth
+                + " order = " + order
                 + " name = " + name
                 + " traceId = " + traceId
                 + " clientAppKey = " + clientAppKey
