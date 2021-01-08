@@ -7,7 +7,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
-import com.trace.core.ConsumerContext;
+import com.trace.core.ChildContext;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
@@ -25,12 +25,12 @@ public class TraceDubboProviderFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String name = invoker.getInterface().getSimpleName() + "." + invocation.getMethodName();
 
-        ConsumerContext consumerContext = (ConsumerContext) invocation.getObjectAttachment(TraceConstants.CONSUMER_CONTEXT);
-        if (consumerContext == null) {
+        ChildContext childContext = (ChildContext) invocation.getObjectAttachment(TraceConstants.CONSUMER_CONTEXT);
+        if (childContext == null) {
             TraceManager.startSpan(TraceConstants.DUMMY_CONSUMER_CONTEXT, ServiceType.DUBBO, name);
         }
         else {
-            TraceManager.startSpan(consumerContext, ServiceType.DUBBO, name);
+            TraceManager.startSpan(childContext, ServiceType.DUBBO, name);
         }
 
         try {

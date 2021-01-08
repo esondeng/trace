@@ -9,7 +9,7 @@ import com.eson.common.core.enums.EnumBase;
 public enum ServiceType implements EnumBase {
     HTTP(0, "http"),
     DUBBO(1, "dubbo"),
-    INNER_CALL(2, "innerCall"),
+    INNER_CALL(2, "inner-call"),
     ASYNC(3, "async");
 
     private int id;

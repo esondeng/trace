@@ -2,7 +2,7 @@ package com.trace.core.manager;
 
 import java.util.UUID;
 
-import com.trace.core.ConsumerContext;
+import com.trace.core.ChildContext;
 import com.trace.core.Span;
 import com.trace.core.TraceCollector;
 import com.trace.core.TraceConfig;
@@ -20,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TraceManager {
 
-    public static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
+    public static void startSpan(ChildContext childContext, ServiceType serviceType, String name) {
         Span parentSpan = TraceContext.get();
         if (parentSpan == null) {
-            parentSpan = buildRootSpan(consumerContext, serviceType, name);
+            parentSpan = buildRootSpan(childContext, serviceType, name);
             TraceContext.set(parentSpan);
         }
         else {
@@ -39,9 +39,9 @@ public class TraceManager {
     }
 
 
-    private static Span buildRootSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
+    private static Span buildRootSpan(ChildContext childContext, ServiceType serviceType, String name) {
         Span span = new Span();
-        String rootSpanId = consumerContext.getConsumerChildId();
+        String rootSpanId = childContext.getConsumerChildId();
         span.setId(rootSpanId);
 
         if (TraceConstants.DUMMY_SPAN_ID.equals(rootSpanId)) {
@@ -50,9 +50,9 @@ public class TraceManager {
             span.setTraceId(buildTranceId());
         }
         else {
-            span.setClientAppKey(consumerContext.getClientAppKey());
-            span.setClientIp(consumerContext.getClientIp());
-            span.setTraceId(consumerContext.getTraceId());
+            span.setClientAppKey(childContext.getClientAppKey());
+            span.setClientIp(childContext.getClientIp());
+            span.setTraceId(childContext.getTraceId());
         }
 
         span.setRootSpanId(rootSpanId);
