@@ -1,8 +1,5 @@
 package com.trace.dubbo.filter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.rpc.Filter;
@@ -60,18 +57,15 @@ public class BusinessExceptionFilter implements Filter, Filter.Listener {
                         // rpcException 需要返回调用方
                         // 其他异常消费者不关心提供者的错误堆栈
                         StackTraceElement[] stackTraceElements = exception.getStackTrace();
-                        List<String> errorStack = new ArrayList<>();
+                        String msg = "";
 
                         if (stackTraceElements != null && stackTraceElements.length > 0) {
-                            int maxErrorNum = Math.min(stackTraceElements.length, 3);
-                            for (int i = 0; i < maxErrorNum; i++) {
-                                errorStack.add(stackTraceElements[i].toString());
-                            }
+                            msg = stackTraceElements[0].toString();
                         }
 
                         ServiceException serviceException = new ServiceException(exception.getMessage())
                                 .setInterfacePath(invoker.getInterface().getCanonicalName() + "." + invocation.getMethodName())
-                                .setErrorStack(errorStack);
+                                .setErrorPlace(msg);
 
                         if (exception instanceof BusinessException) {
                             BusinessException bex = (BusinessException) exception;
@@ -83,7 +77,7 @@ public class BusinessExceptionFilter implements Filter, Filter.Listener {
 
                         Span span = TraceContext.get();
                         if (span != null) {
-                            span.setErrorMessages(new ArrayList<>(errorStack));
+                            span.fillErrors(exception);
                         }
                     }
                 }

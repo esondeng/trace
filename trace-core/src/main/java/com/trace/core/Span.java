@@ -1,5 +1,6 @@
 package com.trace.core;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,6 +81,21 @@ public class Span {
             children = new LinkedList<>();
         }
         children.add(childSpan);
+    }
+
+    public void fillErrors(Throwable exception) {
+        StackTraceElement[] stackTraceElements = exception.getStackTrace();
+        List<String> errorStack = new ArrayList<>();
+
+        if (stackTraceElements != null && stackTraceElements.length > 0) {
+            // 最多关心前五个
+            int maxErrorNum = Math.min(stackTraceElements.length, 5);
+            for (int i = 0; i < maxErrorNum; i++) {
+                errorStack.add(stackTraceElements[i].toString());
+            }
+        }
+
+        errorMessages = errorStack;
     }
 
     @Override

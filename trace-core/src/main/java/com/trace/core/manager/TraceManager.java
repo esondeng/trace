@@ -2,6 +2,7 @@ package com.trace.core.manager;
 
 import java.util.UUID;
 
+import com.eson.common.core.utils.IpUtils;
 import com.trace.core.ChildContext;
 import com.trace.core.Span;
 import com.trace.core.TraceCollector;
@@ -9,7 +10,6 @@ import com.trace.core.TraceConfig;
 import com.trace.core.TraceContext;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
-import com.trace.core.utils.NetworkUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +61,7 @@ public class TraceManager {
         span.setName(name);
 
         span.setAppKey(TraceConfig.getAppKey());
-        span.setIp(NetworkUtils.getLocalIp());
+        span.setIp(IpUtils.getLocalIp());
         span.setStart(System.currentTimeMillis());
 
         return span;

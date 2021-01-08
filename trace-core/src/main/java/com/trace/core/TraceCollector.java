@@ -67,6 +67,10 @@ public class TraceCollector {
             return;
         }
 
+        if (span.isCollected()) {
+            return;
+        }
+
         if (span.getParent() != null && !span.getParent().isCollected()) {
             return;
         }
