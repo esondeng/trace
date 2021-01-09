@@ -201,6 +201,7 @@ public class Span {
     @Override
     public String toString() {
         String content = "id = " + id
+                + " serviceType = " + serviceType
                 + " depth = " + depth
                 + " order = " + order
                 + " name = " + name
