@@ -26,15 +26,18 @@ public class TraceDubboConsumerFilter implements Filter {
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         Span span = TraceContext.get();
         if (span != null) {
-            ConsumerContext consumerContext = ConsumerContext.of(span);
-            invocation.setAttachment(TraceConstants.CONSUMER_CONTEXT, consumerContext);
-
             ServiceType serviceType = span.isAsyncParent() ? ServiceType.DUBBO_ASYNC_CONSUMER : ServiceType.DUBBO_CONSUMER;
             String name = invoker.getInterface().getSimpleName() + "." + invocation.getMethodName();
+
             return TraceManager.tracingWithReturn(
                     serviceType,
                     name,
-                    () -> invoker.invoke(invocation));
+                    () -> {
+                        ConsumerContext consumerContext = ConsumerContext.of(TraceContext.get());
+                        invocation.setAttachment(TraceConstants.CONSUMER_CONTEXT, consumerContext);
+
+                        return invoker.invoke(invocation);
+                    });
         }
         else {
             return invoker.invoke(invocation);

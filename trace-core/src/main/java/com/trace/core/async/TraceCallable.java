@@ -18,7 +18,7 @@ public class TraceCallable<V> implements Callable<V> {
     private Callable<V> callable;
 
 
-    public TraceCallable(Span asyncParent, Callable callable) {
+    public TraceCallable(Span asyncParent, Callable<V> callable) {
         this.asyncParent = asyncParent;
         this.callable = callable;
     }
@@ -28,7 +28,7 @@ public class TraceCallable<V> implements Callable<V> {
         return TraceManager.asyncParent(this);
     }
 
-    public static Callable get(Callable callable) {
+    public static <V> Callable<V> get(Callable<V> callable) {
         if (callable == null) {
             return null;
         }
@@ -38,6 +38,6 @@ public class TraceCallable<V> implements Callable<V> {
             return callable;
         }
 
-        return new TraceCallable(span, callable);
+        return new TraceCallable<>(Span.copyAsAsyncParent(span), callable);
     }
 }

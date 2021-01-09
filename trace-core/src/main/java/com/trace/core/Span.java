@@ -107,13 +107,12 @@ public class Span {
 
     public static Span copyAsAsyncParent(Span span) {
         Span copy = new Span();
+        copy.setAsyncParent(true);
 
         // 新先线程直接使用父线程的id
         fillIdInfo(copy, span.getId());
-        span.setChildCounter(span.getChildCounter());
-
-        copy.setAsyncParent(true);
-        copyFromParent(span, copy);
+        copyFromParent(copy, span);
+        copy.setChildCounter(span.getChildCounter());
 
         return copy;
     }
@@ -158,9 +157,15 @@ public class Span {
             fillIdInfo(span, parentSpan.nextChildId());
             span.setTraceId(parentSpan.getTraceId());
             span.setStart(System.currentTimeMillis());
-            span.setServiceType(ServiceType.INNER_CALL.message());
 
-            copyFromParent(parentSpan, span);
+            if (!parentSpan.isAsyncParent) {
+                span.setServiceType(ServiceType.INNER_CALL.message());
+            }
+            else {
+                span.setServiceType(serviceType.message());
+            }
+
+            copyFromParent(span, parentSpan);
 
             span.setParent(parentSpan);
             parentSpan.addChild(span);
@@ -182,7 +187,7 @@ public class Span {
         span.setStart(System.currentTimeMillis());
     }
 
-    private static void copyFromParent(Span parentSpan, Span span) {
+    private static void copyFromParent(Span span, Span parentSpan) {
         span.setAppKey(parentSpan.getAppKey());
         span.setIp(parentSpan.getIp());
         span.setClientIp(parentSpan.getClientIp());
