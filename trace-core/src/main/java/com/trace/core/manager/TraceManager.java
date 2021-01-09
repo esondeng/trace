@@ -48,7 +48,7 @@ public class TraceManager {
         }
         catch (Throwable e) {
             fillError(e);
-            throw new RuntimeException(e);
+            throw buildException(e);
         }
         finally {
             TraceManager.endSpan();
@@ -83,7 +83,7 @@ public class TraceManager {
             traceRunnable.getRunnable().run();
         }
         catch (Throwable e) {
-            throw new RuntimeException(e);
+            throw buildException(e);
         }
         finally {
             // 异步的parent已经收集过，直接放弃
@@ -98,7 +98,7 @@ public class TraceManager {
             return traceCallable.getCallable().call();
         }
         catch (Throwable e) {
-            throw new RuntimeException(e);
+            throw buildException(e);
         }
         finally {
             // 异步的parent已经收集过，直接放弃
@@ -112,10 +112,19 @@ public class TraceManager {
         }
         catch (Throwable e) {
             fillError(e);
-            throw new RuntimeException(e);
+            throw buildException(e);
         }
         finally {
             TraceManager.endSpan();
+        }
+    }
+
+    private static RuntimeException buildException(Throwable e) {
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
+        }
+        else {
+            return new RuntimeException(e);
         }
     }
 
