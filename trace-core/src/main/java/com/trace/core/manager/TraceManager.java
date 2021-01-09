@@ -1,14 +1,11 @@
 package com.trace.core.manager;
 
-import java.util.UUID;
-
-import com.eson.common.core.constants.Constants;
-import com.eson.common.core.utils.IpUtils;
 import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
 import com.trace.core.TraceCollector;
-import com.trace.core.TraceConfig;
 import com.trace.core.TraceContext;
+import com.trace.core.async.TraceCallable;
+import com.trace.core.async.TraceRunnable;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.function.ThrowRunnable;
@@ -30,17 +27,17 @@ public class TraceManager {
                                           ServiceType serviceType,
                                           String name,
                                           ThrowSupplier<T> supplier) {
-        TraceManager.startSpan(consumerContext, serviceType, name);
+        startSpan(consumerContext, serviceType, name);
         return invoke(supplier);
     }
 
     /**
-     * Web端入口
+     * Web端入口或者调用
      */
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,
                                           ThrowSupplier<T> supplier) {
-        TraceManager.startSpan(serviceType, name);
+        startSpan(serviceType, name);
         return invoke(supplier);
 
     }
@@ -65,7 +62,7 @@ public class TraceManager {
                                ServiceType serviceType,
                                String name,
                                ThrowRunnable runnable) {
-        TraceManager.startSpan(consumerContext, serviceType, name);
+        startSpan(consumerContext, serviceType, name);
         invoke(runnable);
     }
 
@@ -75,8 +72,38 @@ public class TraceManager {
     public static void tracing(ServiceType serviceType,
                                String name,
                                ThrowRunnable runnable) {
-        TraceManager.startSpan(serviceType, name);
+        startSpan(serviceType, name);
         invoke(runnable);
+    }
+
+
+    public static void asyncParent(TraceRunnable traceRunnable) {
+        TraceContext.set(traceRunnable.getAsyncParent());
+        try {
+            traceRunnable.getRunnable().run();
+        }
+        catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            // 异步的parent已经收集过，直接放弃
+            TraceContext.pop();
+        }
+    }
+
+
+    public static <V> V asyncParent(TraceCallable<V> traceCallable) {
+        TraceContext.set(traceCallable.getAsyncParent());
+        try {
+            return traceCallable.getCallable().call();
+        }
+        catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        finally {
+            // 异步的parent已经收集过，直接放弃
+            TraceContext.pop();
+        }
     }
 
     private static void invoke(ThrowRunnable runnable) {
@@ -100,7 +127,7 @@ public class TraceManager {
     }
 
     private static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
-        Span span = buildSpan(consumerContext, serviceType, name);
+        Span span = Span.of(consumerContext, serviceType, name);
         TraceContext.set(span);
     }
 
@@ -108,8 +135,9 @@ public class TraceManager {
         Span parentSpan = TraceContext.get();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
+
         }
-        Span span = buildSpan(parentSpan, serviceType, name);
+        Span span = Span.of(parentSpan, serviceType, name);
         TraceContext.set(span);
     }
 
@@ -117,82 +145,5 @@ public class TraceManager {
     private static void endSpan() {
         Span span = TraceContext.pop();
         TraceCollector.getInstance().collect(span);
-    }
-
-
-    /**
-     * 微服务提供者场景使用
-     */
-    private static Span buildSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
-        Span span = new Span();
-        span.setName(name);
-        span.setServiceType(serviceType.message());
-
-        String rootSpanId = consumerContext.getConsumerChildId();
-        fillIdInfo(span, rootSpanId);
-
-        span.setClientAppKey(consumerContext.getClientAppKey());
-        span.setClientIp(consumerContext.getClientIp());
-        span.setTraceId(consumerContext.getTraceId());
-
-        fillServerInfo(span);
-        return span;
-    }
-
-
-    /**
-     * 内部调用使用parentSpan可能是null，标书第一个span
-     */
-    private static Span buildSpan(Span parentSpan, ServiceType serviceType, String name) {
-        Span span = new Span();
-        span.setName(name);
-
-        if (parentSpan == TraceConstants.DUMMY_SPAN) {
-            span.setServiceType(serviceType.message());
-            span.setTraceId(buildTranceId());
-
-            fillIdInfo(span, TraceConstants.HEAD_SPAN_ID);
-            fillServerInfo(span);
-
-            return span;
-        }
-        else {
-            fillIdInfo(span, parentSpan.nextChildId());
-            span.setTraceId(parentSpan.getTraceId());
-            span.setStart(System.currentTimeMillis());
-            span.setServiceType(ServiceType.INNER_CALL.message());
-
-            copyFromParent(parentSpan, span);
-
-            span.setParent(parentSpan);
-            parentSpan.addChild(span);
-            return span;
-        }
-    }
-
-
-    private static void fillIdInfo(Span span, String id) {
-        span.setId(id);
-        String[] strs = id.split(Constants.POINT_SPLITTER);
-        span.setDepth(strs.length);
-        span.setOrder(Integer.valueOf(strs[strs.length - 1]));
-    }
-
-    private static void fillServerInfo(Span span) {
-        span.setAppKey(TraceConfig.getAppKey());
-        span.setIp(IpUtils.getLocalIp());
-        span.setStart(System.currentTimeMillis());
-    }
-
-    private static void copyFromParent(Span parentSpan, Span span) {
-        span.setAppKey(parentSpan.getAppKey());
-        span.setIp(parentSpan.getIp());
-        span.setClientIp(parentSpan.getClientIp());
-        span.setClientAppKey(parentSpan.getClientAppKey());
-    }
-
-
-    private static String buildTranceId() {
-        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
     }
 }

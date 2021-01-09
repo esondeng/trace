@@ -8,9 +8,11 @@ import com.eson.common.core.enums.EnumBase;
  */
 public enum ServiceType implements EnumBase {
     HTTP(0, "http"),
-    DUBBO(1, "dubbo"),
-    INNER_CALL(2, "inner-call"),
-    ASYNC(3, "async");
+    DUBBO_CONSUMER(2, "duubo-c"),
+    DUBBO_ASYNC_CONSUMER(3, "dubbo-async-c"),
+    DUBBO_PROVIDER(4, "dubbo-p"),
+    INNER_CALL(5, "inner-call"),
+    ASYNC(6, "async");
 
     private int id;
 

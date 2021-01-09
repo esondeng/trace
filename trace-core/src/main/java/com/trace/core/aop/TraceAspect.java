@@ -19,13 +19,13 @@ import com.trace.core.manager.TraceManager;
 public class TraceAspect {
 
     @Pointcut("@annotation(com.trace.core.annotion.Tracing) || @within(com.trace.core.annotion.Tracing)")
-    public void methodPointcut() {
+    public void tracePointCut() {
 
     }
 
 
-    @Around("methodPointcut()")
-    public Object methodAdvice(ProceedingJoinPoint point) throws Throwable {
+    @Around("tracePointCut()")
+    public Object traceAdvice(ProceedingJoinPoint point) throws Throwable {
         Method method = ((MethodSignature) point.getSignature()).getMethod();
         String name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
 

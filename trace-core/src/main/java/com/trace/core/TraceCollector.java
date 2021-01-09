@@ -73,15 +73,25 @@ public class TraceCollector {
             return;
         }
 
+        Span parent = span.getParent();
+        // 新开线程的情况第一个span只是用来传递context
+        if (parent != null && parent.isAsyncParent()) {
+            offer(span);
+            return;
+        }
+
         if (span.getParent() != null && !span.getParent().isCollected()) {
             return;
         }
 
+        offer(span);
+    }
+
+    private void offer(Span span) {
         if (!queue.offer(span)) {
             FAIL_COUNTER.incrementAndGet();
         }
         span.setCollected(true);
-
     }
 
     private TraceCollector() {

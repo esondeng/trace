@@ -11,6 +11,8 @@ import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
 import com.trace.core.TraceContext;
 import com.trace.core.constants.TraceConstants;
+import com.trace.core.enums.ServiceType;
+import com.trace.core.manager.TraceManager;
 
 /**
  * @author dengxiaolin
@@ -26,7 +28,17 @@ public class TraceDubboConsumerFilter implements Filter {
         if (span != null) {
             ConsumerContext consumerContext = ConsumerContext.of(span);
             invocation.setAttachment(TraceConstants.CONSUMER_CONTEXT, consumerContext);
+
+            ServiceType serviceType = span.isAsyncParent() ? ServiceType.DUBBO_ASYNC_CONSUMER : ServiceType.DUBBO_CONSUMER;
+            String name = invoker.getInterface().getSimpleName() + "." + invocation.getMethodName();
+            return TraceManager.tracingWithReturn(
+                    serviceType,
+                    name,
+                    () -> invoker.invoke(invocation));
         }
-        return invoker.invoke(invocation);
+        else {
+            return invoker.invoke(invocation);
+        }
+
     }
 }

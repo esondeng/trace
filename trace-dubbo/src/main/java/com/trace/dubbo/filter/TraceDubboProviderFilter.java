@@ -28,7 +28,7 @@ public class TraceDubboProviderFilter implements Filter {
 
         return TraceManager.tracingWithReturn(
                 consumerContext,
-                ServiceType.DUBBO,
+                ServiceType.DUBBO_PROVIDER,
                 name,
                 () -> invoker.invoke(invocation));
     }

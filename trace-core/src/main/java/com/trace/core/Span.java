@@ -3,9 +3,15 @@ package com.trace.core;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.collections4.CollectionUtils;
+
+import com.eson.common.core.constants.Constants;
+import com.eson.common.core.utils.IpUtils;
+import com.trace.core.constants.TraceConstants;
+import com.trace.core.enums.ServiceType;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +56,10 @@ public class Span {
     private List<Span> children;
     private List<String> errorMessages;
 
+    /**
+     * 新开线程池的时候，copy当前的span放在子线程的threadLocal里面
+     */
+    private boolean isAsyncParent;
 
     /**
      * 是否被收集过
@@ -93,6 +103,94 @@ public class Span {
         }
 
         errorMessages = errorStack;
+    }
+
+    public static Span copyAsAsyncParent(Span span) {
+        Span copy = new Span();
+
+        // 新先线程直接使用父线程的id
+        fillIdInfo(copy, span.getId());
+        span.setChildCounter(span.getChildCounter());
+
+        copy.setAsyncParent(true);
+        copyFromParent(span, copy);
+
+        return copy;
+    }
+
+    /**
+     * 微服务提供者场景使用
+     */
+    public static Span of(ConsumerContext consumerContext, ServiceType serviceType, String name) {
+        Span span = new Span();
+        span.setName(name);
+        span.setServiceType(serviceType.message());
+
+        String rootSpanId = consumerContext.getConsumerChildId();
+        fillIdInfo(span, rootSpanId);
+
+        span.setClientAppKey(consumerContext.getClientAppKey());
+        span.setClientIp(consumerContext.getClientIp());
+        span.setTraceId(consumerContext.getTraceId());
+
+        fillServerInfo(span);
+        return span;
+    }
+
+
+    /**
+     * 内部调用使用parentSpan可能是null，标书第一个span
+     */
+    public static Span of(Span parentSpan, ServiceType serviceType, String name) {
+        Span span = new Span();
+        span.setName(name);
+
+        if (parentSpan == TraceConstants.DUMMY_SPAN) {
+            span.setServiceType(serviceType.message());
+            span.setTraceId(buildTranceId());
+
+            fillIdInfo(span, TraceConstants.HEAD_SPAN_ID);
+            fillServerInfo(span);
+
+            return span;
+        }
+        else {
+            fillIdInfo(span, parentSpan.nextChildId());
+            span.setTraceId(parentSpan.getTraceId());
+            span.setStart(System.currentTimeMillis());
+            span.setServiceType(ServiceType.INNER_CALL.message());
+
+            copyFromParent(parentSpan, span);
+
+            span.setParent(parentSpan);
+            parentSpan.addChild(span);
+            return span;
+        }
+    }
+
+
+    private static void fillIdInfo(Span span, String id) {
+        span.setId(id);
+        String[] strs = id.split(Constants.POINT_SPLITTER);
+        span.setDepth(strs.length);
+        span.setOrder(Integer.valueOf(strs[strs.length - 1]));
+    }
+
+    private static void fillServerInfo(Span span) {
+        span.setAppKey(TraceConfig.getAppKey());
+        span.setIp(IpUtils.getLocalIp());
+        span.setStart(System.currentTimeMillis());
+    }
+
+    private static void copyFromParent(Span parentSpan, Span span) {
+        span.setAppKey(parentSpan.getAppKey());
+        span.setIp(parentSpan.getIp());
+        span.setClientIp(parentSpan.getClientIp());
+        span.setClientAppKey(parentSpan.getClientAppKey());
+    }
+
+    private static String buildTranceId() {
+        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
     }
 
     @Override
