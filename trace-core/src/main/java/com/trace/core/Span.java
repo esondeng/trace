@@ -188,6 +188,7 @@ public class Span {
     }
 
     private static void copyFromParent(Span span, Span parentSpan) {
+        span.setTraceId(parentSpan.getTraceId());
         span.setAppKey(parentSpan.getAppKey());
         span.setIp(parentSpan.getIp());
         span.setClientIp(parentSpan.getClientIp());
