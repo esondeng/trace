@@ -6,6 +6,7 @@ import com.trace.core.TraceContainer;
 import com.trace.core.TraceContext;
 import com.trace.core.async.TraceCallable;
 import com.trace.core.async.TraceRunnable;
+import com.trace.core.async.TraceSupplier;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.function.ThrowRunnable;
@@ -93,6 +94,20 @@ public class TraceManager {
         TraceContext.set(traceCallable.getAsyncParent());
         try {
             return traceCallable.getCallable().call();
+        }
+        catch (Throwable e) {
+            throw buildException(e);
+        }
+        finally {
+            // 异步的parent已经收集过，直接放弃
+            TraceContext.pop();
+        }
+    }
+
+    public static <T> T asyncParent(TraceSupplier<T> traceSupplier) {
+        TraceContext.set(traceSupplier.getAsyncParent());
+        try {
+            return traceSupplier.getSupplier().get();
         }
         catch (Throwable e) {
             throw buildException(e);

@@ -26,7 +26,7 @@ public class TraceCallable<V> implements Callable<V> {
         return TraceManager.asyncParent(this);
     }
 
-    public static <V> Callable<V> get(Callable<V> callable) {
+    public static <V> Callable<V> getInstance(Callable<V> callable) {
         if (callable == null) {
             return null;
         }

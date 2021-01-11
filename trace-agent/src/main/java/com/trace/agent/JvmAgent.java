@@ -17,10 +17,10 @@ public class JvmAgent {
      * 命令行使用
      */
     public static void premain(String agentArgs, Instrumentation instrumentation) {
-        System.out.println("agentmain agent start");
+        System.out.println("premain agent start");
         instr = instrumentation;
         install();
-        System.out.println("agentmain agent end");
+        System.out.println("premain agent end");
     }
 
     /**

@@ -22,7 +22,7 @@ public class TraceRunnable implements Runnable {
         TraceManager.asyncParent(this);
     }
 
-    public static Runnable get(Runnable runnable) {
+    public static Runnable getInstance(Runnable runnable) {
         if (runnable == null) {
             return null;
         }

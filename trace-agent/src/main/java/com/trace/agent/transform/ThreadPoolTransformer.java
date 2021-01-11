@@ -2,9 +2,8 @@ package com.trace.agent.transform;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.regex.Pattern;
 
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -16,51 +15,32 @@ import javassist.Modifier;
  */
 public class ThreadPoolTransformer implements TraceTransformer {
 
-    private static final Set<String> TRANSFORM_CLASS_SET = new HashSet<>();
-
-    static {
-        TRANSFORM_CLASS_SET.add("java.util.concurrent.ThreadPoolExecutor");
-        TRANSFORM_CLASS_SET.add("java.util.concurrent.ScheduledThreadPoolExecutor");
-    }
-
-    private static final Set<String> TRANSFORM_METHOD_SET = new HashSet<>();
-
-    static {
-        TRANSFORM_METHOD_SET.add("execute");
-        TRANSFORM_METHOD_SET.add("submit");
-        TRANSFORM_METHOD_SET.add("schedule");
-        TRANSFORM_METHOD_SET.add("scheduleAtFixedRate");
-        TRANSFORM_METHOD_SET.add("scheduleWithFixedDelay");
-    }
+    private static final Pattern pattern = Pattern.compile("java.util.concurrent.*");
 
     private static Map<String, String> CLASS_NAME_MAP = new HashMap<>();
 
     static {
         CLASS_NAME_MAP.put("java.lang.Runnable", "com.trace.core.async.TraceRunnable");
         CLASS_NAME_MAP.put("java.util.concurrent.Callable", "com.trace.core.async.TraceCallable");
+        CLASS_NAME_MAP.put("java.util.function.Supplier", "com.trace.core.async.TraceSupplier");
     }
 
     @Override
     public boolean needTransform(String className) {
-        return TRANSFORM_CLASS_SET.contains(className);
+        return pattern.matcher(className).find();
     }
 
     @Override
     public void doTransform(CtClass clazz) {
         Arrays.stream(clazz.getDeclaredMethods())
-                .filter(method -> TRANSFORM_METHOD_SET.contains(method.getName()))
                 .forEach(ThreadPoolTransformer::transformMethod);
     }
 
     private static void transformMethod(CtMethod method) {
-
-
         int modifiers = method.getModifiers();
-        if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers)) {
+        if (!Modifier.isPublic(modifiers)) {
             return;
         }
-
-        System.out.println("transform " + method.getLongName());
 
         try {
             CtClass[] parameterTypes = method.getParameterTypes();
