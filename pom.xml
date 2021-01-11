@@ -20,7 +20,6 @@
         <module>trace-dubbo</module>
         <module>trace-agent</module>
         <module>trace-collect</module>
-        <module>trace-agent-bootstrap</module>
     </modules>
 
     <properties>
