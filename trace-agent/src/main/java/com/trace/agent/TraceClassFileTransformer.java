@@ -40,7 +40,6 @@ public class TraceClassFileTransformer implements ClassFileTransformer {
             className = toClassName(className);
             for (TraceTransformer transformer : transformerList) {
                 if (transformer.needTransform(className)) {
-                    System.out.println(("Transforming class " + className));
                     final CtClass clazz = getCtClass(classfileBuffer, loader);
                     transformer.doTransform(clazz);
                     return clazz.toBytecode();
