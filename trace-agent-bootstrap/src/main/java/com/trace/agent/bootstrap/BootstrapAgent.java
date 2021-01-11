@@ -13,18 +13,17 @@ import com.sun.tools.attach.VirtualMachineDescriptor;
 public class BootstrapAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) {
-        // 获取当前系统中所有 运行中的 虚拟机
-        System.out.println("running JVM start ");
-        String jvmAgentJarPath = System.getProperty("agent.jar.path");
-        System.out.println("agent.jar.path =  " + jvmAgentJarPath);
+        AgentLocation agentLocation = new AgentLocation();
+        inst.appendToBootstrapClassLoaderSearch(agentLocation.getToolsJarFile());
 
+        // 获取当前系统中所有 运行中的 虚拟机
         List<VirtualMachineDescriptor> list = VirtualMachine.list();
         for (VirtualMachineDescriptor vmd : list) {
             System.out.println("vm name = " + vmd.displayName());
 
             try {
                 VirtualMachine virtualMachine = VirtualMachine.attach(vmd.id());
-                virtualMachine.loadAgent(jvmAgentJarPath);
+                virtualMachine.loadAgent(agentLocation.getJvmAgentJarPath());
                 virtualMachine.detach();
             }
             catch (Exception e) {
