@@ -1,4 +1,4 @@
-package com.trace.core.aop;
+package com.trace.collect.aop;
 
 import java.lang.reflect.Method;
 
@@ -18,11 +18,10 @@ import com.trace.core.manager.TraceManager;
 @Aspect
 public class TraceAspect {
 
-    @Pointcut("@annotation(com.trace.core.annotion.Tracing) || @within(com.trace.core.annotion.Tracing)")
+    @Pointcut("@annotation(com.trace.collect.annotation.Tracing) || @within(com.trace.collect.annotation.Tracing)")
     public void tracePointCut() {
 
     }
-
 
     @Around("tracePointCut()")
     public Object traceAdvice(ProceedingJoinPoint point) throws Throwable {

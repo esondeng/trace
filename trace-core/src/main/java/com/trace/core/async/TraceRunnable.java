@@ -4,13 +4,10 @@ import com.trace.core.Span;
 import com.trace.core.TraceContext;
 import com.trace.core.manager.TraceManager;
 
-import lombok.Getter;
-
 /**
  * @author dengxiaolin
  * @since 2021/01/09
  */
-@Getter
 public class TraceRunnable implements Runnable {
     private Span asyncParent;
     private Runnable runnable;
@@ -36,5 +33,13 @@ public class TraceRunnable implements Runnable {
         }
 
         return new TraceRunnable(Span.copyAsAsyncParent(span), runnable);
+    }
+
+    public Span getAsyncParent() {
+        return asyncParent;
+    }
+
+    public Runnable getRunnable() {
+        return runnable;
     }
 }

@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.eson.common.core.utils.Strings;
-
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.Modifier;
@@ -51,18 +49,18 @@ public class ThreadPoolTransformer implements TraceTransformer {
     public void doTransform(CtClass clazz) {
         Arrays.stream(clazz.getDeclaredMethods())
                 .filter(method -> TRANSFORM_METHOD_SET.contains(method.getName()))
-                .forEach(method -> transformMethod(clazz, method));
+                .forEach(ThreadPoolTransformer::transformMethod);
     }
 
-    private static void transformMethod(CtClass clazz, CtMethod method) {
-        if (method.getDeclaringClass() != clazz) {
-            return;
-        }
+    private static void transformMethod(CtMethod method) {
+
 
         int modifiers = method.getModifiers();
         if (!Modifier.isPublic(modifiers) || Modifier.isStatic(modifiers)) {
             return;
         }
+
+        System.out.println("transform " + method.getLongName());
 
         try {
             CtClass[] parameterTypes = method.getParameterTypes();
@@ -73,10 +71,11 @@ public class ThreadPoolTransformer implements TraceTransformer {
                 String paraTypeName = paraType.getName();
 
                 if (CLASS_NAME_MAP.containsKey(paraTypeName)) {
+                    System.out.println("interfaceName:" + paraTypeName);
                     int paramIndex = i + 1;
-                    String replaceCode = Strings.of("${} = {}.get({});", paramIndex, CLASS_NAME_MAP.get(paraTypeName), paramIndex);
+                    String replaceCode = String.format("$%d = %s.get($%d);", paramIndex, CLASS_NAME_MAP.get(paraTypeName), paramIndex);
                     sb.append(replaceCode);
-                    System.out.println("insert code before method " + method + " of class " + method.getDeclaringClass().getName() + ": " + replaceCode);
+                    System.out.println("insert code before method " + method.getLongName() + " of class " + method.getDeclaringClass().getName() + ": " + replaceCode);
                 }
             }
 
@@ -85,6 +84,7 @@ public class ThreadPoolTransformer implements TraceTransformer {
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

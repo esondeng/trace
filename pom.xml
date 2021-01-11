@@ -19,6 +19,7 @@
         <module>trace-web</module>
         <module>trace-dubbo</module>
         <module>trace-agent</module>
+        <module>trace-collect</module>
     </modules>
 
     <properties>

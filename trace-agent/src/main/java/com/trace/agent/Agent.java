@@ -8,20 +8,27 @@ import java.lang.instrument.Instrumentation;
  * @since 2021/01/10
  */
 public class Agent {
-
     private static Instrumentation inst;
 
-    public static void main(String[] args) {
-
+    /**
+     * 命令行启动
+     */
+    public static void premain(String agentArgs, Instrumentation instrumentation) {
+        inst = instrumentation;
+        install(inst);
     }
 
     /**
      * 类加载调用
      */
     public static void agentmain(String agentArgs, Instrumentation instrumentation) {
-        System.out.println("agent start");
+        install(instrumentation);
+    }
+
+    private static void install(Instrumentation instrumentation) {
+        System.out.println("premain agent start");
         ClassFileTransformer transformer = new TraceClassFileTransformer();
         instrumentation.addTransformer(transformer, true);
-        System.out.println("agent end");
+        System.out.println("premain agent end");
     }
 }

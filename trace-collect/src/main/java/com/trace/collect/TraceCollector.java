@@ -1,27 +1,24 @@
-package com.trace.core;
+package com.trace.collect;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.collections4.CollectionUtils;
+import com.trace.core.Span;
+import com.trace.core.TraceContainer;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author dengxiaolin
- * @since 2021/01/06
+ * @since 2021/01/10
  */
 @Slf4j
 public class TraceCollector {
-
-    private static final AtomicInteger FAIL_COUNTER = new AtomicInteger(0);
     private static final int UPLOAD_SIZE = 1024;
 
     /**
@@ -33,14 +30,14 @@ public class TraceCollector {
      */
     private static final int MIN_INTERVAL = 1000;
 
-    private BlockingQueue<Span> queue;
     private ArrayList<Span> retryList;
 
-    private volatile boolean isActive = true;
+    private TraceContainer traceContainer;
+
     /**
      * 默认睡2秒
      */
-    private volatile int interval = 2 * 1000;
+    private int interval = 2 * 1000;
 
     private ThreadPoolExecutor uploadExecutor = new ThreadPoolExecutor(
             1,
@@ -58,62 +55,25 @@ public class TraceCollector {
             },
             new ThreadPoolExecutor.CallerRunsPolicy());
 
-    private static final TraceCollector instance = new TraceCollector();
-
-    public static TraceCollector getInstance() {
-        return instance;
-    }
-
-    public void collect(Span span) {
-        if (!this.isActive || span == null) {
-            return;
-        }
-
-        if (span.isCollected()) {
-            return;
-        }
-
-        Span parent = span.getParent();
-        // 新开线程的情况第一个span只是用来传递context
-        if (parent != null && parent.isAsyncParent()) {
-            offer(span);
-            return;
-        }
-
-        if (span.getParent() != null && !span.getParent().isCollected()) {
-            return;
-        }
-
-        offer(span);
-    }
-
-    private void offer(Span span) {
-        if (!queue.offer(span)) {
-            FAIL_COUNTER.incrementAndGet();
-        }
-        span.setCollected(true);
-    }
-
-    private TraceCollector() {
-        this.queue = new ArrayBlockingQueue<>(1024 * 8);
+    public TraceCollector() {
         this.retryList = new ArrayList<>(UPLOAD_SIZE);
+        this.traceContainer = TraceContainer.getInstance();
 
         startUploadWorker();
         addShutdownHook();
-
     }
 
     private void startUploadWorker() {
         uploadExecutor.execute(() -> {
-            while (isActive) {
+            while (traceContainer.isActive()) {
                 List<Span> total = new ArrayList<Span>(UPLOAD_SIZE * 2);
                 List<Span> currentRoundList = new ArrayList<Span>(UPLOAD_SIZE);
-                queue.drainTo(currentRoundList, UPLOAD_SIZE);
+                traceContainer.getQueue().drainTo(currentRoundList, UPLOAD_SIZE);
 
                 log.debug("span uploader loop interval " + interval +
                         " upload " + currentRoundList.size() +
                         " retry " + retryList.size() +
-                        " fail " + FAIL_COUNTER.getAndSet(0));
+                        " fail " + traceContainer.getAndResetFailCounter());
 
                 if (!retryList.isEmpty()) {
                     total.addAll(retryList);
@@ -142,14 +102,14 @@ public class TraceCollector {
     private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             // upload worker 停止工作
-            isActive = false;
+            traceContainer.setActive(false);
 
             List<Span> spans = new ArrayList<Span>(UPLOAD_SIZE);
-            queue.drainTo(spans, UPLOAD_SIZE);
+            traceContainer.getQueue().drainTo(spans, UPLOAD_SIZE);
 
-            log.info("TraceCollector before shutdown upload " + spans.size() +
+            log.info("TraceContainer before shutdown upload " + spans.size() +
                     " retry " + retryList.size() +
-                    " fail " + FAIL_COUNTER.getAndSet(0));
+                    " fail " + traceContainer.getAndResetFailCounter());
 
             if (!retryList.isEmpty()) {
                 spans.addAll(retryList);
@@ -176,11 +136,10 @@ public class TraceCollector {
 
         spans.forEach(span -> {
             log.info(span.toString());
-            if (CollectionUtils.isNotEmpty(span.getChildren())) {
+            if (span.getChildren() != null) {
                 span.getChildren().forEach(t -> log.info(t.toString()));
             }
         });
         return true;
     }
-
 }

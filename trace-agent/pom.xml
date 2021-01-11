@@ -31,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Main-Class>com.trace.agent.Agent</Main-Class>
+                            <Premain-Class>com.trace.agent.Agent</Premain-Class>
                             <Agent-Class>com.trace.agent.Agent</Agent-Class>
                             <Boot-Class-Path>${project.artifactId}-${project.version}.jar</Boot-Class-Path>
                             <Can-Redefine-Classes>true</Can-Redefine-Classes>
@@ -54,6 +54,27 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createSourcesJar>true</createSourcesJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>com.trace.agent.javassist</shadedPattern>
+                                </relocation>
+                            </relocations>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

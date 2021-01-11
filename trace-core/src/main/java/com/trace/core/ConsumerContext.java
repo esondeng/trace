@@ -2,17 +2,12 @@ package com.trace.core;
 
 import java.io.Serializable;
 
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * 传输给服务提供者的上下文
  *
  * @author dengxiaolin
  * @since 2021/01/07
  */
-@Getter
-@Setter
 public class ConsumerContext implements Serializable {
     private String traceId;
 
@@ -35,5 +30,37 @@ public class ConsumerContext implements Serializable {
         consumerContext.setClientIp(span.getIp());
 
         return consumerContext;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
+    }
+
+    public String getConsumerChildId() {
+        return consumerChildId;
+    }
+
+    public void setConsumerChildId(String consumerChildId) {
+        this.consumerChildId = consumerChildId;
+    }
+
+    public String getClientAppKey() {
+        return clientAppKey;
+    }
+
+    public void setClientAppKey(String clientAppKey) {
+        this.clientAppKey = clientAppKey;
+    }
+
+    public String getClientIp() {
+        return clientIp;
+    }
+
+    public void setClientIp(String clientIp) {
+        this.clientIp = clientIp;
     }
 }

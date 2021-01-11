@@ -2,7 +2,7 @@ package com.trace.core.manager;
 
 import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
-import com.trace.core.TraceCollector;
+import com.trace.core.TraceContainer;
 import com.trace.core.TraceContext;
 import com.trace.core.async.TraceCallable;
 import com.trace.core.async.TraceRunnable;
@@ -11,13 +11,10 @@ import com.trace.core.enums.ServiceType;
 import com.trace.core.function.ThrowRunnable;
 import com.trace.core.function.ThrowSupplier;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author dengxiaolin
  * @since 2021/01/06
  */
-@Slf4j
 public class TraceManager {
 
     /**
@@ -153,6 +150,6 @@ public class TraceManager {
 
     private static void endSpan() {
         Span span = TraceContext.pop();
-        TraceCollector.getInstance().collect(span);
+        TraceContainer.getInstance().put(span);
     }
 }
