@@ -24,12 +24,16 @@ public class TraceDubboProviderFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         ConsumerContext consumerContext = (ConsumerContext) invocation.getObjectAttachment(TraceConstants.CONSUMER_CONTEXT);
-        String name = invoker.getInterface().getSimpleName() + "." + invocation.getMethodName();
-
-        return TraceManager.tracingWithReturn(
-                consumerContext,
-                ServiceType.DUBBO_PROVIDER,
-                name,
-                () -> invoker.invoke(invocation));
+        if (consumerContext == null) {
+            return invoker.invoke(invocation);
+        }
+        else {
+            String name = invoker.getInterface().getSimpleName() + "." + invocation.getMethodName();
+            return TraceManager.tracingWithReturn(
+                    consumerContext,
+                    ServiceType.DUBBO_PROVIDER,
+                    name,
+                    () -> invoker.invoke(invocation));
+        }
     }
 }
