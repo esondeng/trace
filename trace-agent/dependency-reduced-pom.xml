@@ -16,7 +16,6 @@
           <archive>
             <manifestEntries>
               <Premain-Class>com.trace.agent.JvmAgent</Premain-Class>
-              <Agent-Class>com.trace.agent.JvmAgent</Agent-Class>
               <Boot-Class-Path>${project.artifactId}-${project.version}.jar</Boot-Class-Path>
               <Can-Redefine-Classes>true</Can-Redefine-Classes>
               <Can-Retransform-Classes>true</Can-Retransform-Classes>

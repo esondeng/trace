@@ -23,16 +23,6 @@ public class JvmAgent {
         System.out.println("premain agent end");
     }
 
-    /**
-     * 类加载调用
-     */
-    public static void agentmain(String agentArgs, Instrumentation instrumentation) {
-        System.out.println("agentmain agent start");
-        instr = instrumentation;
-        install();
-        System.out.println("agentmain agent end");
-    }
-
     private static void install() {
         ClassFileTransformer transformer = new TraceClassFileTransformer();
         instrumentation().addTransformer(transformer, true);
