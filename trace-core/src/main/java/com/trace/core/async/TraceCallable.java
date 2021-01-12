@@ -31,12 +31,8 @@ public class TraceCallable<V> implements Callable<V> {
             return null;
         }
 
-        Span span = TraceContext.get();
-        if (span == null) {
-            return callable;
-        }
-
-        return new TraceCallable<>(Span.copyAsAsyncParent(span), callable);
+        Span asyncParent = Span.copyAsAsyncParent(TraceContext.get());
+        return asyncParent == null ? callable : new TraceCallable<>(asyncParent, callable);
     }
 
     public Span getAsyncParent() {

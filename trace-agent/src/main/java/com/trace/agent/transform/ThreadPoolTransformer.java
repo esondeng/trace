@@ -23,6 +23,7 @@ public class ThreadPoolTransformer implements TraceTransformer {
         TRANSFER_CLASS_SET.add("java.util.concurrent.ScheduledThreadPoolExecutor");
         TRANSFER_CLASS_SET.add("java.util.concurrent.CompletableFuture");
         TRANSFER_CLASS_SET.add("java.util.concurrent.CompletionService");
+        TRANSFER_CLASS_SET.add("java.util.concurrent.ForkJoinPool");
     }
 
     private static Map<String, String> CLASS_NAME_MAP = new HashMap<>();

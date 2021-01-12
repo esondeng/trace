@@ -100,6 +100,10 @@ public class Span {
     }
 
     public static Span copyAsAsyncParent(Span span) {
+        if (span == null) {
+            return null;
+        }
+
         Span copy = new Span();
         copy.setAsyncParent(true);
 

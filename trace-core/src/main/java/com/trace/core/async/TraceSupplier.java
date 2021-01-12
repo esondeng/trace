@@ -29,12 +29,8 @@ public class TraceSupplier<T> implements Supplier<T> {
             return null;
         }
 
-        Span span = TraceContext.get();
-        if (span == null) {
-            return supplier;
-        }
-
-        return new TraceSupplier<>(Span.copyAsAsyncParent(span), supplier);
+        Span asyncParent = Span.copyAsAsyncParent(TraceContext.get());
+        return asyncParent == null ? supplier : new TraceSupplier<>(asyncParent, supplier);
     }
 
     public Span getAsyncParent() {

@@ -27,12 +27,8 @@ public class TraceRunnable implements Runnable {
             return null;
         }
 
-        Span span = TraceContext.get();
-        if (span == null) {
-            return runnable;
-        }
-
-        return new TraceRunnable(Span.copyAsAsyncParent(span), runnable);
+        Span asyncParent = Span.copyAsAsyncParent(TraceContext.get());
+        return asyncParent == null ? runnable : new TraceRunnable(asyncParent, runnable);
     }
 
     public Span getAsyncParent() {

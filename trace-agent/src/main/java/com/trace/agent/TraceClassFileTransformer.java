@@ -8,6 +8,7 @@ import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.trace.agent.transform.ForkJoinTaskTransformer;
 import com.trace.agent.transform.ThreadPoolTransformer;
 import com.trace.agent.transform.TraceTransformer;
 
@@ -24,6 +25,7 @@ public class TraceClassFileTransformer implements ClassFileTransformer {
 
     public TraceClassFileTransformer() {
         transformerList.add(new ThreadPoolTransformer());
+        transformerList.add(new ForkJoinTaskTransformer());
     }
 
     @Override
