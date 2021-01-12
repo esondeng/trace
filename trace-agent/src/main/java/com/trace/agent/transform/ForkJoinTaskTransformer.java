@@ -27,7 +27,7 @@ public class ForkJoinTaskTransformer implements TraceTransformer {
         try {
             String addFieldName = "asyncParent";
             CtField addField = CtField.make("private com.trace.core.Span " + addFieldName + ";", clazz);
-            clazz.addField(addField, "com.trace.core.Span.copyAsAsyncParent(TraceManager.get());");
+            clazz.addField(addField, "com.trace.core.Span.copyAsAsyncParent(com.trace.core.manager.TraceManager.get());");
 
             String doExecMethodName = "doExec";
             CtMethod doExecMethod = clazz.getDeclaredMethod(doExecMethodName);
