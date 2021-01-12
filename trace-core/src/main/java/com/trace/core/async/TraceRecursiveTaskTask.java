@@ -9,12 +9,12 @@ import com.trace.core.TraceContext;
  * @author dengxiaolin
  * @since 2021/01/11
  */
-public abstract class TraceForkJoinTask<T> extends ForkJoinTask<T> {
+public abstract class TraceRecursiveTaskTask<T> extends ForkJoinTask<T> {
     private Span asyncParent;
     private T result;
 
 
-    public TraceForkJoinTask() {
+    public TraceRecursiveTaskTask() {
         asyncParent = Span.copyAsAsyncParent(TraceContext.get());
     }
 
