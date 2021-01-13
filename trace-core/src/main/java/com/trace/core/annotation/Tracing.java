@@ -1,4 +1,4 @@
-package com.trace.collect.annotation;
+package com.trace.core.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
