@@ -24,7 +24,7 @@ public class TraceCollector {
     /**
      * 最大上传间隔时间
      */
-    private static final int MAX_INTERVAL = 32 * 1000;
+    private static final int MAX_INTERVAL = 16 * 1000;
     /**
      * 最小上传间隔时间
      */
