@@ -83,11 +83,9 @@ public class ThreadPoolTransformer implements TraceTransformer {
                 String paraTypeName = paraType.getName();
 
                 if (CLASS_NAME_MAP.containsKey(paraTypeName)) {
-                    System.out.println("paraTypeName:" + paraTypeName);
                     int paramIndex = i + 1;
                     String replaceCode = String.format("$%d = %s.getInstance($%d);", paramIndex, CLASS_NAME_MAP.get(paraTypeName), paramIndex);
                     sb.append(replaceCode);
-                    System.out.println("insert code before method " + method.getLongName() + " of class " + method.getDeclaringClass().getName() + ": " + replaceCode);
                 }
             }
 

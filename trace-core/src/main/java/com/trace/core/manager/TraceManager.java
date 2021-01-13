@@ -30,7 +30,7 @@ public class TraceManager {
     }
 
     /**
-     * Web端入口或者调用
+     * Web端入口或者内部调用
      */
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,

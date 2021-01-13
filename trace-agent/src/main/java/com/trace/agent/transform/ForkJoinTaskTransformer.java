@@ -55,7 +55,6 @@ public class ForkJoinTaskTransformer implements TraceTransformer {
                     + "}";
             newDoExecMethod.setBody(code);
             clazz.addMethod(newDoExecMethod);
-            System.out.println("insert code around method " + doExecMethod + " of class " + FORK_JOIN_TASK_CLASS_NAME + ": " + code);
         }
         catch (Exception e) {
             e.printStackTrace();
