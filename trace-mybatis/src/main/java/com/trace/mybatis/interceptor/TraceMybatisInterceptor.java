@@ -1,15 +1,19 @@
 package com.trace.mybatis.interceptor;
 
+import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.ibatis.executor.statement.StatementHandler;
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.plugin.Interceptor;
+import org.apache.ibatis.plugin.Intercepts;
 import org.apache.ibatis.plugin.Invocation;
 import org.apache.ibatis.plugin.Plugin;
+import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -23,6 +27,8 @@ import com.trace.core.manager.TraceManager;
  * @author dengxiaolin
  * @since 2021/01/14
  */
+@Intercepts({
+        @Signature(method = "prepare", type = StatementHandler.class, args = {Connection.class})})
 public class TraceMybatisInterceptor implements Interceptor {
     /**
      * sql 最大长度
