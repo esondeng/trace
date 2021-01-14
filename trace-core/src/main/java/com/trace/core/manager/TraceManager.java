@@ -40,6 +40,18 @@ public class TraceManager {
 
     }
 
+    /**
+     * 记录sql入口
+     */
+    public static <T> T tracingWithReturn(ServiceType serviceType,
+                                          String name,
+                                          String sql,
+                                          ThrowSupplier<T> supplier) {
+        startSpan(serviceType, sql, name);
+        return invoke(supplier);
+
+    }
+
     private static <T> T invoke(ThrowSupplier<T> supplier) {
         try {
             return supplier.get();
@@ -158,10 +170,20 @@ public class TraceManager {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
-        Span span = Span.of(parentSpan, serviceType, name);
+        Span span = Span.of(parentSpan, serviceType, name, null);
         TraceContext.set(span);
     }
 
+    private static void startSpan(ServiceType serviceType, String sql, String name) {
+        Span parentSpan = TraceContext.get();
+        if (parentSpan == null) {
+            parentSpan = TraceConstants.DUMMY_SPAN;
+
+        }
+        Span span = Span.of(parentSpan, serviceType, name, sql);
+        span.setSql(sql);
+        TraceContext.set(span);
+    }
 
     private static void endSpan() {
         Span span = TraceContext.pop();

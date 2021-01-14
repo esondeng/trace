@@ -31,6 +31,7 @@ public class Span {
 
     private String traceId;
     private String name;
+    private String sql;
     private String serviceType;
 
     private String clientAppKey;
@@ -126,9 +127,9 @@ public class Span {
         String rootSpanId = consumerContext.getConsumerChildId();
         fillIdInfo(span, rootSpanId);
 
+        span.setTraceId(consumerContext.getTraceId());
         span.setClientAppKey(consumerContext.getClientAppKey());
         span.setClientIp(consumerContext.getClientIp());
-        span.setTraceId(consumerContext.getTraceId());
 
         fillServerInfo(span);
         return span;
@@ -138,9 +139,10 @@ public class Span {
     /**
      * 内部调用使用parentSpan可能是null，标书第一个span
      */
-    public static Span of(Span parentSpan, ServiceType serviceType, String name) {
+    public static Span of(Span parentSpan, ServiceType serviceType, String name, String sql) {
         Span span = new Span();
         span.setName(name);
+        span.setSql(sql);
 
         if (parentSpan == TraceConstants.DUMMY_SPAN) {
             span.setServiceType(serviceType.message());
@@ -259,6 +261,14 @@ public class Span {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSql() {
+        return sql;
+    }
+
+    public void setSql(String sql) {
+        this.sql = sql;
     }
 
     public String getServiceType() {

@@ -20,6 +20,7 @@
         <module>trace-dubbo</module>
         <module>trace-agent</module>
         <module>trace-collect</module>
+        <module>trace-mybatis</module>
     </modules>
 
     <properties>
