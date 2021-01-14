@@ -206,6 +206,7 @@ public class Span {
                 + " depth = " + depth
                 + " order = " + order
                 + " name = " + name
+                + " sql = " + sql
                 + " traceId = " + traceId
                 + " clientAppKey = " + clientAppKey
                 + " clientIp = " + clientIp
