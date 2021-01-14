@@ -2,12 +2,14 @@ package com.trace.mybatis.interceptor;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Invocation;
+import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.type.TypeHandlerRegistry;
@@ -26,6 +28,8 @@ public class TraceMybatisInterceptor implements Interceptor {
      * sql 最大长度
      */
     private static final int MAX_LENGTH = 10000;
+
+    private Properties properties;
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -109,5 +113,15 @@ public class TraceMybatisInterceptor implements Interceptor {
         else {
             return sql;
         }
+    }
+
+    @Override
+    public Object plugin(Object target) {
+        return Plugin.wrap(target, this);
+    }
+
+    @Override
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }
