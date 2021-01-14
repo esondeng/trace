@@ -155,15 +155,10 @@ public class Span {
         }
         else {
             fillIdInfo(span, parentSpan.nextChildId());
+
             span.setTraceId(parentSpan.getTraceId());
             span.setStart(System.currentTimeMillis());
-
-            if (!parentSpan.isAsyncParent) {
-                span.setServiceType(ServiceType.INNER_CALL.message());
-            }
-            else {
-                span.setServiceType(serviceType.message());
-            }
+            span.setServiceType(serviceType.message());
 
             copyFromParent(span, parentSpan);
 
