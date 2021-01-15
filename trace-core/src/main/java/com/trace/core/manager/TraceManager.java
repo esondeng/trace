@@ -1,5 +1,7 @@
 package com.trace.core.manager;
 
+import com.eson.common.function.ThrowCallable;
+import com.eson.common.function.ThrowRunnable;
 import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
 import com.trace.core.TraceContainer;
@@ -9,8 +11,6 @@ import com.trace.core.async.TraceRunnable;
 import com.trace.core.async.TraceSupplier;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
-import com.trace.core.function.ThrowRunnable;
-import com.trace.core.function.ThrowSupplier;
 
 /**
  * @author dengxiaolin
@@ -24,9 +24,9 @@ public class TraceManager {
     public static <T> T tracingWithReturn(ConsumerContext consumerContext,
                                           ServiceType serviceType,
                                           String name,
-                                          ThrowSupplier<T> supplier) {
+                                          ThrowCallable<T> callable) {
         startSpan(consumerContext, serviceType, name);
-        return invoke(supplier);
+        return invoke(callable);
     }
 
     /**
@@ -34,9 +34,9 @@ public class TraceManager {
      */
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,
-                                          ThrowSupplier<T> supplier) {
+                                          ThrowCallable<T> callable) {
         startSpan(serviceType, name);
-        return invoke(supplier);
+        return invoke(callable);
 
     }
 
@@ -46,15 +46,15 @@ public class TraceManager {
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,
                                           String sql,
-                                          ThrowSupplier<T> supplier) {
+                                          ThrowCallable<T> callable) {
         startSpan(serviceType, sql, name);
-        return invoke(supplier);
+        return invoke(callable);
 
     }
 
-    private static <T> T invoke(ThrowSupplier<T> supplier) {
+    private static <T> T invoke(ThrowCallable<T> callable) {
         try {
-            return supplier.get();
+            return callable.call();
         }
         catch (Throwable e) {
             fillError(e);
