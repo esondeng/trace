@@ -37,7 +37,7 @@ public class TraceCollector {
     /**
      * 默认睡2秒
      */
-    private int interval = 2 * 1000;
+    private volatile int interval = 2 * 1000;
 
     private ThreadPoolExecutor uploadExecutor = new ThreadPoolExecutor(
             1,

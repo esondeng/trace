@@ -18,6 +18,11 @@ public class TraceContainer {
 
     private volatile boolean isActive = true;
 
+    private TraceContainer() {
+        this.queue = new ArrayBlockingQueue<>(1024 * 8);
+        this.failCounter = new AtomicInteger(0);
+    }
+
 
     private static final TraceContainer instance = new TraceContainer();
 
@@ -59,10 +64,6 @@ public class TraceContainer {
         span.setCollected(true);
     }
 
-    private TraceContainer() {
-        this.queue = new ArrayBlockingQueue<>(1024 * 8);
-        this.failCounter = new AtomicInteger(0);
-    }
 
     public BlockingQueue<Span> getQueue() {
         return queue;
