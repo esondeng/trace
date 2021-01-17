@@ -23,7 +23,6 @@ import com.trace.core.manager.TraceManager;
  * @author dengxiaolin
  * @since 2021/01/14
  */
-
 @Intercepts({
         @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
         @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
