@@ -33,10 +33,10 @@ public class ForkJoinTaskTransformer implements TraceTransformer {
             CtMethod doExecMethod = clazz.getDeclaredMethod(doExecMethodName);
             CtMethod newDoExecMethod = CtNewMethod.copy(doExecMethod, doExecMethodName, clazz, null);
 
-            // rename original doExec method, and set to private method(avoid reflect out renamed method unexpectedly)
             String originalDoExecMethodName = "originalDoExec";
             doExecMethod.setName(originalDoExecMethodName);
-            doExecMethod.setModifiers(doExecMethod.getModifiers() & ~java.lang.reflect.Modifier.PUBLIC | Modifier.PRIVATE);
+            // 原来是public，则改成private，默认方法则不改
+            doExecMethod.setModifiers(doExecMethod.getModifiers() & ~Modifier.PUBLIC | Modifier.PRIVATE);
 
             final String code = "{\n"
                     + "if (this instanceof " + TRACE_RECURSIVE_TASK_CLASS_NAME + " || this instanceof " + TRACE_RECURSIVE_ACTION_CLASS_NAME + ") {\n"
