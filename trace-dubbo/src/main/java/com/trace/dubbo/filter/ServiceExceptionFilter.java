@@ -25,11 +25,11 @@ import com.trace.core.TraceContext;
 @Activate(
         group = {"provider"}
 )
-public class BusinessExceptionFilter implements Filter, Filter.Listener {
+public class ServiceExceptionFilter implements Filter, Filter.Listener {
 
     private Logger logger = LoggerFactory.getLogger(ExceptionFilter.class);
 
-    public BusinessExceptionFilter() {
+    public ServiceExceptionFilter() {
     }
 
     @Override
