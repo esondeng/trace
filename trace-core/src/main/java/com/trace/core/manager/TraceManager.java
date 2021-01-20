@@ -1,5 +1,7 @@
 package com.trace.core.manager;
 
+import java.util.Collection;
+
 import com.eson.common.function.ThrowCallable;
 import com.eson.common.function.ThrowRunnable;
 import com.trace.core.ConsumerContext;
@@ -54,7 +56,19 @@ public class TraceManager {
 
     private static <T> T invoke(ThrowCallable<T> callable) {
         try {
-            return callable.call();
+            T result = callable.call();
+            Span span = TraceContext.get();
+            if (ServiceType.JDBC.message().equals(span.getServiceType())) {
+                if (result instanceof Integer || result instanceof Long) {
+                    span.setSql(span.getSql() + "; total = " + result);
+                }
+                else if (result instanceof Collection<?>) {
+                    Collection<?> collection = (Collection<?>) result;
+                    span.setSql(span.getSql() + "; total = " + collection.size());
+                }
+            }
+
+            return result;
         }
         catch (Throwable e) {
             fillError(e);
