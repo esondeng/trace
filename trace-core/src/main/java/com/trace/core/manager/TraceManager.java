@@ -60,11 +60,11 @@ public class TraceManager {
             Span span = TraceContext.get();
             if (ServiceType.JDBC.message().equals(span.getServiceType())) {
                 if (result instanceof Integer || result instanceof Long) {
-                    span.setSql(span.getSql() + "; total = " + result);
+                    span.setSql(span.getSql() + "; Total: " + result);
                 }
                 else if (result instanceof Collection<?>) {
                     Collection<?> collection = (Collection<?>) result;
-                    span.setSql(span.getSql() + "; total = " + collection.size());
+                    span.setSql(span.getSql() + "; Total: " + collection.size());
                 }
             }
 
