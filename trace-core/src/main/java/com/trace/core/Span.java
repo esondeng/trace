@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
-import com.trace.core.utils.NetworkUtils;
+import com.trace.core.util.NetworkUtils;
 
 /**
  * 鉴于agent要使用，这里尽量使用jdk自带的方法，避免引入其他的类

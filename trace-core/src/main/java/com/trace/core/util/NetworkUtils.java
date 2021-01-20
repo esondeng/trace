@@ -1,4 +1,4 @@
-package com.trace.core.utils;
+package com.trace.core.util;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
