@@ -13,7 +13,6 @@ import com.trace.core.async.TraceRunnable;
 import com.trace.core.async.TraceSupplier;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
-import com.trace.core.util.JsonUtils;
 
 /**
  * @author dengxiaolin
@@ -69,9 +68,6 @@ public class TraceManager {
                     Collection<?> collection = (Collection<?>) result;
                     span.setSql(span.getSql() + "; Total: " + collection.size());
                 }
-            }
-            else if (ServiceType.DUBBO_PROVIDER.message().equals(serviceType)) {
-                span.setResponse(result == null ? "" : JsonUtils.toJson(result));
             }
 
             return result;

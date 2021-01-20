@@ -33,7 +33,6 @@ public class Span {
     private String name;
     private String sql;
     private String request;
-    private String response;
     private String serviceType;
 
     private String clientAppKey;
@@ -205,6 +204,7 @@ public class Span {
                 + " order = " + order
                 + " name = " + name
                 + " sql = " + sql
+                + " request = " + request
                 + " traceId = " + traceId
                 + " clientAppKey = " + clientAppKey
                 + " clientIp = " + clientIp
@@ -276,14 +276,6 @@ public class Span {
 
     public void setRequest(String request) {
         this.request = request;
-    }
-
-    public String getResponse() {
-        return response;
-    }
-
-    public void setResponse(String response) {
-        this.response = response;
     }
 
     public String getServiceType() {
