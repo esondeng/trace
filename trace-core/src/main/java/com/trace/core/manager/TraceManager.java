@@ -13,6 +13,7 @@ import com.trace.core.async.TraceRunnable;
 import com.trace.core.async.TraceSupplier;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
+import com.trace.core.util.JsonUtils;
 
 /**
  * @author dengxiaolin
@@ -26,8 +27,9 @@ public class TraceManager {
     public static <T> T tracingWithReturn(ConsumerContext consumerContext,
                                           ServiceType serviceType,
                                           String name,
+                                          String request,
                                           ThrowCallable<T> callable) {
-        startSpan(consumerContext, serviceType, name);
+        startSpan(consumerContext, serviceType, name, request);
         return invoke(callable);
     }
 
@@ -58,7 +60,8 @@ public class TraceManager {
         try {
             T result = callable.call();
             Span span = TraceContext.get();
-            if (ServiceType.JDBC.message().equals(span.getServiceType())) {
+            String serviceType = span.getServiceType();
+            if (ServiceType.JDBC.message().equals(serviceType)) {
                 if (result instanceof Integer || result instanceof Long) {
                     span.setSql(span.getSql() + "; Total: " + result);
                 }
@@ -66,6 +69,9 @@ public class TraceManager {
                     Collection<?> collection = (Collection<?>) result;
                     span.setSql(span.getSql() + "; Total: " + collection.size());
                 }
+            }
+            else if (ServiceType.DUBBO_PROVIDER.message().equals(serviceType)) {
+                span.setResponse(result == null ? "" : JsonUtils.toJson(result));
             }
 
             return result;
@@ -77,17 +83,6 @@ public class TraceManager {
         finally {
             TraceManager.endSpan();
         }
-    }
-
-    /**
-     * 微服务提供者入口
-     */
-    public static void tracing(ConsumerContext consumerContext,
-                               ServiceType serviceType,
-                               String name,
-                               ThrowRunnable runnable) {
-        startSpan(consumerContext, serviceType, name);
-        invoke(runnable);
     }
 
     /**
@@ -173,8 +168,8 @@ public class TraceManager {
         }
     }
 
-    private static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name) {
-        Span span = Span.of(consumerContext, serviceType, name);
+    private static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name, String request) {
+        Span span = Span.of(consumerContext, serviceType, name, request);
         TraceContext.set(span);
     }
 

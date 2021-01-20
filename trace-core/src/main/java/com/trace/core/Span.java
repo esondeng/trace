@@ -32,6 +32,8 @@ public class Span {
     private String traceId;
     private String name;
     private String sql;
+    private String request;
+    private String response;
     private String serviceType;
 
     private String clientAppKey;
@@ -119,9 +121,10 @@ public class Span {
     /**
      * 微服务提供者场景使用
      */
-    public static Span of(ConsumerContext consumerContext, ServiceType serviceType, String name) {
+    public static Span of(ConsumerContext consumerContext, ServiceType serviceType, String name, String request) {
         Span span = new Span();
         span.setName(name);
+        span.setRequest(request);
         span.setServiceType(serviceType.message());
 
         String rootSpanId = consumerContext.getConsumerChildId();
@@ -265,6 +268,22 @@ public class Span {
 
     public void setSql(String sql) {
         this.sql = sql;
+    }
+
+    public String getRequest() {
+        return request;
+    }
+
+    public void setRequest(String request) {
+        this.request = request;
+    }
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
     }
 
     public String getServiceType() {

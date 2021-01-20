@@ -21,13 +21,13 @@ public class TraceConfig {
         InputStream is = null;
 
         if (classLoader != null) {
-            is = classLoader.getResourceAsStream(TraceConstants.APPKEY_CONFIG_FILE_NAME);
+            is = classLoader.getResourceAsStream(TraceConstants.APP_KEY_CONFIG_FILE_NAME);
         }
 
         if (is == null) {
             classLoader = TraceManager.class.getClassLoader();
             if (classLoader != null) {
-                is = classLoader.getResourceAsStream(TraceConstants.APPKEY_CONFIG_FILE_NAME);
+                is = classLoader.getResourceAsStream(TraceConstants.APP_KEY_CONFIG_FILE_NAME);
             }
         }
 
