@@ -50,7 +50,7 @@ public class TraceCollector {
 
                 @Override
                 public Thread newThread(Runnable r) {
-                    return new Thread(r, "thread-span-uploader" + atomicInteger.getAndIncrement());
+                    return new Thread(r, "thread-trace-collector" + atomicInteger.getAndIncrement());
                 }
             },
             new ThreadPoolExecutor.CallerRunsPolicy());

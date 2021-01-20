@@ -44,7 +44,7 @@ public class TraceContainer {
         }
 
         Span parent = span.getParent();
-        // 新开线程的情况第一个span只是用来
+        // 新开线程的情况第一个span只是用来作为上下文，不必收集
         if (parent != null && parent.isAsyncParent()) {
             offer(span);
             return;
