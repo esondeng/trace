@@ -1,5 +1,7 @@
 package com.trace.dubbo.filter;
 
+import java.util.Arrays;
+
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
@@ -33,6 +35,7 @@ public class TraceDubboProviderFilter implements Filter {
                     consumerContext,
                     ServiceType.DUBBO_PROVIDER,
                     name,
+                    Arrays.toString(invocation.getArguments()),
                     () -> invoker.invoke(invocation));
         }
     }
