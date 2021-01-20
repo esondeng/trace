@@ -5,6 +5,7 @@ import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.PreparedStatementHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Intercepts;
@@ -46,9 +47,10 @@ public class TraceMybatisInterceptor implements Interceptor {
             PreparedStatementHandler preparedStatementHandler = (PreparedStatementHandler) ReflectUtils.getFieldValueByName(statementHandler, "delegate");
             MappedStatement mappedStatement = (MappedStatement) ReflectUtils.getFieldValueByName(preparedStatementHandler, "mappedStatement");
 
-            String sqlId = mappedStatement.getId();
-            String sql = cutLongSql(preparedStatement.getSql());
+            BoundSql boundSql = mappedStatement.getBoundSql(preparedStatement);
+            String sql = cutLongSql(showSql(boundSql));
 
+            String sqlId = mappedStatement.getId();
             return TraceManager.tracingWithReturn(
                     ServiceType.JDBC,
                     sqlId,
@@ -58,9 +60,14 @@ public class TraceMybatisInterceptor implements Interceptor {
         }
     }
 
+    private static String showSql(BoundSql boundSql) {
+        Object parameterObject = boundSql.getParameterObject();
+        String sql = parameterObject.toString();
+        sql = sql.replaceAll("[\\s]+", " ");
+        return sql.substring(sql.indexOf(":"));
+    }
 
     private String cutLongSql(String sql) {
-        sql = sql.replaceAll("[\\s]+", " ");
         if (sql.length() > MAX_LENGTH) {
             return sql.substring(0, MAX_LENGTH);
         }
