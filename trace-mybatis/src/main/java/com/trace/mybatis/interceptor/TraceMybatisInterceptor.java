@@ -15,7 +15,7 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 
 import com.alibaba.druid.pool.DruidPooledPreparedStatement;
-import com.eson.common.core.utils.ReflectUtils;
+import com.eson.common.core.util.ReflectUtils;
 import com.trace.core.TraceContext;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
