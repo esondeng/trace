@@ -163,7 +163,10 @@ public class Span {
     public static Span of(Span parentSpan, ServiceType serviceType, String name, String sql) {
         Span span = new Span();
         span.setName(name);
-        span.putTag(TraceConstants.SQL_TAG_KEY, sql);
+
+        if (serviceType == ServiceType.JDBC) {
+            span.putTag(TraceConstants.SQL_TAG_KEY, sql);
+        }
 
         if (parentSpan == TraceConstants.DUMMY_SPAN) {
             span.setServiceType(serviceType.message());
