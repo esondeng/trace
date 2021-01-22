@@ -25,6 +25,11 @@
         </dependency>
 
         <dependency>
+            <groupId>com.eson</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
@@ -35,8 +40,8 @@
         </dependency>
 
         <dependency>
-            <groupId>com.eson</groupId>
-            <artifactId>common-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
         </dependency>
     </dependencies>
 

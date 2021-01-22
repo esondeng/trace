@@ -23,14 +23,6 @@ public class Span {
      * span id, 类似0， 0.1，0.2 用来表示调用层级
      */
     private String id;
-
-    /**
-     * 方便排序，比如id是0.1， depth是2，order就是1
-     */
-    private int depth;
-
-    private int order;
-
     private String traceId;
     private String name;
     private String serviceType;
@@ -129,7 +121,7 @@ public class Span {
         copy.setAsyncParent(true);
 
         // 新先线程直接使用父线程的id
-        fillIdInfo(copy, span.getId());
+        copy.setId(span.getId());
         copyFromParent(copy, span);
         copy.setChildCounter(span.getChildCounter());
 
@@ -146,7 +138,7 @@ public class Span {
         span.setServiceType(serviceType.message());
 
         String rootSpanId = consumerContext.getConsumerChildId();
-        fillIdInfo(span, rootSpanId);
+        span.setId(rootSpanId);
 
         span.setTraceId(consumerContext.getTraceId());
         span.setClientAppKey(consumerContext.getClientAppKey());
@@ -172,14 +164,13 @@ public class Span {
             span.setServiceType(serviceType.message());
             span.setTraceId(buildTranceId());
 
-            fillIdInfo(span, TraceConstants.HEAD_SPAN_ID);
+            span.setId(TraceConstants.HEAD_SPAN_ID);
             fillServerInfo(span);
 
             return span;
         }
         else {
-            fillIdInfo(span, parentSpan.nextChildId());
-
+            span.setId(parentSpan.nextChildId());
             span.setTraceId(parentSpan.getTraceId());
             span.setStart(System.currentTimeMillis());
             span.setServiceType(serviceType.message());
@@ -190,14 +181,6 @@ public class Span {
             parentSpan.addChild(span);
             return span;
         }
-    }
-
-
-    private static void fillIdInfo(Span span, String id) {
-        span.setId(id);
-        String[] strs = id.split("\\.");
-        span.setDepth(strs.length);
-        span.setOrder(Integer.valueOf(strs[strs.length - 1]));
     }
 
     private static void fillServerInfo(Span span) {
@@ -222,8 +205,6 @@ public class Span {
     public String toString() {
         String content = "id = " + id
                 + " serviceType = " + serviceType
-                + " depth = " + depth
-                + " order = " + order
                 + " name = " + name
                 + " traceId = " + traceId
                 + " clientAppKey = " + clientAppKey
@@ -254,22 +235,6 @@ public class Span {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public int getDepth() {
-        return depth;
-    }
-
-    public void setDepth(int depth) {
-        this.depth = depth;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
     }
 
     public String getTraceId() {
