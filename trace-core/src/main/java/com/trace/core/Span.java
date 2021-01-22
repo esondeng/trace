@@ -1,8 +1,10 @@
 package com.trace.core;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,8 +33,6 @@ public class Span {
 
     private String traceId;
     private String name;
-    private String sql;
-    private String request;
     private String serviceType;
 
     private String clientAppKey;
@@ -40,6 +40,14 @@ public class Span {
 
     private String appKey;
     private String ip;
+
+    /**
+     * 额外信息
+     * http: HttPath
+     * dubbo: request参数
+     * jdbc: sql
+     */
+    private Map<String, String> tags;
 
     /**
      * 毫秒
@@ -86,6 +94,17 @@ public class Span {
         children.add(childSpan);
     }
 
+    public void putTag(String key, String tag) {
+        if (tags == null) {
+            tags = new HashMap<>(16);
+        }
+        tags.put(key, tag);
+    }
+
+    public String getTag(String key) {
+        return tags == null ? null : tags.get(key);
+    }
+
     public void fillErrors(Throwable exception) {
         StackTraceElement[] stackTraceElements = exception.getStackTrace();
         List<String> errorStack = new ArrayList<>();
@@ -123,7 +142,7 @@ public class Span {
     public static Span of(ConsumerContext consumerContext, ServiceType serviceType, String name, String request) {
         Span span = new Span();
         span.setName(name);
-        span.setRequest(request);
+        span.putTag(TraceConstants.REQUEST_TAG_KEY, request);
         span.setServiceType(serviceType.message());
 
         String rootSpanId = consumerContext.getConsumerChildId();
@@ -144,7 +163,7 @@ public class Span {
     public static Span of(Span parentSpan, ServiceType serviceType, String name, String sql) {
         Span span = new Span();
         span.setName(name);
-        span.setSql(sql);
+        span.putTag(TraceConstants.SQL_TAG_KEY, sql);
 
         if (parentSpan == TraceConstants.DUMMY_SPAN) {
             span.setServiceType(serviceType.message());
@@ -203,8 +222,6 @@ public class Span {
                 + " depth = " + depth
                 + " order = " + order
                 + " name = " + name
-                + " sql = " + sql
-                + " request = " + request
                 + " traceId = " + traceId
                 + " clientAppKey = " + clientAppKey
                 + " clientIp = " + clientIp
@@ -213,6 +230,12 @@ public class Span {
                 + " start = " + start
                 + " end = " + end
                 + " cost = " + cost;
+
+        if (tags != null && !tags.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            tags.forEach((k, v) -> sb.append(" " + k + " = " + v));
+            content = content + sb.toString();
+        }
 
         if (errorMessages != null && !errorMessages.isEmpty()) {
             return content + " error = " + String.join(";", errorMessages);
@@ -262,22 +285,6 @@ public class Span {
         this.name = name;
     }
 
-    public String getSql() {
-        return sql;
-    }
-
-    public void setSql(String sql) {
-        this.sql = sql;
-    }
-
-    public String getRequest() {
-        return request;
-    }
-
-    public void setRequest(String request) {
-        this.request = request;
-    }
-
     public String getServiceType() {
         return serviceType;
     }
@@ -316,6 +323,14 @@ public class Span {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public Map<String, String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Map<String, String> tags) {
+        this.tags = tags;
     }
 
     public long getStart() {

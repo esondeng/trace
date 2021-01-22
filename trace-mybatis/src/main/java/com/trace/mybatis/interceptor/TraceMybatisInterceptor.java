@@ -19,6 +19,7 @@ import com.eson.common.core.util.ReflectUtils;
 import com.trace.core.TraceContext;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
+import com.trace.core.util.TraceUtils;
 
 /**
  * @author dengxiaolin
@@ -50,9 +51,11 @@ public class TraceMybatisInterceptor implements Interceptor {
             String sql = cutLongSql(showSql(preparedStatement));
 
             String sqlId = mappedStatement.getId();
+            String name = TraceUtils.getSimpleName(sqlId);
+
             return TraceManager.tracingWithReturn(
                     ServiceType.JDBC,
-                    sqlId,
+                    name,
                     sql,
                     invocation::proceed
             );

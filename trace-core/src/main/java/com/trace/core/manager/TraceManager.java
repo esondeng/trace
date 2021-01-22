@@ -61,13 +61,16 @@ public class TraceManager {
             Span span = TraceContext.get();
             String serviceType = span.getServiceType();
             if (ServiceType.JDBC.message().equals(serviceType)) {
+                String sql = span.getTag(TraceConstants.SQL_TAG_KEY);
                 if (result instanceof Integer || result instanceof Long) {
-                    span.setSql(span.getSql() + "; Total: " + result);
+                    sql = sql + "; Total: " + result;
+
                 }
                 else if (result instanceof Collection<?>) {
                     Collection<?> collection = (Collection<?>) result;
-                    span.setSql(span.getSql() + "; Total: " + collection.size());
+                    sql = sql + "; Total: " + collection.size();
                 }
+                span.putTag(TraceConstants.SQL_TAG_KEY, sql);
             }
 
             return result;
@@ -186,7 +189,6 @@ public class TraceManager {
 
         }
         Span span = Span.of(parentSpan, serviceType, name, sql);
-        span.setSql(sql);
         TraceContext.set(span);
     }
 

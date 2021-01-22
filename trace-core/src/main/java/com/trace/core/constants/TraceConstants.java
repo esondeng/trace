@@ -17,4 +17,10 @@ public class TraceConstants {
     public static final String HEAD_SPAN_ID = "0";
 
     public static final String CONSUMER_CONTEXT = "consumerContext";
+
+    public static final String SQL_TAG_KEY = "sql";
+
+    public static final String HTTP_PATH_TAG_KEY = "httpPath";
+
+    public static final String REQUEST_TAG_KEY = "request";
 }
