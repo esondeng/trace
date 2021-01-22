@@ -11,7 +11,7 @@ import com.dubbo.trace.web.servlet.TracingInterceptor;
  * @since 2021/01/22
  */
 @Configuration
-public class TraceWebMvcConfigurer implements WebMvcConfigurer {
+public class TraceWebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

@@ -13,7 +13,7 @@ import com.trace.core.aop.TraceAspect;
  * @since 2021/01/22
  */
 @Configuration
-@Import({TraceWebMvcConfigurer.class})
+@Import({TraceWebMvcConfig.class})
 public class TraceWebAutoConfig {
 
     /**
