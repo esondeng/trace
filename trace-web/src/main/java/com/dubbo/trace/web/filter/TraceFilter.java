@@ -68,6 +68,7 @@ public class TraceFilter implements Filter {
             String action = path.substring(httpServletRequest.getContextPath().length());
             if (isExclude(path) || isExclude(action)) {
                 filterChain.doFilter(servletRequest, servletResponse);
+                return;
             }
 
             TraceManager.tracing(
@@ -84,14 +85,11 @@ public class TraceFilter implements Filter {
     }
 
     private boolean isExclude(String path) {
-        if (EXCLUDE_PATTERN.matcher(path).find()) {
-            return true;
-        }
-
         if (excludeUrls.contains(path)) {
             return true;
         }
-
-        return excludePrefixes.stream().anyMatch(path::startsWith);
+        else {
+            return excludePrefixes.stream().anyMatch(path::startsWith);
+        }
     }
 }
