@@ -13,7 +13,7 @@ public abstract class TraceRecursiveAction extends ForkJoinTask<Void> {
     private Span asyncParent;
 
     public TraceRecursiveAction() {
-        asyncParent = Span.copyAsAsyncParent(TraceContext.get());
+        asyncParent = Span.copyAsAsyncParent(TraceContext.peek());
     }
 
     @Override
@@ -38,7 +38,7 @@ public abstract class TraceRecursiveAction extends ForkJoinTask<Void> {
             return true;
         }
         else {
-            TraceContext.set(asyncParent);
+            TraceContext.push(asyncParent);
             try {
                 compute();
                 return true;

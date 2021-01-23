@@ -58,7 +58,7 @@ public class TraceManager {
     private static <T> T invoke(ThrowCallable<T> callable) {
         try {
             T result = callable.call();
-            Span span = TraceContext.get();
+            Span span = TraceContext.peek();
             String serviceType = span.getServiceType();
             if (ServiceType.JDBC.message().equals(serviceType)) {
                 String sql = span.getTag(TraceConstants.SQL_TAG_KEY);
@@ -96,7 +96,7 @@ public class TraceManager {
 
 
     public static void asyncParent(TraceRunnable traceRunnable) {
-        TraceContext.set(traceRunnable.getAsyncParent());
+        TraceContext.push(traceRunnable.getAsyncParent());
         try {
             traceRunnable.getRunnable().run();
         }
@@ -111,7 +111,7 @@ public class TraceManager {
 
 
     public static <V> V asyncParent(TraceCallable<V> traceCallable) {
-        TraceContext.set(traceCallable.getAsyncParent());
+        TraceContext.push(traceCallable.getAsyncParent());
         try {
             return traceCallable.getCallable().call();
         }
@@ -125,7 +125,7 @@ public class TraceManager {
     }
 
     public static <T> T asyncParent(TraceSupplier<T> traceSupplier) {
-        TraceContext.set(traceSupplier.getAsyncParent());
+        TraceContext.push(traceSupplier.getAsyncParent());
         try {
             return traceSupplier.getSupplier().get();
         }
@@ -161,7 +161,7 @@ public class TraceManager {
     }
 
     private static void fillError(Throwable e) {
-        Span currentSpan = TraceContext.get();
+        Span currentSpan = TraceContext.peek();
         if (currentSpan != null) {
             currentSpan.fillErrors(e);
         }
@@ -169,27 +169,27 @@ public class TraceManager {
 
     private static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name, String request) {
         Span span = Span.of(consumerContext, serviceType, name, request);
-        TraceContext.set(span);
+        TraceContext.push(span);
     }
 
     private static void startSpan(ServiceType serviceType, String name) {
-        Span parentSpan = TraceContext.get();
+        Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
         Span span = Span.of(parentSpan, serviceType, name, null);
-        TraceContext.set(span);
+        TraceContext.push(span);
     }
 
     private static void startSpan(ServiceType serviceType, String sql, String name) {
-        Span parentSpan = TraceContext.get();
+        Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
         Span span = Span.of(parentSpan, serviceType, name, sql);
-        TraceContext.set(span);
+        TraceContext.push(span);
     }
 
     private static void endSpan() {

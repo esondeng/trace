@@ -39,7 +39,7 @@ public class TraceMybatisInterceptor implements Interceptor {
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        if (TraceContext.get() == null) {
+        if (TraceContext.peek() == null) {
             return invocation.proceed();
         }
         else {

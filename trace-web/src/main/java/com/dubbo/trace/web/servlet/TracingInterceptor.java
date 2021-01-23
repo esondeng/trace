@@ -22,7 +22,7 @@ public class TracingInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (handler instanceof HandlerMethod) {
             HandlerMethod handlerMethod = (HandlerMethod) handler;
-            Span span = TraceContext.get();
+            Span span = TraceContext.peek();
             if (span != null) {
                 // 入口处name记成了path
                 span.putTag(TraceConstants.HTTP_PATH_TAG_KEY, span.getName());

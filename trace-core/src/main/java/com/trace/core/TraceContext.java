@@ -12,7 +12,7 @@ public class TraceContext {
 
     private static final ThreadLocal<Stack<Span>> CALL_STACK = new ThreadLocal<>();
 
-    public static Span get() {
+    public static Span peek() {
         Stack<Span> stack = CALL_STACK.get();
         if (stack == null) {
             return null;
@@ -22,7 +22,7 @@ public class TraceContext {
         }
     }
 
-    public static void set(Span span) {
+    public static void push(Span span) {
         Stack<Span> stack = CALL_STACK.get();
         if (stack == null) {
             stack = new Stack<>();

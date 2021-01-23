@@ -28,7 +28,7 @@ public class TraceAspect {
     @Around("tracePointCut()")
     public Object traceAdvice(ProceedingJoinPoint point) throws Throwable {
         // 内部调用时，验证是否在Trace context下
-        Span parentSpan = TraceContext.get();
+        Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             return point.proceed();
         }

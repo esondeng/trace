@@ -75,7 +75,7 @@ public class ServiceExceptionFilter implements Filter, Filter.Listener {
 
                         appResponse.setException(serviceException);
 
-                        Span span = TraceContext.get();
+                        Span span = TraceContext.peek();
                         if (span != null) {
                             span.fillErrors(exception);
                         }

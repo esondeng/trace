@@ -15,7 +15,7 @@ public abstract class TraceRecursiveTaskTask<T> extends ForkJoinTask<T> {
 
 
     public TraceRecursiveTaskTask() {
-        asyncParent = Span.copyAsAsyncParent(TraceContext.get());
+        asyncParent = Span.copyAsAsyncParent(TraceContext.peek());
     }
 
     /**
@@ -30,7 +30,7 @@ public abstract class TraceRecursiveTaskTask<T> extends ForkJoinTask<T> {
             return true;
         }
         else {
-            TraceContext.set(asyncParent);
+            TraceContext.push(asyncParent);
             try {
                 result = compute();
                 return true;

@@ -24,7 +24,7 @@ import com.trace.core.manager.TraceManager;
 public class TraceDubboConsumerFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        Span span = TraceContext.get();
+        Span span = TraceContext.peek();
         if (span == null) {
             return invoker.invoke(invocation);
         }
@@ -36,7 +36,7 @@ public class TraceDubboConsumerFilter implements Filter {
                     serviceType,
                     name,
                     () -> {
-                        ConsumerContext consumerContext = ConsumerContext.of(TraceContext.get());
+                        ConsumerContext consumerContext = ConsumerContext.of(TraceContext.peek());
                         invocation.setAttachment(TraceConstants.CONSUMER_CONTEXT, consumerContext);
 
                         return invoker.invoke(invocation);
