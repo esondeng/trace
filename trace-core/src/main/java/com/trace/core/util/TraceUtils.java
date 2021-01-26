@@ -1,5 +1,7 @@
 package com.trace.core.util;
 
+import java.util.UUID;
+
 /**
  * @author dengxiaolin
  * @since 2021/01/22
@@ -15,5 +17,9 @@ public class TraceUtils {
         else {
             return name;
         }
+    }
+
+    public static String buildTranceId() {
+        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
     }
 }

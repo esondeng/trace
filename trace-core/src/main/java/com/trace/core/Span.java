@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.util.NetworkUtils;
+import com.trace.core.util.TraceUtils;
 
 /**
  * 鉴于agent要使用，这里尽量使用jdk自带的方法，避免引入其他的类
@@ -35,7 +36,7 @@ public class Span {
 
     /**
      * 额外信息
-     * http: HttPath
+     * http: httPath
      * dubbo: request参数
      * jdbc: sql
      */
@@ -162,7 +163,7 @@ public class Span {
 
         if (parentSpan == TraceConstants.DUMMY_SPAN) {
             span.setServiceType(serviceType.message());
-            span.setTraceId(buildTranceId());
+            span.setTraceId(TraceUtils.buildTranceId());
 
             span.setId(TraceConstants.HEAD_SPAN_ID);
             fillServerInfo(span);
@@ -197,9 +198,7 @@ public class Span {
         span.setClientAppKey(parentSpan.getClientAppKey());
     }
 
-    private static String buildTranceId() {
-        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
-    }
+
 
     @Override
     public String toString() {
