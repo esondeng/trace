@@ -21,6 +21,7 @@
         <module>trace-agent</module>
         <module>trace-collect</module>
         <module>trace-mybatis</module>
+        <module>trace-monitor</module>
     </modules>
 
     <properties>
