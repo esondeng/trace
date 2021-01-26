@@ -7,6 +7,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
+import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
 import com.trace.core.TraceContext;
@@ -40,7 +41,8 @@ public class TraceDubboConsumerFilter implements Filter {
                         invocation.setAttachment(TraceConstants.CONSUMER_CONTEXT, consumerContext);
 
                         return invoker.invoke(invocation);
-                    });
+                    },
+                    MdcTraceConstants.MDC_RUNNABLE_LIST);
         }
     }
 }

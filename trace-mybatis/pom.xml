@@ -19,6 +19,12 @@
         </dependency>
 
         <dependency>
+            <groupId>com.trace</groupId>
+            <artifactId>trace-collect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.eson</groupId>
             <artifactId>common-core</artifactId>
         </dependency>

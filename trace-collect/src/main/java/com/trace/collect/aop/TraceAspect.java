@@ -1,4 +1,4 @@
-package com.trace.core.aop;
+package com.trace.collect.aop;
 
 import java.lang.reflect.Method;
 
@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 
+import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.Span;
 import com.trace.core.TraceContext;
 import com.trace.core.enums.ServiceType;
@@ -37,7 +38,11 @@ public class TraceAspect {
             String name = method.getDeclaringClass().getSimpleName() + "." + method.getName();
 
             ServiceType serviceType = parentSpan.isAsyncParent() ? ServiceType.ASYNC : ServiceType.INNER_CALL;
-            return TraceManager.tracingWithReturn(serviceType, name, point::proceed);
+            return TraceManager.tracingWithReturn(
+                    serviceType,
+                    name,
+                    point::proceed,
+                    MdcTraceConstants.MDC_RUNNABLE_LIST);
         }
     }
 }

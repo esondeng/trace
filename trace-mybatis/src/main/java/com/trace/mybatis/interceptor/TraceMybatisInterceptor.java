@@ -16,6 +16,7 @@ import org.apache.ibatis.session.ResultHandler;
 
 import com.alibaba.druid.pool.DruidPooledPreparedStatement;
 import com.eson.common.core.util.ReflectUtils;
+import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.TraceContext;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
@@ -57,7 +58,8 @@ public class TraceMybatisInterceptor implements Interceptor {
                     ServiceType.JDBC,
                     name,
                     sql,
-                    invocation::proceed
+                    invocation::proceed,
+                    MdcTraceConstants.MDC_RUNNABLE_LIST
             );
         }
     }

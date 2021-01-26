@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import com.trace.collect.TraceCollector;
-import com.trace.core.aop.TraceAspect;
+import com.trace.collect.aop.TraceAspect;
 
 /**
  * @author dengxiaolin

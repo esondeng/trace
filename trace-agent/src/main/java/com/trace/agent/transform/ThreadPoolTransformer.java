@@ -19,11 +19,11 @@ public class ThreadPoolTransformer implements TraceTransformer {
     private static Set<String> TRANSFER_CLASS_SET = new HashSet<>();
 
     static {
-        TRANSFER_CLASS_SET.add("java.util.concurrent.ThreadPoolExecutor");
-        TRANSFER_CLASS_SET.add("java.util.concurrent.ScheduledThreadPoolExecutor");
-        TRANSFER_CLASS_SET.add("java.util.concurrent.CompletableFuture");
-        TRANSFER_CLASS_SET.add("java.util.concurrent.CompletionService");
-        TRANSFER_CLASS_SET.add("java.util.concurrent.ForkJoinPool");
+        TRANSFER_CLASS_SET.add("java.constants.concurrent.ThreadPoolExecutor");
+        TRANSFER_CLASS_SET.add("java.constants.concurrent.ScheduledThreadPoolExecutor");
+        TRANSFER_CLASS_SET.add("java.constants.concurrent.CompletableFuture");
+        TRANSFER_CLASS_SET.add("java.constants.concurrent.CompletionService");
+        TRANSFER_CLASS_SET.add("java.constants.concurrent.ForkJoinPool");
     }
 
     private static Map<String, String> CLASS_NAME_MAP = new HashMap<>();
@@ -48,8 +48,8 @@ public class ThreadPoolTransformer implements TraceTransformer {
 
     static {
         CLASS_NAME_MAP.put("java.lang.Runnable", "com.trace.core.async.TraceRunnable");
-        CLASS_NAME_MAP.put("java.util.concurrent.Callable", "com.trace.core.async.TraceCallable");
-        CLASS_NAME_MAP.put("java.util.function.Supplier", "com.trace.core.async.TraceSupplier");
+        CLASS_NAME_MAP.put("java.constants.concurrent.Callable", "com.trace.core.async.TraceCallable");
+        CLASS_NAME_MAP.put("java.constants.function.Supplier", "com.trace.core.async.TraceSupplier");
     }
 
     @Override

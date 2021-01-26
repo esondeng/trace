@@ -1,6 +1,7 @@
 package com.trace.core.manager;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.eson.common.function.ThrowCallable;
 import com.eson.common.function.ThrowRunnable;
@@ -27,9 +28,10 @@ public class TraceManager {
                                           ServiceType serviceType,
                                           String name,
                                           String request,
-                                          ThrowCallable<T> callable) {
-        startSpan(consumerContext, serviceType, name, request);
-        return invoke(callable);
+                                          ThrowCallable<T> callable,
+                                          List<Runnable> mdcRunnableList) {
+        startSpan(consumerContext, serviceType, name, request, mdcRunnableList);
+        return invoke(callable, mdcRunnableList);
     }
 
     /**
@@ -37,9 +39,10 @@ public class TraceManager {
      */
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,
-                                          ThrowCallable<T> callable) {
-        startSpan(serviceType, name);
-        return invoke(callable);
+                                          ThrowCallable<T> callable,
+                                          List<Runnable> mdcRunnableList) {
+        startSpan(serviceType, name, mdcRunnableList);
+        return invoke(callable, mdcRunnableList);
 
     }
 
@@ -49,13 +52,14 @@ public class TraceManager {
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,
                                           String sql,
-                                          ThrowCallable<T> callable) {
-        startSpan(serviceType, sql, name);
-        return invoke(callable);
+                                          ThrowCallable<T> callable,
+                                          List<Runnable> mdcRunnableList) {
+        startSpan(serviceType, sql, name, mdcRunnableList);
+        return invoke(callable, mdcRunnableList);
 
     }
 
-    private static <T> T invoke(ThrowCallable<T> callable) {
+    private static <T> T invoke(ThrowCallable<T> callable, List<Runnable> mdcRunnableList) {
         try {
             T result = callable.call();
             Span span = TraceContext.peek();
@@ -80,6 +84,7 @@ public class TraceManager {
             throw buildException(e);
         }
         finally {
+            mdcRunnableList.get(1).run();
             TraceManager.endSpan();
         }
     }
@@ -89,9 +94,10 @@ public class TraceManager {
      */
     public static void tracing(ServiceType serviceType,
                                String name,
-                               ThrowRunnable runnable) {
-        startSpan(serviceType, name);
-        invoke(runnable);
+                               ThrowRunnable runnable,
+                               List<Runnable> mdcRunnableList) {
+        startSpan(serviceType, name, mdcRunnableList);
+        invoke(runnable, mdcRunnableList);
     }
 
 
@@ -138,7 +144,7 @@ public class TraceManager {
         }
     }
 
-    private static void invoke(ThrowRunnable runnable) {
+    private static void invoke(ThrowRunnable runnable, List<Runnable> mdcRunnableList) {
         try {
             runnable.run();
         }
@@ -147,6 +153,7 @@ public class TraceManager {
             throw buildException(e);
         }
         finally {
+            mdcRunnableList.get(1).run();
             TraceManager.endSpan();
         }
     }
@@ -167,28 +174,35 @@ public class TraceManager {
         }
     }
 
-    private static void startSpan(ConsumerContext consumerContext, ServiceType serviceType, String name, String request) {
+    private static void startSpan(ConsumerContext consumerContext,
+                                  ServiceType serviceType,
+                                  String name,
+                                  String request,
+                                  List<Runnable> mdcRunnableList) {
         Span span = Span.of(consumerContext, serviceType, name, request);
+        mdcRunnableList.get(0).run();
         TraceContext.push(span);
     }
 
-    private static void startSpan(ServiceType serviceType, String name) {
+    private static void startSpan(ServiceType serviceType, String name, List<Runnable> mdcRunnableList) {
         Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
         Span span = Span.of(parentSpan, serviceType, name, null);
+        mdcRunnableList.get(0).run();
         TraceContext.push(span);
     }
 
-    private static void startSpan(ServiceType serviceType, String sql, String name) {
+    private static void startSpan(ServiceType serviceType, String sql, String name, List<Runnable> mdcRunnableList) {
         Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
         Span span = Span.of(parentSpan, serviceType, name, sql);
+        mdcRunnableList.get(0).run();
         TraceContext.push(span);
     }
 

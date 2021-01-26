@@ -9,6 +9,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
+import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.ConsumerContext;
 import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
@@ -36,7 +37,8 @@ public class TraceDubboProviderFilter implements Filter {
                     ServiceType.DUBBO_PROVIDER,
                     name,
                     Arrays.toString(invocation.getArguments()),
-                    () -> invoker.invoke(invocation));
+                    () -> invoker.invoke(invocation),
+                    MdcTraceConstants.MDC_RUNNABLE_LIST);
         }
     }
 }

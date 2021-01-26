@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
 
@@ -74,7 +75,8 @@ public class TraceFilter implements Filter {
             TraceManager.tracing(
                     ServiceType.HTTP,
                     path,
-                    () -> filterChain.doFilter(servletRequest, servletResponse));
+                    () -> filterChain.doFilter(servletRequest, servletResponse),
+                    MdcTraceConstants.MDC_RUNNABLE_LIST);
         }
 
     }
