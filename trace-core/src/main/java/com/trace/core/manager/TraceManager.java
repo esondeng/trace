@@ -180,8 +180,8 @@ public class TraceManager {
                                   String request,
                                   List<Runnable> mdcRunnableList) {
         Span span = Span.of(consumerContext, serviceType, name, request);
-        mdcRunnableList.get(0).run();
         TraceContext.push(span);
+        mdcRunnableList.get(0).run();
     }
 
     private static void startSpan(ServiceType serviceType, String name, List<Runnable> mdcRunnableList) {
@@ -191,8 +191,8 @@ public class TraceManager {
 
         }
         Span span = Span.of(parentSpan, serviceType, name, null);
-        mdcRunnableList.get(0).run();
         TraceContext.push(span);
+        mdcRunnableList.get(0).run();
     }
 
     private static void startSpan(ServiceType serviceType, String sql, String name, List<Runnable> mdcRunnableList) {
@@ -202,8 +202,8 @@ public class TraceManager {
 
         }
         Span span = Span.of(parentSpan, serviceType, name, sql);
-        mdcRunnableList.get(0).run();
         TraceContext.push(span);
+        mdcRunnableList.get(0).run();
     }
 
     private static void endSpan() {
