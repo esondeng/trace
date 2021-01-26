@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactor
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.devtools.autoconfigure.LocalDevToolsAutoConfiguration;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
@@ -35,6 +36,7 @@ import com.trace.monitor.spring.MonitorConfig;
         ConfigurationPropertiesAutoConfiguration.class,
         ProjectInfoAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
+        LocalDevToolsAutoConfiguration.class,
         MonitorConfig.class
 })
 public class MonitorApplication extends SpringBootServletInitializer {
