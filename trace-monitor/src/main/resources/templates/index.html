@@ -7,6 +7,9 @@
     <!--- css start-->
     <link th:href="@{/static/plugins/bootstrap/css/bootstrap.min.css}" rel="stylesheet"/>
     <link th:href="@{/static/plugins/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/index.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/trace.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/trace-detail.css}" rel="stylesheet"/>
 
     <!--- js start-->
     <script th:src="@{/static/plugins/jQuery/jQuery-2.1.4.min.js}"></script>
@@ -21,33 +24,73 @@
 <nav class="navbar navbar-inverse" role="navigation">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">链路监控123</a>
+            <a class="navbar-brand" href="#">链路监控</a>
         </div>
-        <div>
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">iOS</a></li>
-                <li><a href="#">SVN</a></li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        Java <b class="caret"></b>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">jmeter</a></li>
-                        <li><a href="#">EJB</a></li>
-                        <li><a href="#">Jasper Report</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">分离的链接</a></li>
-                        <li class="divider"></li>
-                        <li><a href="#">另一个分离的链接</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+        <ul class="nav navbar-nav navbar-left" id="index-tab-id">
+            <li><a id="traceTabId" class="js-click-tab active" data-url="/trace/trace.html" href="javascript:void(0);"><span class="glyphicon glyphicon-retweet"></span> 链路查找</a></li>
+            <li><a href="javascript:void(0);" class="js-click-tab" data-url="/dependency/dependency.html"><span class="glyphicon glyphicon-circle-arrow-right"></span> 依赖关系</a></li>
+            <li><a href="javascript:void(0);"><span class="glyphicon glyphicon-eye-open"></span> 日志查询</a></li>
+        </ul>
     </div>
 </nav>
 
-<div class="panel panel-default">
-    <div class="panel-body">
+<div id="contentHtml">
+    <div class="css-monitor-main-content">
+
+        <ol class="breadcrumb">
+            <li><a href="javascript:void(0);">监控系统</a></li>
+            <li><a href="javascript:void(0);">链路查找</a></li>
+            <li><a href="javascript:void(0);" class = "active">链路详情</a></li>
+        </ol>
+
+        <div id='trace-controls' class='panel panel-default'>
+            <div class="panel-body">
+                <ul class='nav nav-pills'>
+                    <li class=''><a href='#'><strong>Trace Id:</strong> <span class='badge'>1412304224978337206</span></a></li>
+                    <li class=''><a href='#'><strong>总耗时:</strong> <span class='badge'>9600732 ms</span></a></li>
+                    <li class=''><a href='#'><strong>服务数:</strong> <span class='badge'>3</span></a></li>
+                    <li class=''><a href='#'><strong>深度:</strong> <span class='badge'>2</span></a></li>
+                    <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge'>2</span></a></li>
+
+                    <li class='navbar-right'><a href='javascript:void(0);' id='traceLogsLink'><span class='btn btn-primary btn-xs badge'>Logs</span></a></li>
+                    <li class='navbar-right'><a href='javascript:void(0);' id='traceJsonLink'><span class='btn btn-primary btn-xs badge'>JSON</span></a></li>
+                </ul>
+
+                <form class='form-inline' role='form'>
+                    <div class='btn-group btn-group-sm' id='filterAllServices'>
+                        <button type='button' class='btn btn-default active' id='uiExpandAllSpans'>展开链路</button>
+                        <button type='button' class='btn btn-default' id='uiCollapseAllSpans'>收起链路</button>
+                    </div>
+                    <select data-placeholder='查找指定服务' class='form-control input-sm' name='serviceFilterSearch' id='serviceFilterSearch'>
+                        <option value=''></option>
+                        <option value='123'>123</option>
+                    </select>
+                </form>
+
+                <div class='trace-details services'>
+                    <span class='label label-default service-filter-label service-tag-filtered'>product.demo.consumer x1</span>
+                    <span class='label label-default service-filter-label service-tag-filtered'>product.demo.provider x2</span>
+                </div>
+            </div>
+        </div>
+
+
+        <div class='row' id='trace-container'>
+            <div id='timeLabel' class='span'>
+                <div class='handle'>服务</div>
+                <div class='handle'>层级</div>
+                <div class='handle'>ip</div>
+                <div class='handle'>耗时(ms)</div>
+                <div class='handle'>类型</div>
+                <div class='handle'>状态</div>
+                <div class='duration-container'>
+                    <div class='time-marker time-marker-1'>100ms</div>
+                    <div class='time-marker time-marker-2'>200ms</div>
+                    <div class='time-marker time-marker-3'>300ms</div>
+                    <div class='time-marker time-marker-4'>400ms</div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>

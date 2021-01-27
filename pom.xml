@@ -40,6 +40,11 @@
                 <artifactId>common-core</artifactId>
                 <version>${eson.commom.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.eson</groupId>
+                <artifactId>common-web</artifactId>
+                <version>${eson.commom.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

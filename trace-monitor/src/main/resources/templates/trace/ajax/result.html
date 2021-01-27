@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org">
+
+<table class="table table-hover table-striped">
+    <thead>
+    <tr>
+        <th class="css-table-text">名称</th>
+        <th class="css-table-text">Trace Id</th>
+        <th class="css-table-text">时间</th>
+        <th class="css-table-text">耗时(ms)</th>
+        <th class="css-table-text">状态</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="trace : ${data.list}">
+        <td class="css-table-text" th:text="${trace.name}"></td>
+        <td class="css-table-text" th:text="${trace.traceId}"></td>
+        <td class="css-table-text" th:text="${trace.start}"></td>
+        <td class="css-table-text" th:text="${trace.cost}"></td>
+        <td class="css-table-text" th:text="${trace.status}"></td>
+    </tr>
+    </tbody>
+</table>
+<ul class="pagination float:right; ">
+    <li><a href="#">&laquo;</a></li>
+    <li class="active"><a href="#">1</a></li>
+    <li class="disabled"><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">5</a></li>
+    <li><a href="#">&raquo;</a></li>
+</ul>
+
+</html>
