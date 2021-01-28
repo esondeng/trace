@@ -1,5 +1,6 @@
 package com.trace.monitor.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public class SpanVo {
     private String id;
     private int depth;
 
+    private String clientAppKey;
+    private String clientIp;
     private String appKey;
     private String ip;
 
@@ -38,27 +41,35 @@ public class SpanVo {
 
     private String status;
 
+    private List<String> childIds;
+
     private int left;
     private int width;
-    private boolean root;
+
 
     public static SpanVo of(Span span, Span rootSpan) {
         SpanVo vo = JsonUtils.convertValue(span, SpanVo.class);
         vo.setStatus(CollectionUtils.isEmpty(vo.getErrorMessages()) ? SpanStatus.SUCCESS.message() : SpanStatus.FAILED.message());
 
         if (rootSpan != null) {
-            vo.setRoot(false);
-
-            int left = (int) ((span.getStart() - rootSpan.getStart()) / rootSpan.getCost());
+            int left = (int) ((span.getStart() - rootSpan.getStart()) * 94 / rootSpan.getCost());
             vo.setLeft(left);
 
-            int width = (int) ((span.getCost()) / rootSpan.getCost());
+            int width = (int) ((span.getCost()) * 94 / rootSpan.getCost());
             vo.setWidth(width);
         }
         else {
-            vo.setRoot(true);
+            vo.setLeft(0);
+            vo.setWidth(94);
         }
 
         return vo;
+    }
+
+    public void addChildId(String childId) {
+        if (CollectionUtils.isEmpty(childIds)) {
+            childIds = new ArrayList<>();
+        }
+        childIds.add(childId);
     }
 }

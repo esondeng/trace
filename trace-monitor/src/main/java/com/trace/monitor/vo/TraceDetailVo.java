@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import com.eson.common.core.constants.Constants;
 import com.eson.common.core.util.Funs;
 
 import lombok.Getter;
@@ -62,6 +63,8 @@ public class TraceDetailVo {
             vo.setAppKeyCount(appKeyCountMap.size());
             vo.setAppKeyCountVos(Funs.map(appKeyCountMap.entrySet(), entry -> AppKeyCountVo.of(entry.getKey(), entry.getValue())));
 
+            fillChildrenInfo(vo);
+
             return vo;
         }
 
@@ -80,6 +83,19 @@ public class TraceDetailVo {
         }
         costSteps.add(rootSpanVo.getCost() + "ms");
         vo.setCostSteps(costSteps);
+    }
+
+    private static void fillChildrenInfo(TraceDetailVo vo) {
+        List<SpanVo> spanVos = vo.getSpanVos();
+        Map<String, SpanVo> spanVoMap = Funs.toMapQuietly(spanVos, SpanVo::getId, t -> t);
+        spanVoMap.forEach((k, v) -> {
+            String id = v.getId();
+            int lastIndex = id.lastIndexOf(Constants.POINT);
+            if (lastIndex > 0) {
+                String parentId = id.substring(0, lastIndex);
+                spanVoMap.get(parentId).addChildId(id);
+            }
+        });
     }
 
 }

@@ -1,6 +1,7 @@
 package com.trace.monitor.manager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,12 +73,13 @@ public class TraceManager {
         span3.setId("0.2");
         span3.setDepth(2);
         span3.setName("ProductService.sayHello");
-        span3.setServiceType("duubo-c");
+        span3.setServiceType("dubbo-c");
         span3.setAppKey("dubbo-consumer-demo");
         span3.setIp("172.25.166.99");
 
         span3.setStart(1611713548374L);
         span3.setEnd(1611713551176L);
+        span3.setErrorMessages(Arrays.asList("time out","dubbo rpc time out"));
         span3.setCost(2802);
         spanVos.add(SpanVo.of(span1, null));
         spanVos.add(SpanVo.of(span2, span1));

@@ -18,6 +18,8 @@ public class Span {
     private String id;
     private int depth;
 
+    private String clientAppKey;
+    private String clientIp;
     private String appKey;
     private String ip;
 

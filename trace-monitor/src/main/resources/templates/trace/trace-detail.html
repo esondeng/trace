@@ -27,8 +27,10 @@
             <a class="navbar-brand" href="#">链路监控</a>
         </div>
         <ul class="nav navbar-nav navbar-left" id="index-tab-id">
-            <li><a id="traceTabId" class="js-click-tab active" data-url="/trace/trace.html" href="javascript:void(0);"><span class="glyphicon glyphicon-retweet"></span> 链路查找</a></li>
-            <li><a href="javascript:void(0);" class="js-click-tab" data-url="/dependency/dependency.html"><span class="glyphicon glyphicon-circle-arrow-right"></span> 依赖关系</a></li>
+            <li><a id="traceTabId" class="js-click-tab active" data-url="/trace/trace.html"
+                   href="javascript:void(0);"><span class="glyphicon glyphicon-retweet"></span> 链路查找</a></li>
+            <li><a href="javascript:void(0);" class="js-click-tab" data-url="/dependency/dependency.html"><span
+                    class="glyphicon glyphicon-circle-arrow-right"></span> 依赖关系</a></li>
             <li><a href="javascript:void(0);"><span class="glyphicon glyphicon-eye-open"></span> 日志查询</a></li>
         </ul>
     </div>
@@ -40,7 +42,7 @@
         <ol class="breadcrumb">
             <li><a href="javascript:void(0);">监控系统</a></li>
             <li><a href="javascript:void(0);">链路查找</a></li>
-            <li><a href="javascript:void(0);" class = "active">链路详情</a></li>
+            <li><a href="javascript:void(0);" class="active">链路详情</a></li>
         </ol>
 
         <div id='trace-controls' class='panel panel-default'>
@@ -50,7 +52,8 @@
                     <li class=''><a href='#'><strong>总耗时:</strong> <span class='badge' th:text="${data.cost} + 'ms'"></span></a></li>
                     <li class=''><a href='#'><strong>服务数:</strong> <span class='badge' th:text="${data.appKeyCount}"></span></a></li>
                     <li class=''><a href='#'><strong>深度:</strong> <span class='badge' th:text="${data.depth}"></span></a></li>
-                    <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a></li>
+                    <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a>
+                    </li>
 
                     <li class='navbar-right'><a href='javascript:void(0);' id='traceLogsLink'><span class='btn btn-primary btn-xs badge'>Logs</span></a></li>
                     <li class='navbar-right'><a href='javascript:void(0);' id='traceJsonLink'><span class='btn btn-primary btn-xs badge'>JSON</span></a></li>
@@ -61,7 +64,8 @@
                         <button type='button' class='btn btn-default active' id='uiExpandAllSpans'>展开链路</button>
                         <button type='button' class='btn btn-default' id='uiCollapseAllSpans'>收起链路</button>
                     </div>
-                    <select data-placeholder='查找指定服务' class='form-control input-sm' name='serviceFilterSearch' id='serviceFilterSearch'>
+                    <select data-placeholder='查找指定服务' class='form-control input-sm' name='serviceFilterSearch'
+                            id='serviceFilterSearch'>
                         <option value=''></option>
                         <option value='123'>123</option>
                     </select>
@@ -84,51 +88,128 @@
                 <div class='status-handle'>状态</div>
                 <div class="details-handle">详情</div>
                 <div class='duration-container' style="margin-left: 730px;" th:each="costStep,stat : ${data.costSteps}">
-                    <div class='time-marker' th:classappend="'time-marker-' + ${stat.index}" th:text="${costStep}"></div>
+                    <div class='time-marker' th:classappend="'time-marker-' + ${stat.index}"
+                         th:text="${costStep}"></div>
                 </div>
             </div>
 
-            <div
-                    id="0"
-                    class="span service-span depth-0 highlight"
-                    data-keys="id,spanName,serviceNames,serviceName,durationStr,duration"
-                    data-id="0"
-                    data-parent-id=""
-                    data-span-name=""
-                    data-service-name="com.sankuai.cloud.mssappbj.plusvideo"
-                    data-service-names="com.sankuai.cloud.mssappbj.plusvideo"
-                    data-duration-str="9600733ms"
-                    data-duration="9600733"
-                    data-children="0-1,0-2" style="display: block;">
+            <div th:each="spanVo,stat : ${data.spanVos}">
+                <div
+                        th:attr="id = ${spanVo.id},data-child-ids=${spanVo.childIds}"
+                        th:class="'span service-span depth-'+ ${stat.index} + ' highlight'"
+                        style="display: block;">
 
-                <div class="handle tooltip-hide" data-toggle="tooltip" data-placement="top" title="" data-original-title="plusvideo">
-                    <div class="service-name" style="margin-left: 10px">
-                        <span class="expander">+</span>ProductController.test
+                    <div class="handle tooltip-hide" data-toggle="tooltip" data-placement="top" title=""
+                         data-original-title="plusvideo">
+                        <div class="service-name" th:style="'margin-left: ' + ${spanVo.depth} * 10 + 'px'">
+                            <span class="expander" th:unless="${#lists.isEmpty(spanVo.childIds)}">-</span><b th:text="${spanVo.name}"></b>
+                        </div>
+                    </div>
+                    <div class="level-handle tooltip-hide" data-toggle="tooltip" data-placement="top" title="" data-original-title="0" th:text="${spanVo.id}">0</div>
+                    <div class='app-key-handle' th:text="${spanVo.appKey}"></div>
+                    <div class="ip-handle" th:text="${spanVo.ip}"></div>
+                    <div class='type-handle' th:text="${spanVo.serviceType}"></div>
+                    <div th:switch="${spanVo.status}">
+                        <div th:case="failed" class="status-handle" style="color: #f40000" th:text="${spanVo.status}" ></div>
+                        <div th:case="success"class="status-handle" th:text="${spanVo.status}" ></div>
+                    </div>
+                    <div class="details-handle"  data-toggle="modal" th:attr="data-target='#spanPanel'+${stat.index}"><a href="javascript:void(0);">详情</a></div>
+                    <div class="duration-container" style="margin-left: 730px;">
+                        <div class="time-marker time-marker-0">.</div>
+                        <div class="time-marker time-marker-1">.</div>
+                        <div class="time-marker time-marker-2">.</div>
+                        <div class="time-marker time-marker-3">.</div>
+                        <div class="time-marker time-marker-4">.</div>
+                        <div class="time-marker time-marker-5">.</div>
+
+                        <div class="duration" th:style="'left: ' + ${spanVo.left} + '%; width:' + ${spanVo.width} + '%; text-align: center;'">
+                            <b th:text="${spanVo.cost} + 'ms'"></b>
+                        </div>
                     </div>
                 </div>
-                <div class="level-handle tooltip-hide" data-toggle="tooltip" data-placement="top" title="" data-original-title="0">0</div>
-                <div class='app-key-handle'>dubbo-consumer-demo</div>
-                <div class="ip-handle">10.73.51.32</div>
-                <div class='type-handle'>http</div>
-                <div class="status-handle">SUCCESS</div>
-                <div class="details-handle" data-toggle="modal" data-target="#myModal0">详情</div>
-                <div class="duration-container" style="margin-left: 730px;">
-                    <div class="time-marker time-marker-0">.</div>
-                    <div class="time-marker time-marker-1">.</div>
-                    <div class="time-marker time-marker-2">.</div>
-                    <div class="time-marker time-marker-3">.</div>
-                    <div class="time-marker time-marker-4">.</div>
-                    <div class="time-marker time-marker-5">.</div>
 
-                    <div class="duration" data-toggle="modal" data-target="#myModal0" style="left: 0.0%; width: 94.5%; text-align: center;">
-                        <b>2803ms</b>
+                <div th:attr="id='spanPanel' + ${stat.index}" class='modal fade' tabindex='-1'>
+                    <div class='modal-dialog modal-lg'>
+                        <div class='modal-content'>
+                            <div class='modal-header'>
+                                <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>&times;</button>
+                                <h4 class='modal-title'></h4>
+                                <h5><span class='service-names' th:text="'名称：' + ${spanVo.name}"></span></h5>
+                            </div>
+                            <div class='modal-body'>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>key</th>
+                                            <th>value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>类型</td>
+                                            <td th:text="${spanVo.serviceType}"></td>
+                                        </tr>
+                                        <div th:unless="${#maps.isEmpty(spanVo.tagMap)}">
+                                            <div>
+                                                <tr th:each="item : ${spanVo.tagMap}">
+                                                    <td th:text="${item.key}"></td>
+                                                    <td th:text="${item.value}"></td>
+                                                </tr>
+                                            </div>
+                                        </div>
+                                        <tr>
+                                            <td>Client AppKey</td>
+                                            <td th:text="${spanVo.clientAppKey}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Client Ip</td>
+                                            <td th:text="${spanVo.clientIp}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>AppKey</td>
+                                            <td th:text="${spanVo.appKey}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Ip</td>
+                                            <td th:text="${spanVo.ip}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>开始时间</td>
+                                            <td th:text="${#dates.format(new java.util.Date(spanVo.start), 'yyyy-MM-dd HH:mm:ss:SSS')}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>结束时间</td>
+                                            <td th:text="${#dates.format(new java.util.Date(spanVo.end), 'yyyy-MM-dd HH:mm:ss:SSS')}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>耗时</td>
+                                            <td th:text="${spanVo.cost} + 'ms'"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <div th:unless="${#lists.isEmpty(spanVo.errorMessages)}">
+                                    <div class="panel panel-danger">
+                                        <div class="panel-heading">
+                                            <h3 class="panel-title">错误日志信息</h3>
+                                        </div>
+                                        <div class="panel-body" >
+                                            <div th:each="errorMessage : ${spanVo.errorMessages}">
+                                                <p class="text-danger" th:text="${errorMessage}"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-
 </body>
 </html>

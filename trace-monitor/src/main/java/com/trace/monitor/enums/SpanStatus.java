@@ -20,10 +20,10 @@ public enum SpanStatus implements EnumBase {
 
     @Override
     public int id() {
-        return 0;
+        return this.id;
     }
 
     @Override
     public String message() {
-        return null;
+        return this.message;
     }}
