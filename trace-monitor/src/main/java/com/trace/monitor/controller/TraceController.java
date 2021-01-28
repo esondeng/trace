@@ -19,9 +19,15 @@ public class TraceController {
     private TraceManager traceManager;
 
     @RequestMapping(value = "/trace/search.html")
-    public String callChainSearch(Model model, TraceQuery traceQuery) {
+    public String traceSearch(Model model, TraceQuery traceQuery) {
         traceQuery.validate();
         model.addAttribute("data", traceManager.search(traceQuery));
-        return "trace/ajax/result";
+        return "trace/ajax/trace-list";
+    }
+
+    @RequestMapping(value = "/trace/detail.html")
+    public String getTraceDetail(Model model, String traceId) {
+        model.addAttribute("data", traceManager.getSpanVosByTraceId(traceId));
+        return "trace/trace-detail";
     }
 }

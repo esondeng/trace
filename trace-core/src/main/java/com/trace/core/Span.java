@@ -40,7 +40,7 @@ public class Span {
      * dubbo: request参数
      * jdbc: sql
      */
-    private Map<String, String> tags;
+    private Map<String, String> tagMap;
 
     /**
      * 毫秒
@@ -88,14 +88,14 @@ public class Span {
     }
 
     public void putTag(String key, String tag) {
-        if (tags == null) {
-            tags = new HashMap<>(16);
+        if (tagMap == null) {
+            tagMap = new HashMap<>(16);
         }
-        tags.put(key, tag);
+        tagMap.put(key, tag);
     }
 
     public String getTag(String key) {
-        return tags == null ? null : tags.get(key);
+        return tagMap == null ? null : tagMap.get(key);
     }
 
     public void fillErrors(Throwable exception) {
@@ -214,9 +214,9 @@ public class Span {
                 + " end = " + end
                 + " cost = " + cost;
 
-        if (tags != null && !tags.isEmpty()) {
+        if (tagMap != null && !tagMap.isEmpty()) {
             StringBuilder sb = new StringBuilder();
-            tags.forEach((k, v) -> sb.append(" " + k + " = " + v));
+            tagMap.forEach((k, v) -> sb.append(" " + k + " = " + v));
             content = content + sb.toString();
         }
 
@@ -292,12 +292,12 @@ public class Span {
         this.ip = ip;
     }
 
-    public Map<String, String> getTags() {
-        return tags;
+    public Map<String, String> getTagMap() {
+        return tagMap;
     }
 
-    public void setTags(Map<String, String> tags) {
-        this.tags = tags;
+    public void setTagMap(Map<String, String> tagMap) {
+        this.tagMap = tagMap;
     }
 
     public long getStart() {

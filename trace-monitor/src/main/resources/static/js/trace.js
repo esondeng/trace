@@ -56,12 +56,11 @@ $(function () {
         );
     }
 
-    //加载调用链列表
+    // 加载调用链列表
     searchCallChains();
 
     // 查询调用链
     $(".js-call-chain-search").on("click", function () {
         searchCallChains();
     });
-
 });

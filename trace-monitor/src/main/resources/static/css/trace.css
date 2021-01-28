@@ -69,10 +69,63 @@
 }
 
 #trace-container .span .handle {
+    display: block;
+    margin-left: 1%;
+    width: 200px;
     overflow: hidden;
     white-space: nowrap;
     float: left;
-    opacity: 0.25;
+    color: black;
+    opacity: 1;
+    padding: 2px;
+}
+
+#trace-container .span .level-handle {
+    display: block;
+    width: 60px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container .span .app-key-handle {
+    display: block;
+    width: 150px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container .span .ip-handle {
+    display: block;
+    width: 100px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container .span .type-handle {
+    display: block;
+    width: 80px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container .span .status-handle {
+    display: block;
+    width: 80px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container .span .details-handle {
+    display: block;
+    width: 30px;
+    float: left;
+    color: black;
+    padding: 2px;
 }
 
 /* ensure spans are shown even if the don't have a name */
@@ -115,29 +168,79 @@
 #trace-container #timeLabel.span .handle {
     display: block;
     margin-left: 1%;
-    width: 90px;
+    width: 200px;
     overflow: hidden;
     white-space: nowrap;
     float: left;
-    opacity: 0.2;
-    border-radius: 2px;
+    color: black;
+    opacity: 1;
+    padding: 2px;
+}
+
+#trace-container #timeLabel.span .level-handle {
+    display: block;
+    width: 60px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container #timeLabel.span .app-key-handle {
+    display: block;
+    width: 150px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container #timeLabel.span .ip-handle {
+    display: block;
+    width: 100px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container #timeLabel.span .type-handle {
+    display: block;
+    width: 80px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container #timeLabel.span .status-handle {
+    display: block;
+    width: 80px;
+    float: left;
+    color: black;
+    padding: 2px;
+}
+
+#trace-container #timeLabel.span .details-handle {
+    display: block;
+    width: 30px;
+    float: left;
+    color: black;
+    padding: 2px;
 }
 
 #trace-container #timeLabel.span .time-marker {
-    margin-left: -1%;
+    margin-left: -0.5%;
 }
 
 #trace-container .span .time-marker {
     position: absolute;
+    left: 420px;
     color: #333;
 }
 
 #trace-container .span .time-marker-0 { left: 0; }
-#trace-container .span .time-marker-1 { left: 20%; }
-#trace-container .span .time-marker-2 { left: 40%; }
-#trace-container .span .time-marker-3 { left: 60%; }
-#trace-container .span .time-marker-4 { left: 80%; }
-#trace-container .span .time-marker-5 { left: 99.5%; }
+#trace-container .span .time-marker-1 { left: 19%; }
+#trace-container .span .time-marker-2 { left: 38.4%; }
+#trace-container .span .time-marker-3 { left: 57.9%; }
+#trace-container .span .time-marker-4 { left: 77.4%; }
+#trace-container .span .time-marker-5 { left: 93.5%; }
 
 #trace-container .span .duration {
     position: absolute;

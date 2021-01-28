@@ -34,67 +34,8 @@
     </div>
 </nav>
 
-<div id="contentHtml">
-    <div class="css-monitor-main-content">
-
-        <ol class="breadcrumb">
-            <li><a href="javascript:void(0);">监控系统</a></li>
-            <li><a href="javascript:void(0);">链路查找</a></li>
-            <li><a href="javascript:void(0);" class = "active">链路详情</a></li>
-        </ol>
-
-        <div id='trace-controls' class='panel panel-default'>
-            <div class="panel-body">
-                <ul class='nav nav-pills'>
-                    <li class=''><a href='#'><strong>Trace Id:</strong> <span class='badge'>1412304224978337206</span></a></li>
-                    <li class=''><a href='#'><strong>总耗时:</strong> <span class='badge'>9600732 ms</span></a></li>
-                    <li class=''><a href='#'><strong>服务数:</strong> <span class='badge'>3</span></a></li>
-                    <li class=''><a href='#'><strong>深度:</strong> <span class='badge'>2</span></a></li>
-                    <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge'>2</span></a></li>
-
-                    <li class='navbar-right'><a href='javascript:void(0);' id='traceLogsLink'><span class='btn btn-primary btn-xs badge'>Logs</span></a></li>
-                    <li class='navbar-right'><a href='javascript:void(0);' id='traceJsonLink'><span class='btn btn-primary btn-xs badge'>JSON</span></a></li>
-                </ul>
-
-                <form class='form-inline' role='form'>
-                    <div class='btn-group btn-group-sm' id='filterAllServices'>
-                        <button type='button' class='btn btn-default active' id='uiExpandAllSpans'>展开链路</button>
-                        <button type='button' class='btn btn-default' id='uiCollapseAllSpans'>收起链路</button>
-                    </div>
-                    <select data-placeholder='查找指定服务' class='form-control input-sm' name='serviceFilterSearch' id='serviceFilterSearch'>
-                        <option value=''></option>
-                        <option value='123'>123</option>
-                    </select>
-                </form>
-
-                <div class='trace-details services'>
-                    <span class='label label-default service-filter-label service-tag-filtered'>product.demo.consumer x1</span>
-                    <span class='label label-default service-filter-label service-tag-filtered'>product.demo.provider x2</span>
-                </div>
-            </div>
-        </div>
-
-
-        <div class='row' id='trace-container'>
-            <div id='timeLabel' class='span'>
-                <div class='handle'>服务</div>
-                <div class='handle'>层级</div>
-                <div class='handle'>ip</div>
-                <div class='handle'>耗时(ms)</div>
-                <div class='handle'>类型</div>
-                <div class='handle'>状态</div>
-                <div class='duration-container'>
-                    <div class='time-marker time-marker-1'>100ms</div>
-                    <div class='time-marker time-marker-2'>200ms</div>
-                    <div class='time-marker time-marker-3'>300ms</div>
-                    <div class='time-marker time-marker-4'>400ms</div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
+<div id="contentHtml"></div>
+<script th:src="@{/static/js/index.js}"></script>
 
 </body>
 </html>

@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
-<table class="table table-hover table-striped">
+<table id="trace-table" class="table table-hover table-striped">
     <thead>
     <tr>
         <th class="css-table-text">名称</th>
@@ -13,7 +13,7 @@
     <tbody>
     <tr th:each="trace : ${data.list}">
         <td class="css-table-text" th:text="${trace.name}"></td>
-        <td class="css-table-text" th:text="${trace.traceId}"></td>
+        <td class="css-table-text"><a class = "trace-list-a" th:text="${trace.traceId}" th:attr="data-trace-id=${trace.traceId}" href = "javascript:void(0);"></a></td>
         <td class="css-table-text" th:text="${trace.start}"></td>
         <td class="css-table-text" th:text="${trace.cost}"></td>
         <td class="css-table-text" th:text="${trace.status}"></td>
@@ -29,5 +29,5 @@
     <li><a href="#">5</a></li>
     <li><a href="#">&raquo;</a></li>
 </ul>
-
+<script th:src="@{/static/js/trace-list.js}"></script>
 </html>
