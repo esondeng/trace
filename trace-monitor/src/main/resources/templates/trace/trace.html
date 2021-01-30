@@ -35,11 +35,17 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-4" style="margin-left: 5%">
-                        <label for="costMin">耗时范围(ms):</label>
-                        <input type="text" class="form-control" value="0" id="costMin" name="costMin">
+                    <div class="form-group col-md-2" style="margin-left: 5%">
+                        <label >耗时范围(ms):</label>
+                        <input type="text" value="0" class="form-control" style="margin-left: 20%;width: 60%" id="minCost">
                     </div>
-                    <div class="form-group col-md-6" style="margin-left: 1%">
+                    <div class="form-group col-md-1">
+                        <span style="float: left;margin-top: 30px;margin-left: -15px">~</span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <input type="text" value="N/A" class="form-control" style="width: 60%;margin-left: -40px;margin-top: 25px" id="maxCost">
+                    </div>
+                    <div class="form-group col-md-6" style="margin-left: -6%">
                         <label for="exceptionName">异常信息:</label>
                         <input type="text" class="form-control" id="exceptionName" name="exceptionName" placeholder="异常信息">
                     </div>
