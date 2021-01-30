@@ -25,4 +25,6 @@ public class TraceConstants {
     public static final String REQUEST_TAG_KEY = "request";
 
     public static final String TRACE_ID = "traceId";
+
+    public static final String POINT_SPLIT = "\\.";
 }

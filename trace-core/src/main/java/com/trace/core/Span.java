@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.trace.core.constants.TraceConstants;
@@ -24,6 +23,7 @@ public class Span {
      * span id, 类似0， 0.1，0.2 用来表示调用层级
      */
     private String id;
+    private int depth;
     private String traceId;
     private String name;
     private String serviceType;
@@ -123,7 +123,9 @@ public class Span {
 
         // 新先线程直接使用父线程的id
         copy.setId(span.getId());
+        copy.setDepth(span.getId().split(TraceConstants.POINT_SPLIT).length);
         copyFromParent(copy, span);
+        // 使用父线程的child计数器
         copy.setChildCounter(span.getChildCounter());
 
         return copy;
@@ -140,6 +142,7 @@ public class Span {
 
         String rootSpanId = consumerContext.getConsumerChildId();
         span.setId(rootSpanId);
+        span.setDepth(rootSpanId.split(TraceConstants.POINT_SPLIT).length);
 
         span.setTraceId(consumerContext.getTraceId());
         span.setClientAppKey(consumerContext.getClientAppKey());
@@ -166,12 +169,16 @@ public class Span {
             span.setTraceId(TraceUtils.buildTranceId());
 
             span.setId(TraceConstants.HEAD_SPAN_ID);
+            span.setDepth(1);
+
             fillServerInfo(span);
 
             return span;
         }
         else {
             span.setId(parentSpan.nextChildId());
+            span.setDepth(span.getId().split(TraceConstants.POINT_SPLIT).length);
+
             span.setTraceId(parentSpan.getTraceId());
             span.setStart(System.currentTimeMillis());
             span.setServiceType(serviceType.message());
@@ -197,7 +204,6 @@ public class Span {
         span.setClientIp(parentSpan.getClientIp());
         span.setClientAppKey(parentSpan.getClientAppKey());
     }
-
 
 
     @Override
@@ -234,6 +240,14 @@ public class Span {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     public String getTraceId() {

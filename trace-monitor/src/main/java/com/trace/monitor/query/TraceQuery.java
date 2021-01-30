@@ -13,8 +13,11 @@ import lombok.Setter;
 @Setter
 public class TraceQuery extends PageQuery {
     private String applicationName;
-    private String interfaceName;
+    private String name;
+    private String ip;
+    private Long minCost;
+    private Long maxCost;
+    private String exceptionInfo;
     private String startTime;
     private String endTime;
-    private String durationTime;
 }
