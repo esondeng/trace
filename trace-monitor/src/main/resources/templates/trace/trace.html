@@ -9,61 +9,66 @@
     <div class="panel panel-default" style="width: 70%;">
         <div class="panel-body">
             <form class="form-horizontal" role="form" id="callChainSearchForm">
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="applicationName">应用名称<p style="color: red;float: left">*</p>:</label>
-                    <div class="col-sm-10">
-                        <select id="applicationName" name="applicationName" class="form-control">
-                            <option value="" selected="selected">请选择</option>
-                            <div th:each="applicationName : ${applicationNames}">
-                                <option th:value="${applicationName}" th:text="${applicationName}"></option>
-                            </div>
-                        </select>
+                <div class="form-row">
+                    <div class="col-md-3">
+                        <label class="control-label" for="applicationName"><span style="color: red;float: left;">*</span>应用名称:</label>
+                        <div>
+                            <select id="applicationName" name="applicationName" class="form-control">
+                                <option value="" selected="selected">请选择</option>
+                                <div th:each="applicationName : ${applicationNames}">
+                                    <option th:value="${applicationName}" th:text="${applicationName}"></option>
+                                </div>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4" style="margin-left: 1%;">
+                        <label for="name" class="control-label">名称:</label>
+                        <div>
+                            <input type="text" class="form-control" id="name" placeholder="TestController.test">
+                        </div>
+                    </div>
+                    <div class="col-md-3" style="margin-left: 1%;">
+                        <label for="ip" class="control-label">机器IP:</label>
+                        <div>
+                            <input type="text" class="form-control" id="ip" placeholder="10.11.22.33">
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="name" class="col-sm-2 control-label">名称:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="name" placeholder="TestController.test">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="ip" class="col-sm-2 control-label">机器IP:</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="ip" placeholder="10.11.22.33">
-                    </div>
-                </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-2" style="margin-left: 3%">
+                    <div class="col-md-2 mb-2">
                         <label >耗时范围(ms):</label>
-                        <input type="text" value="0" class="form-control" style="margin-left: 22%;width: 60%" id="minCost">
+                        <input type="text" value="0" class="form-control" id="minCost">
                     </div>
-                    <div class="form-group col-md-1">
-                        <span style="float: left;margin-top: 30px;margin-left: -12px">~</span>
+                    <div class="col-md-1 mb-1">
+                        <span style="float: left;margin-top: 30px;margin-left: -20px">~</span>
                     </div>
-                    <div class="form-group col-md-2">
-                        <input type="text" value="N/A" class="form-control" style="width: 60%;margin-left: -40px;margin-top: 25px" id="maxCost">
+                    <div class="col-md-2 mb-2">
+                        <input type="text" value="N/A" class="form-control" style="margin-left: -63%;margin-top: 25px" id="maxCost">
                     </div>
-                    <div class="form-group col-md-6" style="margin-left: 2%">
+                    <div class="col-md-5 mb-5" style="margin-left: -8.5%">
                         <label for="exceptionInfo">异常信息:</label>
-                        <input type="text" class="form-control" style="width: 64%" id="exceptionInfo" name="exceptionInfo" placeholder="异常信息">
+                        <input type="text" class="form-control" id="exceptionInfo" name="exceptionInfo" placeholder="异常信息">
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-4" style="margin-left: 6%">
+                    <div class="col-md-4 mb-4">
                         <label for="startTime">开始时间:</label>
                         <input class="form-control" id="startTime" name="startTime" type="text">
                     </div>
-                    <div class="form-group col-md-4" style="margin-left: 1%">
+                    <div class="col-md-4 mb-4">
                         <label for="endTime">结束时间:<p style="float: right;margin-bottom: 0px;color: red">(注意:时间段只能在同一天)</p></label>
                         <input class="form-control" id="endTime" name="endTime" type="text">
                     </div>
-                    <div class="form-group col-md-1" style="margin-left: 1%">
-                        <button type="button" class="btn btn-default js-call-chain-search" style="margin-top:50%;">搜索</button>
+                    <div class="col-md-3 mb-3">
+                        <button type="button" class="btn btn-default js-call-chain-search" style="margin-top: 12%;margin-left:-3.5%;">搜索</button>
                     </div>
                 </div>
+
+
             </form>
         </div>
     </div>
