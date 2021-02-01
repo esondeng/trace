@@ -1,92 +1,102 @@
 <html>
-<div class="row well well-sm">
-    <form id="dependency-query-form" class="form" role="form">
-        <div id="start-ts" class="form-group">
-            <label>Start time</label>
-            <input class="form-control input-sm date-input" type="text">
-            <input class="form-control input-sm time-input" type="text">
-            <input class="timestamp-value" id="startTs" name="startTs" type="hidden" value="">
-        </div>
+<div class="css-monitor-main-content">
+    <ol class="breadcrumb">
+        <li><a href="javascript:void(0);">监控系统</a></li>
+        <li><a href="javascript:void(0);" class="active">依赖分析</a></li>
+    </ol>
 
-        <div id="end-ts" class="form-group">
-            <label>End time</label>
-            <input class="form-control input-sm date-input" type="text">
-            <input class="form-control input-sm time-input" type="text">
-            <input class="timestamp-value" id="endTs" name="endTs" type="hidden" value="">
-        </div>
-
-        <button type="submit" class="btn btn-default btn-sm" data-i18n="dep.analyze">Analyze Dependencies</button>
-    </form>
-</div>
-
-<div id="service-data-modal-container">
-    <div class="modal" id="serviceModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title">
-                        <span id="serviceModalTitle">[title]</span>
-                    </h3>
+    <div class="panel panel-default" style="width: 70%;">
+        <div class="panel-body">
+            <form id="dependency-query-form" class="form-horizontal" role="form">
+                <div class="form-row">
+                    <div class="col-md-4 mb-4">
+                        <label for="startTime">开始时间:</label>
+                        <input class="form-control" id="startTime" name="startTime" type="text">
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <label for="endTime">结束时间:<p style="float: right;margin-bottom: 0px;color: red">(注意:时间段只能在同一天)</p>
+                        </label>
+                        <input class="form-control" id="endTime" name="endTime" type="text">
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <button type="button" class="btn btn-default js-dependency-analyze" style="margin-top: 12%;margin-left:-3.5%;">
+                            依赖分析
+                        </button>
+                    </div>
                 </div>
-                <div class="modal-body">
+            </form>
+        </div>
+    </div>
 
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <h4>Used by</h4>
-                                <ul id="serviceUsedByList"></ul>
-                            </div>
-                            <div class="col-sm-6">
-                                <h4>Uses</h4>
-                                <ul id="serviceUsesList"></ul>
+    <div id="service-data-modal-container">
+        <div class="modal" id="serviceModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title">
+                            <span id="serviceModalTitle">[title]</span>
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h4>Used by</h4>
+                                    <ul id="serviceUsedByList"></ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h4>Uses</h4>
+                                    <ul id="serviceUsesList"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal" id="dependencyModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h3 class="modal-title text-center">
-                        <div id="dependencyModalParent">[parent]</div>
-                        <div class=""><span class="glyphicon glyphicon-arrow-down"></span></div>
-                        <div id="dependencyModalChild">[child]</div>
+        <div class="modal" id="dependencyModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title text-center">
+                            <div id="dependencyModalParent">[parent]</div>
+                            <div class=""><span class="glyphicon glyphicon-arrow-down"></span></div>
+                            <div id="dependencyModalChild">[child]</div>
 
-                    </h3>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th>Key</th>
-                            <th>Value</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>Number of calls</td>
-                            <td id="dependencyCallCount">?</td>
-                        </tr>
-                        <tr>
-                            <td>Number of errors</td>
-                            <td id="dependencyErrorCount">?</td>
-                        </tr>
-                        </tbody>
-                    </table>
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th>Key</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Number of calls</td>
+                                <td id="dependencyCallCount">?</td>
+                            </tr>
+                            <tr>
+                                <td>Number of errors</td>
+                                <td id="dependencyErrorCount">?</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div id="dependency-container">
-    <svg width="100%" height="4000" class="rootSvg">
-    </svg>
+    <div id="dependency-container">
+        <svg width="100%" height="4000" class="rootSvg">
+        </svg>
+    </div>
 </div>
 </html>

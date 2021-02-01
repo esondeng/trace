@@ -12,7 +12,7 @@
     <link th:href="@{/static/css/trace-detail.css}" rel="stylesheet"/>
 
     <!--- js start-->
-    <script th:src="@{/static/plugins/jQuery/jQuery-2.1.4.min.js}"></script>
+    <script th:src="@{/static/plugins/jQuery/jQuery-2.2.0.min.js}"></script>
     <script th:src="@{/static/plugins/jQuery/jquery.form.js}"></script>
     <script th:src="@{/static/plugins/bootstrap/js/bootstrap.min.js}"></script>
     <script th:src="@{/static/plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js}"></script>
@@ -52,11 +52,7 @@
                     <li class=''><a href='#'><strong>总耗时:</strong> <span class='badge' th:text="${data.cost} + 'ms'"></span></a></li>
                     <li class=''><a href='#'><strong>服务数:</strong> <span class='badge' th:text="${data.appKeyCount}"></span></a></li>
                     <li class=''><a href='#'><strong>深度:</strong> <span class='badge' th:text="${data.depth}"></span></a></li>
-                    <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a>
-                    </li>
-
-                    <li class='navbar-right'><a href='javascript:void(0);' id='traceLogsLink'><span class='btn btn-primary btn-xs badge'>Logs</span></a></li>
-                    <li class='navbar-right'><a href='javascript:void(0);' id='traceJsonLink'><span class='btn btn-primary btn-xs badge'>JSON</span></a></li>
+                    <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a></li>
                 </ul>
 
                 <form class='form-inline' role='form'>
@@ -211,6 +207,5 @@
         </div>
     </div>
 </div>
-<script th:src="@{/static/js/trace-detail.js}"></script>
 </body>
 </html>
