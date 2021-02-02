@@ -12,8 +12,9 @@ function loadHtml(path) {
         $("#index-tab-id").find("li").removeClass("active");
         $(e.target).parent().addClass("active");
 
-        var path = $(e.target).attr("data-url");
+        const path = $(e.target).attr("data-url");
         loadHtml(path);
     });
+
     $("#traceTabId").click();
 }(jQuery, this, this.document));

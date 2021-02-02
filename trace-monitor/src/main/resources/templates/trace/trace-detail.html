@@ -55,18 +55,6 @@
                     <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a></li>
                 </ul>
 
-                <form class='form-inline' role='form'>
-                    <div class='btn-group btn-group-sm' id='filterAllServices'>
-                        <button type='button' class='btn btn-default active' id='uiExpandAllSpans'>展开链路</button>
-                        <button type='button' class='btn btn-default' id='uiCollapseAllSpans'>收起链路</button>
-                    </div>
-                    <select data-placeholder='查找指定服务' class='form-control input-sm' name='serviceFilterSearch'
-                            id='serviceFilterSearch'>
-                        <option value=''></option>
-                        <option value='123'>123</option>
-                    </select>
-                </form>
-
                 <div class='trace-details services' th:each="appCountVo : ${data.appKeyCountVos}">
                     <span class='label label-default service-filter-label service-tag-filtered' th:text="${appCountVo.appKey} + ' x ' + ${appCountVo.count}"></span>
                 </div>

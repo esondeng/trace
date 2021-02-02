@@ -1,6 +1,6 @@
 $(function () {
 
-    var loadingHtml =
+    const loadingHtml =
         "<div class='col-xs-12 text-center'>"
         + "<img src='/static/images/loading.gif'/> 数据加载中..."
         + "</div>";
@@ -19,7 +19,7 @@ $(function () {
             startView: 2,
             minView: 0
         }).on('changeDate', function (selected) {
-            var minDate = new Date(selected.date.valueOf());
+            const minDate = new Date(selected.date.valueOf());
             $('#endTime').datetimepicker('setStartDate', minDate);
         });
 
@@ -32,7 +32,7 @@ $(function () {
             minView: 0,
             initialDate: new Date()
         }).on('changeDate', function (selected) {
-            var maxDate = new Date(selected.date.valueOf());
+            const maxDate = new Date(selected.date.valueOf());
             $('#startTime').datetimepicker('setEndDate', maxDate);
         });
     }
