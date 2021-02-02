@@ -16,6 +16,7 @@ import org.apache.ibatis.plugin.Plugin;
 import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledPreparedStatement;
 import com.eson.common.core.util.ReflectUtils;
 import com.trace.collect.constants.MdcTraceConstants;
@@ -56,7 +57,9 @@ public class TraceMybatisInterceptor implements Interceptor {
 
             Map<String, String> tagMap = new HashMap<>(16);
             tagMap.put(TraceConstants.SQL_TAG_KEY, sql);
-            tagMap.put(TraceConstants.JDBC_REF_TAG_KEY, mappedStatement.getSqlSource().toString());
+
+            DruidDataSource druidDataSource = (DruidDataSource) mappedStatement.getConfiguration().getEnvironment().getDataSource();
+            tagMap.put(TraceConstants.JDBC_REF_TAG_KEY, druidDataSource.getRawJdbcUrl());
 
             String sqlId = mappedStatement.getId();
             String name = TraceUtils.getSimpleName(sqlId);
