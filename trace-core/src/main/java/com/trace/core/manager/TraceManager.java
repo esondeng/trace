@@ -2,6 +2,7 @@ package com.trace.core.manager;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import com.eson.common.function.ThrowCallable;
 import com.eson.common.function.ThrowRunnable;
@@ -27,10 +28,10 @@ public class TraceManager {
     public static <T> T tracingWithReturn(ConsumerContext consumerContext,
                                           ServiceType serviceType,
                                           String name,
-                                          String request,
+                                          Map<String, String> tagMap,
                                           ThrowCallable<T> callable,
                                           List<Runnable> mdcRunnableList) {
-        startSpan(consumerContext, serviceType, name, request, mdcRunnableList);
+        startSpan(consumerContext, serviceType, name, tagMap, mdcRunnableList);
         return invoke(callable, mdcRunnableList);
     }
 
@@ -51,10 +52,10 @@ public class TraceManager {
      */
     public static <T> T tracingWithReturn(ServiceType serviceType,
                                           String name,
-                                          String sql,
+                                          Map<String, String> tagMap,
                                           ThrowCallable<T> callable,
                                           List<Runnable> mdcRunnableList) {
-        startSpan(serviceType, sql, name, mdcRunnableList);
+        startSpan(serviceType, name, tagMap, mdcRunnableList);
         return invoke(callable, mdcRunnableList);
 
     }
@@ -177,9 +178,9 @@ public class TraceManager {
     private static void startSpan(ConsumerContext consumerContext,
                                   ServiceType serviceType,
                                   String name,
-                                  String request,
+                                  Map<String, String> tagMap,
                                   List<Runnable> mdcRunnableList) {
-        Span span = Span.of(consumerContext, serviceType, name, request);
+        Span span = Span.of(consumerContext, serviceType, name, tagMap);
         TraceContext.push(span);
         mdcRunnableList.get(0).run();
     }
@@ -195,13 +196,13 @@ public class TraceManager {
         mdcRunnableList.get(0).run();
     }
 
-    private static void startSpan(ServiceType serviceType, String sql, String name, List<Runnable> mdcRunnableList) {
+    private static void startSpan(ServiceType serviceType, String name, Map<String, String> tagMap, List<Runnable> mdcRunnableList) {
         Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
-        Span span = Span.of(parentSpan, serviceType, name, sql);
+        Span span = Span.of(parentSpan, serviceType, name, tagMap);
         TraceContext.push(span);
         mdcRunnableList.get(0).run();
     }

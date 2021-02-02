@@ -20,7 +20,11 @@ public class TraceConstants {
 
     public static final String SQL_TAG_KEY = "sql";
 
+    public static final String JDBC_REF_TAG_KEY = "jdbcRef";
+
     public static final String HTTP_PATH_TAG_KEY = "httpPath";
+
+    public static final String HTTP_METHOD_TAG_KEY = "method";
 
     public static final String REQUEST_TAG_KEY = "request";
 

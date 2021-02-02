@@ -1,4 +1,4 @@
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <div class="css-monitor-main-content">
     <ol class="breadcrumb">
         <li><a href="javascript:void(0);">监控系统</a></li>
@@ -95,8 +95,11 @@
     </div>
 
     <div id="dependency-container">
-        <svg width="100%" height="4000" class="rootSvg">
+        <svg width="100%" height="4000" class="rootSvg" id = "rootSvg">
         </svg>
     </div>
 </div>
+<script th:type="module" th:src="@{/static/plugins/dagre-d3/js/dagre-d3.min.js}"></script>
+<script th:type="module" th:src="@{/static/plugins/d3/js/d3.min.js}"></script>
+<script th:src="@{/static/js/dependency.js}"></script>
 </html>

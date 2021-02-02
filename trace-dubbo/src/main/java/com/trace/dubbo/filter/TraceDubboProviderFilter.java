@@ -1,6 +1,8 @@
 package com.trace.dubbo.filter;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.Filter;
@@ -32,11 +34,14 @@ public class TraceDubboProviderFilter implements Filter {
         }
         else {
             String name = invoker.getInterface().getSimpleName() + "." + invocation.getMethodName();
+            Map<String, String> tagMap = new HashMap<>(16);
+            tagMap.put(TraceConstants.REQUEST_TAG_KEY, Arrays.toString(invocation.getArguments()));
+
             return TraceManager.tracingWithReturn(
                     consumerContext,
                     ServiceType.DUBBO_PROVIDER,
                     name,
-                    Arrays.toString(invocation.getArguments()),
+                    tagMap,
                     () -> invoker.invoke(invocation),
                     MdcTraceConstants.MDC_RUNNABLE_LIST);
         }

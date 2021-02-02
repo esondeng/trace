@@ -94,6 +94,17 @@ public class Span {
         tagMap.put(key, tag);
     }
 
+    public void putTags(Map<String, String> tagMap) {
+        if (tagMap == null) {
+            return;
+        }
+
+        if (this.tagMap == null) {
+            this.tagMap = new HashMap<>(16);
+        }
+        this.tagMap.putAll(tagMap);
+    }
+
     public String getTag(String key) {
         return tagMap == null ? null : tagMap.get(key);
     }
@@ -134,10 +145,10 @@ public class Span {
     /**
      * 微服务提供者场景使用
      */
-    public static Span of(ConsumerContext consumerContext, ServiceType serviceType, String name, String request) {
+    public static Span of(ConsumerContext consumerContext, ServiceType serviceType, String name, Map<String, String> tagMap) {
         Span span = new Span();
         span.setName(name);
-        span.putTag(TraceConstants.REQUEST_TAG_KEY, request);
+        span.putTags(tagMap);
         span.setServiceType(serviceType.message());
 
         String rootSpanId = consumerContext.getConsumerChildId();
@@ -156,13 +167,11 @@ public class Span {
     /**
      * 内部调用使用parentSpan可能是null，标书第一个span
      */
-    public static Span of(Span parentSpan, ServiceType serviceType, String name, String sql) {
+    public static Span of(Span parentSpan, ServiceType serviceType, String name, Map<String, String> tagMap) {
         Span span = new Span();
         span.setName(name);
 
-        if (serviceType == ServiceType.JDBC) {
-            span.putTag(TraceConstants.SQL_TAG_KEY, sql);
-        }
+        span.putTags(tagMap);
 
         if (parentSpan == TraceConstants.DUMMY_SPAN) {
             span.setServiceType(serviceType.message());

@@ -2,6 +2,8 @@ package com.trace.mybatis.interceptor;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.ibatis.executor.statement.PreparedStatementHandler;
@@ -18,6 +20,7 @@ import com.alibaba.druid.pool.DruidPooledPreparedStatement;
 import com.eson.common.core.util.ReflectUtils;
 import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.TraceContext;
+import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
 import com.trace.core.util.TraceUtils;
@@ -51,13 +54,17 @@ public class TraceMybatisInterceptor implements Interceptor {
 
             String sql = cutLongSql(showSql(preparedStatement));
 
+            Map<String, String> tagMap = new HashMap<>(16);
+            tagMap.put(TraceConstants.SQL_TAG_KEY, sql);
+            tagMap.put(TraceConstants.JDBC_REF_TAG_KEY, mappedStatement.getSqlSource().toString());
+
             String sqlId = mappedStatement.getId();
             String name = TraceUtils.getSimpleName(sqlId);
 
             return TraceManager.tracingWithReturn(
                     ServiceType.JDBC,
                     name,
-                    sql,
+                    tagMap,
                     invocation::proceed,
                     MdcTraceConstants.MDC_RUNNABLE_LIST
             );
