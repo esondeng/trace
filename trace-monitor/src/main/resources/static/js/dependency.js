@@ -1,8 +1,6 @@
 const dagre = window.dagreD3;
 
 $(function () {
-
-    let services = {};
     let dependencies = {};
 
     function getDependency() {
@@ -19,19 +17,12 @@ $(function () {
     }
 
     function buildServiceData(links) {
-        services = {};
-        dependencies = {};
+
         links.forEach(link => {
             const {parent, child} = link;
 
             dependencies[parent] = dependencies[parent] || {};
             dependencies[parent][child] = link;
-
-            services[parent] = services[parent] || {serviceName: parent, uses: [], usedBy: []};
-            services[child] = services[child] || {serviceName: child, uses: [], usedBy: []};
-
-            services[parent].uses.push(child);
-            services[child].usedBy.push(parent);
         });
     }
 
@@ -153,10 +144,6 @@ $(function () {
                     const $this = $(this);
                     const nodeEl = $this[0];
 
-                    $this.click(() => {
-                        renderServiceDataModal(d);
-                    });
-
                     $this.hover(() => {
                         nodeEl.classList.add('hover');
                         rootSvg.classList.add('dark');
@@ -208,6 +195,7 @@ $(function () {
                         el.classList.add('hover');
                     });
                     edgeEl.classList.add('hover-edge');
+
                 }, () => {
                     rootSvg.classList.remove('dark');
                     const nodes = getIncidentNodeElements(
@@ -217,6 +205,16 @@ $(function () {
                         el.classList.remove('hover');
                     });
                     edgeEl.classList.remove('hover-edge');
+                });
+
+                $el.click(() => {
+                    const nodes = getIncidentNodeElements(
+                        edgeEl.getAttribute('data-from'),
+                        edgeEl.getAttribute('data-to'));
+                    renderDependencyModal({
+                        parent: nodes[0].__data__,
+                        child: nodes[1].__data__
+                    });
                 });
             });
 
@@ -230,64 +228,11 @@ $(function () {
             .run(g, svgGroup);
     }
 
-    function renderServiceDataModal(d) {
-        const data = services[d];
-        const $modal = $('#serviceModal');
-        $modal.find('#serviceUsedByList').html('');
-        data.usedBy.sort((a, b) =>
-            a.toLowerCase().localeCompare(b.toLowerCase())
-        );
-        data.usedBy.forEach(usedBy => {
-            const $name = $(`<li><a href="">${usedBy}</a></li>`);
-            $name.find('a').click(ev => {
-                ev.preventDefault();
-                renderDependencyModal({
-                    parent: usedBy,
-                    child: data.serviceName
-                });
-            });
-            $modal.find('#serviceUsedByList').append($name);
-        });
-
-        $modal.find('#serviceUsesList').html('');
-        data.uses.sort((a, b) =>
-            a.toLowerCase().localeCompare(b.toLowerCase())
-        );
-
-        data.uses.forEach(uses => {
-            const $name = $(`<li><a href="">${uses}</a></li>`);
-            $name.find('a').click(ev => {
-                ev.preventDefault();
-                renderDependencyModal({
-                    parent: data.serviceName,
-                    child: uses
-                });
-            });
-            $modal.find('#serviceUsesList').append($name);
-        });
-
-        $modal.find('#serviceModalTitle').text(data.serviceName);
-
-        $modal.modal('show');
-        $('#dependencyModal').modal('hide');
-    }
-
     function renderDependencyModal(data) {
         const $modal = $('#dependencyModal');
-        const $parentElement = $(`<a href="">${data.parent}</a>`);
-        $parentElement.click(ev => {
-            ev.preventDefault();
-            renderServiceDataModal(data.parent);
-        });
 
-        const $childElement = $(`<a href="">${data.child}</a>`);
-        $childElement.click(ev => {
-            ev.preventDefault();
-            renderServiceDataModal(data.child);
-        });
-
-        $modal.find('#dependencyModalParent').html($parentElement);
-        $modal.find('#dependencyModalChild').html($childElement);
+        $modal.find('#dependencyModalParent').html(data.parent);
+        $modal.find('#dependencyModalChild').html(data.child);
 
         const link = dependencies[data.parent][data.child]
 

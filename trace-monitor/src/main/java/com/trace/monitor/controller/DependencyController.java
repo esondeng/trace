@@ -25,6 +25,56 @@ public class DependencyController {
 
         list.add(vo);
 
+        vo = new DependencyVo();
+        vo.setParent("test-consumer");
+        vo.setChild("elephant-provider");
+        vo.setCallCount(3);
+        list.add(vo);
+
+        vo = new DependencyVo();
+        vo.setParent("product-dubbo-consumer");
+        vo.setChild("elephant-provider");
+        vo.setCallCount(3);
+
+        list.add(vo);
+
+        vo = new DependencyVo();
+        vo.setParent("elephant-provider");
+        vo.setChild("rider-provider");
+        vo.setCallCount(3);
+
+        list.add(vo);
+
+        vo = new DependencyVo();
+        vo.setParent("product-dubbo-consumer");
+        vo.setChild("money-provider");
+        vo.setCallCount(3);
+
+        list.add(vo);
+
+        vo = new DependencyVo();
+        vo.setParent("product-dubbo-consumer");
+        vo.setChild("org-provider");
+        vo.setCallCount(3);
+
+        list.add(vo);
+
+        vo = new DependencyVo();
+        vo.setParent("product-dubbo-consumer");
+        vo.setChild("user-provider");
+        vo.setCallCount(3);
+
+        list.add(vo);
+
+        vo = new DependencyVo();
+        vo.setParent("product-dubbo-consumer");
+        vo.setChild("token-provider");
+        vo.setCallCount(3);
+
+        list.add(vo);
+
+
+
         return WebResponse.success(list);
     }
 }
