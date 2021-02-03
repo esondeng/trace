@@ -1,6 +1,6 @@
 const dagre = window.dagreD3;
 
-(function ($, window, document, undefined) {
+$(function () {
 
     let services = {};
     let dependencies = {};
@@ -16,7 +16,7 @@ const dagre = window.dagreD3;
                 dependencyDataReceived(links);
             }
         });
-    };
+    }
 
     function buildServiceData(links) {
         services = {};
@@ -33,7 +33,7 @@ const dagre = window.dagreD3;
             services[parent].uses.push(child);
             services[child].usedBy.push(parent);
         });
-    };
+    }
 
     // 依赖分析
     $(".js-dependency-analyze").on("click", function () {
@@ -46,7 +46,8 @@ const dagre = window.dagreD3;
         const highErrorRate = 0.1;
 
         const _this = this;
-        const rootSvg = $("#rootSvg");
+        const container = $("#dependency-container")[0];
+        const rootSvg = container.querySelector('svg');
         rootSvg.textContent = null;
 
         const svg = d3.select('svg');
@@ -229,4 +230,4 @@ const dagre = window.dagreD3;
             .layout(layout)
             .run(g, svgGroup);
     }
-}(jQuery, this, this.document));
+});

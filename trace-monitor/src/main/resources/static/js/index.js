@@ -3,7 +3,7 @@ function loadHtml(path) {
 }
 
 
-(function ($, window, document, undefined) {
+$(function () {
     //绑定tag点击事件
     $(".js-click-tab").on("click", function (e) {
         e.preventDefault();
@@ -17,4 +17,4 @@ function loadHtml(path) {
     });
 
     $("#traceTabId").click();
-}(jQuery, this, this.document));
+});
