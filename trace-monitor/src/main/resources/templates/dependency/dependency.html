@@ -72,20 +72,20 @@
                     <div class="modal-body">
                         <table class="table table-striped">
                             <thead>
-                            <tr>
-                                <th>Key</th>
-                                <th>Value</th>
-                            </tr>
+                                <tr>
+                                    <th>Key</th>
+                                    <th>Value</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>Number of calls</td>
-                                <td id="dependencyCallCount">?</td>
-                            </tr>
-                            <tr>
-                                <td>Number of errors</td>
-                                <td id="dependencyErrorCount">?</td>
-                            </tr>
+                                <tr>
+                                    <td>调用次数</td>
+                                    <td id="dependencyCallCount">?</td>
+                                </tr>
+                                <tr>
+                                    <td>失败次数</td>
+                                    <td id="dependencyErrorCount">?</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -94,14 +94,16 @@
         </div>
     </div>
 
-    <div id="dependency-container">
-        <svg width="100%" height="4000" class="rootSvg">
-        </svg>
+    <div class = "css-monitor-main-content">
+        <div id="dependency-container">
+            <svg width="100%" height="4000" class="rootSvg">
+            </svg>
+        </div>
     </div>
 </div>
 
-<script  th:src="@{/static/plugins/dagre-d3/js/dagre-d3.min.js}"></script>
 <script  th:src="@{/static/plugins/d3/js/d3.min.js}"></script>
+<script  th:src="@{/static/plugins/dagre-d3/js/dagre-d3.min.js}"></script>
 <script  th:src="@{/static/js/dependency.js}"></script>
 
 </html>

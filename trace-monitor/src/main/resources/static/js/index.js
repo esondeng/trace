@@ -1,10 +1,9 @@
-function loadHtml(path) {
-    $("#contentHtml").load(path);
-}
-
-
 $(function () {
-    //绑定tag点击事件
+    function loadHtml(path) {
+        $("#contentHtml").load(path);
+    }
+
+    // 绑定tag点击事件
     $(".js-click-tab").on("click", function (e) {
         e.preventDefault();
         e.stopPropagation();

@@ -40,7 +40,7 @@ $(function () {
         getDependency();
     });
 
-    function dependencyDataReceived(...links) {
+    function dependencyDataReceived(links) {
 
         const lowErrorRate = 0.01;
         const highErrorRate = 0.1;
@@ -52,6 +52,7 @@ $(function () {
 
         const svg = d3.select('svg');
         const svgGroup = svg.append('g');
+
         const g = new dagre.Digraph();
         const renderer = new dagre.Renderer();
 
@@ -153,9 +154,7 @@ $(function () {
                     const nodeEl = $this[0];
 
                     $this.click(() => {
-                        _this.trigger('showServiceDataModal', {
-                            serviceName: d
-                        });
+                        renderServiceDataModal(d);
                     });
 
                     $this.hover(() => {
@@ -229,5 +228,73 @@ $(function () {
         renderer
             .layout(layout)
             .run(g, svgGroup);
+    }
+
+    function renderServiceDataModal(d) {
+        const data = services[d];
+        const $modal = $('#serviceModal');
+        $modal.find('#serviceUsedByList').html('');
+        data.usedBy.sort((a, b) =>
+            a.toLowerCase().localeCompare(b.toLowerCase())
+        );
+        data.usedBy.forEach(usedBy => {
+            const $name = $(`<li><a href="">${usedBy}</a></li>`);
+            $name.find('a').click(ev => {
+                ev.preventDefault();
+                renderDependencyModal({
+                    parent: usedBy,
+                    child: data.serviceName
+                });
+            });
+            $modal.find('#serviceUsedByList').append($name);
+        });
+
+        $modal.find('#serviceUsesList').html('');
+        data.uses.sort((a, b) =>
+            a.toLowerCase().localeCompare(b.toLowerCase())
+        );
+
+        data.uses.forEach(uses => {
+            const $name = $(`<li><a href="">${uses}</a></li>`);
+            $name.find('a').click(ev => {
+                ev.preventDefault();
+                renderDependencyModal({
+                    parent: data.serviceName,
+                    child: uses
+                });
+            });
+            $modal.find('#serviceUsesList').append($name);
+        });
+
+        $modal.find('#serviceModalTitle').text(data.serviceName);
+
+        $modal.modal('show');
+        $('#dependencyModal').modal('hide');
+    }
+
+    function renderDependencyModal(data) {
+        const $modal = $('#dependencyModal');
+        const $parentElement = $(`<a href="">${data.parent}</a>`);
+        $parentElement.click(ev => {
+            ev.preventDefault();
+            renderServiceDataModal(data.parent);
+        });
+
+        const $childElement = $(`<a href="">${data.child}</a>`);
+        $childElement.click(ev => {
+            ev.preventDefault();
+            renderServiceDataModal(data.child);
+        });
+
+        $modal.find('#dependencyModalParent').html($parentElement);
+        $modal.find('#dependencyModalChild').html($childElement);
+
+        const link = dependencies[data.parent][data.child]
+
+        $modal.find('#dependencyCallCount').text(link.callCount);
+        $modal.find('#dependencyErrorCount').text(link.errorCount || 0);
+
+        $('#serviceModal').modal('hide');
+        $modal.modal('show');
     }
 });
