@@ -40,11 +40,20 @@ $(function () {
     // 时间控件
     initDateComponent();
 
+
+
     /**
      * 查询调用链信息(提交调用链查询条件区域表单)
      *
      */
     function searchCallChains() {
+        $("#callChainSearchForm").validate({
+            messages: {
+                "applicationName": {
+                    "required": "应用名称必填"
+                }
+            }
+        }).valid();
 
         $("#call-chain-results").html(loadingHtml);
         $.ajax(
