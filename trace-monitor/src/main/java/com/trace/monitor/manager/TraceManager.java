@@ -9,7 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.eson.common.web.vo.PageVo;
-import com.trace.monitor.domain.Span;
+import com.trace.common.domain.IndexSpan;
 import com.trace.monitor.query.TraceQuery;
 import com.trace.monitor.vo.SpanVo;
 import com.trace.monitor.vo.TraceDetailVo;
@@ -37,7 +37,7 @@ public class TraceManager {
 
     public TraceDetailVo getSpanVosByTraceId(String traceId) {
         List<SpanVo> spanVos = new ArrayList<>();
-        Span span1 = new Span();
+        IndexSpan span1 = new IndexSpan();
         span1.setTraceId("9c1dedea00464376afca73708e7d170b");
         span1.setId("0");
         span1.setDepth(1);
@@ -55,7 +55,7 @@ public class TraceManager {
         span1.setCost(2872);
 
 
-        Span span2 = new Span();
+        IndexSpan span2 = new IndexSpan();
         span2.setTraceId("9c1dedea00464376afca73708e7d170b");
         span2.setId("0.1");
         span2.setDepth(2);
@@ -68,7 +68,7 @@ public class TraceManager {
         span2.setEnd(1611713548363L);
         span2.setCost(9);
 
-        Span span3 = new Span();
+        IndexSpan span3 = new IndexSpan();
         span3.setTraceId("9c1dedea00464376afca73708e7d170b");
         span3.setId("0.2");
         span3.setDepth(2);
@@ -79,7 +79,7 @@ public class TraceManager {
 
         span3.setStart(1611713548374L);
         span3.setEnd(1611713551176L);
-        span3.setErrorMessages(Arrays.asList("time out","dubbo rpc time out"));
+        span3.setErrorMessages(Arrays.asList("time out", "dubbo rpc time out"));
         span3.setCost(2802);
         spanVos.add(SpanVo.of(span1, null));
         spanVos.add(SpanVo.of(span2, span1));

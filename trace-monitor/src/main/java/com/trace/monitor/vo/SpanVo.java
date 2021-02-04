@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.eson.common.core.util.JsonUtils;
-import com.trace.monitor.domain.Span;
+import com.trace.common.domain.IndexSpan;
 import com.trace.monitor.enums.SpanStatus;
 
 import lombok.Getter;
@@ -47,7 +47,7 @@ public class SpanVo {
     private int width;
 
 
-    public static SpanVo of(Span span, Span rootSpan) {
+    public static SpanVo of(IndexSpan span, IndexSpan rootSpan) {
         SpanVo vo = JsonUtils.convertValue(span, SpanVo.class);
         vo.setStatus(CollectionUtils.isEmpty(vo.getErrorMessages()) ? SpanStatus.SUCCESS.message() : SpanStatus.FAILED.message());
 

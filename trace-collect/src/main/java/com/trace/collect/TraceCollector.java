@@ -8,6 +8,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
+
+import com.eson.common.core.util.HttpClientUtils;
+import com.eson.common.core.util.JsonUtils;
+import com.trace.common.domain.IndexSpan;
 import com.trace.core.Span;
 import com.trace.core.TraceContainer;
 
@@ -30,6 +36,14 @@ public class TraceCollector {
      */
     private static final int MIN_INTERVAL = 1000;
 
+    /**
+     * 每500个IndexSpan发一次收集请求
+     */
+    private static final int COLLECT_BATCH_SIZE = 500;
+
+    @Value(value = "${trace.collect.url}")
+    private String traceCollectUrl;
+
     private ArrayList<Span> retryList;
 
     private TraceContainer traceContainer;
@@ -37,7 +51,7 @@ public class TraceCollector {
     /**
      * 默认睡2秒
      */
-    private volatile int interval = 2 * 1000;
+    private int interval = 2 * 1000;
 
     private ThreadPoolExecutor uploadExecutor = new ThreadPoolExecutor(
             1,
@@ -125,6 +139,10 @@ public class TraceCollector {
     }
 
     private boolean upload(List<Span> spans) {
+        if (CollectionUtils.isEmpty(spans)) {
+            return true;
+        }
+
         int currentUploadSize = spans.size();
 
         if (currentUploadSize >= UPLOAD_SIZE && interval > MIN_INTERVAL) {
@@ -134,12 +152,39 @@ public class TraceCollector {
             interval = interval * 2;
         }
 
-        spans.forEach(span -> {
-            log.info(span.toString());
+        List<IndexSpan> indexSpans = new ArrayList<>(500);
+
+        for (Span span : spans) {
+            indexSpans.add(IndexSpan.of(span));
+
             if (span.getChildren() != null) {
-                span.getChildren().forEach(t -> log.info(t.toString()));
+                span.getChildren().forEach(t -> indexSpans.add(IndexSpan.of(t)));
             }
-        });
+
+            if (indexSpans.size() > COLLECT_BATCH_SIZE) {
+                if (!sendAndClear(indexSpans)) {
+                    return false;
+                }
+            }
+        }
+
+        return sendAndClear(indexSpans);
+    }
+
+    private boolean sendAndClear(List<IndexSpan> indexSpans) {
+        if (CollectionUtils.isEmpty(indexSpans)) {
+            return true;
+        }
+
+        try {
+            HttpClientUtils.post(traceCollectUrl, JsonUtils.toJson(indexSpans));
+            indexSpans.clear();
+        }
+        catch (Exception e) {
+            log.error("收集trace失败", e);
+            return false;
+        }
+
         return true;
     }
 }

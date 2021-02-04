@@ -22,6 +22,8 @@
         <module>trace-collect</module>
         <module>trace-mybatis</module>
         <module>trace-monitor</module>
+        <module>trace-index</module>
+        <module>trace-common</module>
     </modules>
 
     <properties>
