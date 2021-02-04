@@ -15,4 +15,9 @@ public class DependencyVo {
 
     private int callCount;
     private int errorCount;
+    private String errorRate;
+    private String tp90;
+    private String tp99;
+    private String tp999;
+    private String tp9999;
 }

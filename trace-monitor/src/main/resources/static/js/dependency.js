@@ -1,10 +1,47 @@
 const dagre = window.dagreD3;
 
 $(function () {
+
+    /**
+     * 组件时间初始化
+     */
+    function initDateComponent() {
+
+        // 初始化日期控件
+        $("#startTime").datetimepicker({
+            language: "zh-CN",
+            autoclose: true,
+            todayBtn: true,
+            format: "yyyy-mm-dd hh:ii:ss",
+            startView: 2,
+            minView: 0
+        }).on('changeDate', function (selected) {
+            const minDate = new Date(selected.date.valueOf());
+            $('#endTime').datetimepicker('setStartDate', minDate);
+        });
+
+        $("#endTime").datetimepicker({
+            language: "zh-CN",
+            autoclose: true,
+            todayBtn: true,
+            format: "yyyy-mm-dd hh:ii:ss",
+            startView: 2,
+            minView: 0,
+            initialDate: new Date()
+        }).on('changeDate', function (selected) {
+            const maxDate = new Date(selected.date.valueOf());
+            $('#startTime').datetimepicker('setEndDate', maxDate);
+        });
+    }
+
+    // 时间控件
+    initDateComponent();
+
+    let services = {};
     let dependencies = {};
 
     function getDependency() {
-        let url = `/dependencies`;
+        let url = '/dependencies.html';
         $.ajax(url, {
             type: 'GET',
             dataType: 'json',
@@ -17,12 +54,17 @@ $(function () {
     }
 
     function buildServiceData(links) {
-
         links.forEach(link => {
             const {parent, child} = link;
 
             dependencies[parent] = dependencies[parent] || {};
             dependencies[parent][child] = link;
+
+            services[parent] = services[parent] || {serviceName: parent, uses: [], usedBy: []};
+            services[child] = services[child] || {serviceName: child, uses: [], usedBy: []};
+
+            services[parent].uses.push(child);
+            services[child].usedBy.push(parent);
         });
     }
 
@@ -144,6 +186,10 @@ $(function () {
                     const $this = $(this);
                     const nodeEl = $this[0];
 
+                    $this.click(() => {
+                        renderServiceDataModal(d);
+                    });
+
                     $this.hover(() => {
                         nodeEl.classList.add('hover');
                         rootSvg.classList.add('dark');
@@ -195,7 +241,6 @@ $(function () {
                         el.classList.add('hover');
                     });
                     edgeEl.classList.add('hover-edge');
-
                 }, () => {
                     rootSvg.classList.remove('dark');
                     const nodes = getIncidentNodeElements(
@@ -205,16 +250,6 @@ $(function () {
                         el.classList.remove('hover');
                     });
                     edgeEl.classList.remove('hover-edge');
-                });
-
-                $el.click(() => {
-                    const nodes = getIncidentNodeElements(
-                        edgeEl.getAttribute('data-from'),
-                        edgeEl.getAttribute('data-to'));
-                    renderDependencyModal({
-                        parent: nodes[0].__data__,
-                        child: nodes[1].__data__
-                    });
                 });
             });
 
@@ -228,16 +263,74 @@ $(function () {
             .run(g, svgGroup);
     }
 
+    function renderServiceDataModal(d) {
+        const data = services[d];
+        const $modal = $('#serviceModal');
+        $modal.find('#serviceUsedByList').html('');
+        data.usedBy.sort((a, b) =>
+            a.toLowerCase().localeCompare(b.toLowerCase())
+        );
+        data.usedBy.forEach(usedBy => {
+            const $name = $(`<li><a href="">${usedBy}</a></li>`);
+            $name.find('a').click(ev => {
+                ev.preventDefault();
+                renderDependencyModal({
+                    parent: usedBy,
+                    child: data.serviceName
+                });
+            });
+            $modal.find('#serviceUsedByList').append($name);
+        });
+
+        $modal.find('#serviceUsesList').html('');
+        data.uses.sort((a, b) =>
+            a.toLowerCase().localeCompare(b.toLowerCase())
+        );
+
+        data.uses.forEach(uses => {
+            const $name = $(`<li><a href="">${uses}</a></li>`);
+            $name.find('a').click(ev => {
+                ev.preventDefault();
+                renderDependencyModal({
+                    parent: data.serviceName,
+                    child: uses
+                });
+            });
+            $modal.find('#serviceUsesList').append($name);
+        });
+
+        $modal.find('#serviceModalTitle').text(data.serviceName);
+
+        $modal.modal('show');
+        $('#dependencyModal').modal('hide');
+    }
+
     function renderDependencyModal(data) {
         const $modal = $('#dependencyModal');
+        const $parentElement = $(`<a href="">${data.parent}</a>`);
+        $parentElement.click(ev => {
+            ev.preventDefault();
+            renderServiceDataModal(data.parent);
+        });
 
-        $modal.find('#dependencyModalParent').html(data.parent);
-        $modal.find('#dependencyModalChild').html(data.child);
+        const $childElement = $(`<a href="">${data.child}</a>`);
+        $childElement.click(ev => {
+            ev.preventDefault();
+            renderServiceDataModal(data.child);
+        });
+
+        $modal.find('#dependencyModalParent').html($parentElement);
+        $modal.find('#dependencyModalChild').html($childElement);
 
         const link = dependencies[data.parent][data.child]
 
         $modal.find('#dependencyCallCount').text(link.callCount);
         $modal.find('#dependencyErrorCount').text(link.errorCount || 0);
+        $modal.find('#dependencyErrorRate').text(link.errorRate || '0%');
+        $modal.find('#dependencyTp90').text(link.tp90 || '0');
+        $modal.find('#dependencyTp99').text(link.tp99 || '0');
+        $modal.find('#dependencyTp999').text(link.tp999 || '0');
+        $modal.find('#dependencyTp9999').text(link.tp9999 || '0');
 
         $('#serviceModal').modal('hide');
         $modal.modal('show');

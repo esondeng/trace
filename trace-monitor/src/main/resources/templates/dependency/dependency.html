@@ -5,21 +5,33 @@
         <li><a href="javascript:void(0);" class="active">依赖分析</a></li>
     </ol>
 
-    <div class="panel panel-default" style="width: 70%;">
+    <div class="panel panel-default" style="width: 80%;">
         <div class="panel-body">
             <form id="dependency-query-form" class="form-horizontal" role="form">
                 <div class="form-row">
-                    <div class="col-md-4 mb-4">
+                    <div class="col-md-3">
+                        <label for="applicationName"><span style="color: red;float: left;">*</span>应用名称:</label>
+                        <div>
+                            <select id="applicationName" name="applicationName" class="form-control">
+                                <option value="" selected="selected">请选择</option>
+                                <div th:each="applicationName : ${applicationNames}">
+                                    <option th:value="${applicationName}" th:text="${applicationName}"></option>
+                                </div>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <label for="startTime">开始时间:</label>
                         <input class="form-control" id="startTime" name="startTime" type="text">
                     </div>
-                    <div class="col-md-4 mb-4">
-                        <label for="endTime">结束时间:<p style="float: right;margin-bottom: 0px;color: red">(注意:时间段只能在同一天)</p>
+                    <div class="col-md-3">
+                        <label for="endTime">结束时间:<p style="float: right;margin-bottom: 0px;color: red">
+                            (注意:时间段只能在同一天)</p>
                         </label>
                         <input class="form-control" id="endTime" name="endTime" type="text">
                     </div>
-                    <div class="col-md-3 mb-3">
-                        <button type="button" class="btn btn-default js-dependency-analyze" style="margin-top: 12%;margin-left:-3.5%;">
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-default js-dependency-analyze" style="margin-top: 40%;margin-left:-3.5%;">
                             依赖分析
                         </button>
                     </div>
@@ -29,6 +41,34 @@
     </div>
 
     <div id="service-data-modal-container">
+        <div class="modal" id="serviceModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h3 class="modal-title">
+                            <span id="serviceModalTitle">[title]</span>
+                        </h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h4>Used by</h4>
+                                    <ul id="serviceUsedByList"></ul>
+                                </div>
+                                <div class="col-sm-6">
+                                    <h4>Uses</h4>
+                                    <ul id="serviceUsesList"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="modal" id="dependencyModal" tabindex="-1">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -44,20 +84,40 @@
                     <div class="modal-body">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Key</th>
-                                    <th>Value</th>
-                                </tr>
+                            <tr>
+                                <th>Key</th>
+                                <th>Value</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>调用次数</td>
-                                    <td id="dependencyCallCount">?</td>
-                                </tr>
-                                <tr>
-                                    <td>失败次数</td>
-                                    <td id="dependencyErrorCount">?</td>
-                                </tr>
+                            <tr>
+                                <td>调用次数</td>
+                                <td id="dependencyCallCount">?</td>
+                            </tr>
+                            <tr>
+                                <td>失败次数</td>
+                                <td id="dependencyErrorCount">?</td>
+                            </tr>
+                            <tr>
+                                <td>失败率</td>
+                                <td id="dependencyErrorRate">?</td>
+                            </tr>
+                            <tr>
+                                <td>Tp90</td>
+                                <td id="dependencyTp90">?</td>
+                            </tr>
+                            <tr>
+                                <td>Tp99</td>
+                                <td id="dependencyTp99">?</td>
+                            </tr>
+                            <tr>
+                                <td>Tp999</td>
+                                <td id="dependencyTp999">?</td>
+                            </tr>
+                            <tr>
+                                <td>Tp9999</td>
+                                <td id="dependencyTp9999">?</td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -66,7 +126,7 @@
         </div>
     </div>
 
-    <div class = "css-monitor-main-content">
+    <div class="css-monitor-main-content">
         <div id="dependency-container">
             <svg width="100%" height="4000" class="rootSvg">
             </svg>
@@ -74,8 +134,8 @@
     </div>
 </div>
 
-<script  th:src="@{/static/plugins/d3/js/d3.min.js}"></script>
-<script  th:src="@{/static/plugins/dagre-d3/js/dagre-d3.min.js}"></script>
-<script  th:src="@{/static/js/dependency.js}"></script>
+<script th:src="@{/static/plugins/d3/js/d3.min.js}"></script>
+<script th:src="@{/static/plugins/dagre-d3/js/dagre-d3.min.js}"></script>
+<script th:src="@{/static/js/dependency.js}"></script>
 
 </html>
