@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.eson.common.core.util.Funs;
 import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
@@ -25,7 +26,6 @@ import com.trace.core.manager.TraceManager;
  * @since 2021/01/06
  */
 public class TraceFilter implements Filter {
-
     private static final String EXCLUDE_URL_REGEX = "^/.*\\.(css|js|gif|dmp|png|jpg)$";
     private static final Pattern EXCLUDE_PATTERN = Pattern.compile(EXCLUDE_URL_REGEX);
 
@@ -91,7 +91,7 @@ public class TraceFilter implements Filter {
             return true;
         }
         else {
-            return excludePrefixes.stream().anyMatch(path::startsWith);
+            return Funs.anyMatch(excludePrefixes, path::startsWith);
         }
     }
 }
