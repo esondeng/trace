@@ -47,11 +47,15 @@ $(function () {
     function searchCallChains() {
 
         $("#call-chain-results").html(loadingHtml);
-        $.post(
+        $.ajax(
             "/trace/search.html",
-            $("#callChainSearchForm").serialize(),
-            function (result) {
-                $("#call-chain-results").html(result);
+            {
+                type: 'GET',
+                async: false,
+                data: $("#callChainSearchForm").serialize(),
+                success: data => {
+                    $("#call-chain-results").html(data);
+                }
             }
         );
     }

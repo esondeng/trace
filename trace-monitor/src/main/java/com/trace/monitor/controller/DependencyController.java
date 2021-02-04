@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eson.common.web.WebResponse;
+import com.trace.monitor.query.DependencyQuery;
 import com.trace.monitor.vo.DependencyVo;
 
 /**
@@ -17,7 +18,7 @@ import com.trace.monitor.vo.DependencyVo;
 public class DependencyController {
 
     @GetMapping("/dependencies.html")
-    public WebResponse<List<DependencyVo>> index() {
+    public WebResponse<List<DependencyVo>> analyze(DependencyQuery dependencyQuery) {
         List<DependencyVo> list = new ArrayList<>();
         DependencyVo vo = new DependencyVo();
         vo.setParent("product-dubbo-consumer");

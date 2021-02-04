@@ -41,16 +41,19 @@ $(function () {
     let dependencies = {};
 
     function getDependency() {
-        let url = '/dependencies.html';
-        $.ajax(url, {
-            type: 'GET',
-            dataType: 'json',
-            success: data => {
-                const links = data.data;
-                buildServiceData(links);
-                dependencyDataReceived(links);
+        $.ajax(
+            "/dependencies.html",
+            {
+                type: 'GET',
+                async: false,
+                data: $("#dependencyQueryForm").serialize(),
+                success: data => {
+                    const links = data.data;
+                    buildServiceData(links);
+                    dependencyDataReceived(links);
+                }
             }
-        });
+        );
     }
 
     function buildServiceData(links) {
@@ -327,10 +330,10 @@ $(function () {
         $modal.find('#dependencyCallCount').text(link.callCount);
         $modal.find('#dependencyErrorCount').text(link.errorCount || 0);
         $modal.find('#dependencyErrorRate').text(link.errorRate || '0%');
-        $modal.find('#dependencyTp90').text(link.tp90 || '0');
-        $modal.find('#dependencyTp99').text(link.tp99 || '0');
-        $modal.find('#dependencyTp999').text(link.tp999 || '0');
-        $modal.find('#dependencyTp9999').text(link.tp9999 || '0');
+        $modal.find('#dependencyTp90').text((link.tp90 || '0') + 'ms');
+        $modal.find('#dependencyTp99').text((link.tp99 || '0') + 'ms');
+        $modal.find('#dependencyTp999').text((link.tp999 || '0') + 'ms');
+        $modal.find('#dependencyTp9999').text((link.tp9999 || '0') + 'ms');
 
         $('#serviceModal').modal('hide');
         $modal.modal('show');
