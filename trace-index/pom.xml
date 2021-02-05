@@ -12,6 +12,17 @@
     <artifactId>trace-index</artifactId>
     <dependencies>
         <dependency>
+            <groupId>com.eson</groupId>
+            <artifactId>common-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.trace</groupId>
+            <artifactId>trace-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
         </dependency>

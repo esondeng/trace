@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
@@ -49,6 +50,10 @@ public class SpanVo {
 
     public static SpanVo of(IndexSpan span, IndexSpan rootSpan) {
         SpanVo vo = JsonUtils.convertValue(span, SpanVo.class);
+        if (StringUtils.isNotBlank(span.getErrorMessage())) {
+            vo.setErrorMessages(JsonUtils.parseList(span.getErrorMessage(), String.class));
+        }
+
         vo.setStatus(CollectionUtils.isEmpty(vo.getErrorMessages()) ? SpanStatus.SUCCESS.message() : SpanStatus.FAILED.message());
 
         if (rootSpan != null) {

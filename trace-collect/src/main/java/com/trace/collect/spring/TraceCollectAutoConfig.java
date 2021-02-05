@@ -12,7 +12,7 @@ import com.trace.collect.aop.TraceAspect;
  * @since 2021/02/04
  */
 @Configuration
-@PropertySource("classpath:config/${spring.profiles.active:dev}/bundle.properties")
+@PropertySource("classpath:config/${spring.profiles.active:dev}/trace.properties")
 public class TraceCollectAutoConfig {
 
     /**

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
+import com.eson.common.core.util.JsonUtils;
 import com.eson.common.web.vo.PageVo;
 import com.trace.common.domain.IndexSpan;
 import com.trace.monitor.query.TraceQuery;
@@ -79,7 +80,7 @@ public class TraceManager {
 
         span3.setStart(1611713548374L);
         span3.setEnd(1611713551176L);
-        span3.setErrorMessages(Arrays.asList("time out", "dubbo rpc time out"));
+        span3.setErrorMessage(JsonUtils.toJson(Arrays.asList("time out", "dubbo rpc time out")));
         span3.setCost(2802);
         spanVos.add(SpanVo.of(span1, null));
         spanVos.add(SpanVo.of(span2, span1));

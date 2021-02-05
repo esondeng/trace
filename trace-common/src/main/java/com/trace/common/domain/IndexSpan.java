@@ -1,10 +1,9 @@
 package com.trace.common.domain;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import com.eson.common.core.util.JsonUtils;
 import com.trace.core.Span;
 
 import lombok.Getter;
@@ -33,9 +32,13 @@ public class IndexSpan {
 
     private String serviceType;
 
-    private List<String> errorMessages;
+    private String errorMessage;
 
     private Map<String, String> tagMap;
+
+    public String generateIndexId() {
+        return traceId + "." + id;
+    }
 
     public static IndexSpan of(Span span) {
         IndexSpan indexSpan = new IndexSpan();
@@ -56,7 +59,7 @@ public class IndexSpan {
         indexSpan.setServiceType(span.getServiceType());
 
         if (span.getErrorMessages() != null) {
-            indexSpan.setErrorMessages(new ArrayList<>(span.getErrorMessages()));
+            indexSpan.setErrorMessage(JsonUtils.toJson(span.getErrorMessages()));
         }
 
         if (span.getTagMap() != null) {
