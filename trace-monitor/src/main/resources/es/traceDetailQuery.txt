@@ -1,0 +1,8 @@
+{
+  "query": {
+    "terms": {
+      "traceId": "${traceId}"
+    }
+  },
+  "size": 2000
+}
