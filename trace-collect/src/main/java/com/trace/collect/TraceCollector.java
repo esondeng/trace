@@ -95,7 +95,6 @@ public class TraceCollector {
                 total.addAll(currentRoundList);
 
                 if (!upload(total)) {
-                    log.warn("Failed to upload spans in retryList, the size of spans is {}", retryList.size());
                     retryList.clear();
                     retryList.addAll(currentRoundList);
                 }
