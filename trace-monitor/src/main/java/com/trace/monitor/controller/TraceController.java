@@ -21,13 +21,13 @@ public class TraceController {
     @RequestMapping(value = "/trace/search.html")
     public String traceSearch(Model model, TraceQuery traceQuery) {
         traceQuery.validate();
-        model.addAttribute("data", traceManager.search(traceQuery));
+        model.addAttribute("data", traceManager.getPageVoByQuery(traceQuery));
         return "trace/ajax/trace-list";
     }
 
     @RequestMapping(value = "/trace/detail.html")
     public String getTraceDetail(Model model, String traceId) {
-        model.addAttribute("data", traceManager.getTraceDetailByTraceId(traceId));
+        model.addAttribute("data", traceManager.getDetailByTraceId(traceId));
         return "trace/trace-detail";
     }
 }

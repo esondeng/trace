@@ -1,3 +1,9 @@
 {
-
+	"query" : {
+        "bool" : {
+            "must":[${conditions}]
+        }
+    },
+    "from": ${offset},
+    "size": ${pageSize}
 }

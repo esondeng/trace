@@ -14,7 +14,7 @@ public class TraceConstants {
     /**
      * 第一个span id
      */
-    public static final String HEAD_SPAN_ID = "0";
+    public static final String ROOT_SPAN_ID = "0";
 
     public static final String CONSUMER_CONTEXT = "consumerContext";
 

@@ -177,7 +177,7 @@ public class Span {
             span.setServiceType(serviceType.message());
             span.setTraceId(TraceUtils.buildTranceId());
 
-            span.setId(TraceConstants.HEAD_SPAN_ID);
+            span.setId(TraceConstants.ROOT_SPAN_ID);
             span.setDepth(1);
 
             fillServerInfo(span);
@@ -212,35 +212,6 @@ public class Span {
         span.setIp(parentSpan.getIp());
         span.setClientIp(parentSpan.getClientIp());
         span.setClientAppKey(parentSpan.getClientAppKey());
-    }
-
-
-    @Override
-    public String toString() {
-        String content = "id = " + id
-                + " serviceType = " + serviceType
-                + " name = " + name
-                + " traceId = " + traceId
-                + " clientAppKey = " + clientAppKey
-                + " clientIp = " + clientIp
-                + " appKey = " + appKey
-                + " ip = " + ip
-                + " start = " + start
-                + " end = " + end
-                + " cost = " + cost;
-
-        if (tagMap != null && !tagMap.isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            tagMap.forEach((k, v) -> sb.append(" " + k + " = " + v));
-            content = content + sb.toString();
-        }
-
-        if (errorMessages != null && !errorMessages.isEmpty()) {
-            return content + " error = " + String.join(";", errorMessages);
-        }
-        else {
-            return content;
-        }
     }
 
     public String getId() {
