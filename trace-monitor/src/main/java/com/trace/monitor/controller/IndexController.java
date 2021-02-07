@@ -21,14 +21,14 @@ public class IndexController {
 
     @RequestMapping("/trace/trace.html")
     public String callChain(Model model) {
-        model.addAttribute("applicationNames", Arrays.asList("product-dubbo-consumer", "product-dubbo-provider"));
+        model.addAttribute("applicationNames", Arrays.asList("dubbo-consumer-demo", "dubbo-provider-demo"));
         return "/trace/trace";
     }
 
 
     @RequestMapping("/dependency/dependency.html")
     public String dependency(Model model) {
-        model.addAttribute("applicationNames", Arrays.asList("product-dubbo-consumer", "product-dubbo-provider"));
+        model.addAttribute("applicationNames", Arrays.asList("dubbo-consumer-demo", "dubbo-provider-demo"));
         return "/dependency/dependency";
     }
 
