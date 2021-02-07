@@ -1,39 +1,36 @@
 {
   "settings": {
-    "number_of_shards": 10,
-    "number_of_replicas": 1,
-    "index.refresh_interval": "1s",
-    "index.translog.flush_threshold_size": "1000m"
-  },
-  "index": {
-    "max_result_window": 100000000
+    "index": {
+      "number_of_shards": 10,
+      "number_of_replicas": 1,
+      "refresh_interval": "1s",
+      "translog.flush_threshold_size": "1000m"
+    }
   },
   "mappings": {
-    "span": {
-      "dynamic_templates": [
-        {
-          "strings": {
-            "match_mapping_type": "string",
-            "match": "*",
-            "mapping": {
-              "type": "keyword"
-            }
+    "dynamic_templates": [
+      {
+        "strings": {
+          "match_mapping_type": "string",
+          "match": "*",
+          "mapping": {
+            "type": "keyword"
           }
         }
-      ],
-      "properties": {
-        "start": {
-          "type": "long"
-        },
-        "end": {
-          "type": "long"
-        },
-        "cost": {
-          "type": "long"
-        },
-        "depth": {
-          "type": "integer"
-        }
+      }
+    ],
+    "properties": {
+      "start": {
+        "type": "long"
+      },
+      "end": {
+        "type": "long"
+      },
+      "cost": {
+        "type": "long"
+      },
+      "depth": {
+        "type": "long"
       }
     }
   }

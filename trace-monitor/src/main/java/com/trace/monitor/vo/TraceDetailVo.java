@@ -10,6 +10,8 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import com.eson.common.core.constants.Constants;
 import com.eson.common.core.util.Funs;
+import com.eson.common.core.util.JsonUtils;
+import com.trace.common.domain.IndexSpan;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,11 +39,12 @@ public class TraceDetailVo {
     private List<SpanVo> spanVos;
 
 
-    public static TraceDetailVo of(List<SpanVo> spanVos) {
-        if (CollectionUtils.isEmpty(spanVos)) {
+    public static TraceDetailVo of(List<IndexSpan> indexSpans) {
+        if (CollectionUtils.isEmpty(indexSpans)) {
             return new TraceDetailVo();
         }
         else {
+            List<SpanVo> spanVos = JsonUtils.convertList(indexSpans, SpanVo.class);
             TraceDetailVo vo = new TraceDetailVo();
             spanVos.sort(Comparator.comparing(SpanVo::getId));
 

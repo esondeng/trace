@@ -1,8 +1,12 @@
 {
-  "query": {
-    "terms": {
-      "traceId": "${traceId}"
-    }
-  },
-  "size": 2000
+	"query" : {
+        "constant_score" : {
+            "filter" : {
+                "term" : {
+                    "traceId" : "${traceId}"
+                }
+            }
+        }
+    },
+    "size": 2000
 }

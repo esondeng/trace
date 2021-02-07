@@ -27,7 +27,7 @@ public class TraceController {
 
     @RequestMapping(value = "/trace/detail.html")
     public String getTraceDetail(Model model, String traceId) {
-        model.addAttribute("data", traceManager.getSpanVosByTraceId(traceId));
+        model.addAttribute("data", traceManager.getTraceDetailByTraceId(traceId));
         return "trace/trace-detail";
     }
 }

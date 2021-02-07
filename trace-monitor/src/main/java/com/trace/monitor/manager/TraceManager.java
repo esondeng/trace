@@ -1,18 +1,15 @@
 package com.trace.monitor.manager;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.eson.common.core.util.JsonUtils;
 import com.eson.common.web.vo.PageVo;
 import com.trace.common.domain.IndexSpan;
+import com.trace.monitor.es.EsClient;
 import com.trace.monitor.query.TraceQuery;
-import com.trace.monitor.vo.SpanVo;
 import com.trace.monitor.vo.TraceDetailVo;
 import com.trace.monitor.vo.TraceVo;
 
@@ -22,6 +19,9 @@ import com.trace.monitor.vo.TraceVo;
  */
 @Component
 public class TraceManager {
+    @Autowired
+    private EsClient esClient;
+
     public PageVo<TraceVo> search(TraceQuery traceQuery) {
         List<TraceVo> traceVos = new ArrayList<>();
         IndexSpan indexSpan = new IndexSpan();
@@ -35,56 +35,8 @@ public class TraceManager {
         return PageVo.of(traceQuery, 1, traceVos);
     }
 
-    public TraceDetailVo getSpanVosByTraceId(String traceId) {
-        List<SpanVo> spanVos = new ArrayList<>();
-        IndexSpan span1 = new IndexSpan();
-        span1.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span1.setId("0");
-        span1.setDepth(1);
-        span1.setName("ProductController.test");
-        span1.setServiceType("http");
-        span1.setAppKey("dubbo-consumer-demo");
-        span1.setIp("172.25.166.99");
-
-        Map<String, String> tagMap = new HashMap<>();
-        tagMap.put("httpPath", "/test/dubbo/test");
-        span1.setTagMap(tagMap);
-
-        span1.setStart(1611713548329L);
-        span1.setEnd(1611713551201L);
-        span1.setCost(2872);
-
-
-        IndexSpan span2 = new IndexSpan();
-        span2.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span2.setId("0.1");
-        span2.setDepth(2);
-        span2.setName("Test.test");
-        span2.setServiceType("inner-call");
-        span2.setAppKey("dubbo-consumer-demo");
-        span2.setIp("172.25.166.99");
-
-        span2.setStart(1611713548354L);
-        span2.setEnd(1611713548363L);
-        span2.setCost(9);
-
-        IndexSpan span3 = new IndexSpan();
-        span3.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span3.setId("0.2");
-        span3.setDepth(2);
-        span3.setName("ProductService.sayHello");
-        span3.setServiceType("dubbo-c");
-        span3.setAppKey("dubbo-consumer-demo");
-        span3.setIp("172.25.166.99");
-
-        span3.setStart(1611713548374L);
-        span3.setEnd(1611713551176L);
-        span3.setErrorMessage(JsonUtils.toJson(Arrays.asList("time out", "dubbo rpc time out")));
-        span3.setCost(2802);
-        spanVos.add(SpanVo.of(span1, null));
-        spanVos.add(SpanVo.of(span2, span1));
-        spanVos.add(SpanVo.of(span3, span1));
-
-        return TraceDetailVo.of(spanVos);
+    public TraceDetailVo getTraceDetailByTraceId(String traceId) {
+        List<IndexSpan> indexSpans = esClient.getSpansByTraceId(traceId);
+        return TraceDetailVo.of(indexSpans);
     }
 }

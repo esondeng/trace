@@ -70,16 +70,16 @@ public class KafkaEsConsumer {
     public void init() {
         log.info("启动kafka监听");
 
-        Properties props = new Properties();
-        props.put("bootstrap.servers", brokerList);
-        props.put("group.id", groupId);
-        props.put("enable.auto.commit", "false");
-        props.put("auto.commit.interval.ms", "1000");
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        consumer = new KafkaConsumer<>(props);
-
-        run();
+//        Properties props = new Properties();
+//        props.put("bootstrap.servers", brokerList);
+//        props.put("group.id", groupId);
+//        props.put("enable.auto.commit", "false");
+//        props.put("auto.commit.interval.ms", "1000");
+//        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+//        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+//        consumer = new KafkaConsumer<>(props);
+//
+//        run();
     }
 
     private void run() {
