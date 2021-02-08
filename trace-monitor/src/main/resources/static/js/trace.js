@@ -41,19 +41,53 @@ $(function () {
     initDateComponent();
 
 
-
     /**
      * 查询调用链信息(提交调用链查询条件区域表单)
      *
      */
     function searchCallChains() {
-        $("#callChainSearchForm").validate({
-            messages: {
-                "applicationName": {
-                    "required": "应用名称必填"
-                }
+        $("#trace-search-alert").hide();
+
+        const applicationName = $("#applicationName").val();
+        const traceId = $("#traceId").val();
+
+        if (applicationName === '' && traceId === '') {
+            $("#trace-error-container").text("不使用精确查找Trace Id的情况下，应用名称必填");
+            $("#trace-search-alert").show();
+            return false;
+        }
+
+        const startTime = $("#startTime").val();
+        const endTime = $("#endTime").val();
+
+        if (startTime !== '' && endTime === '') {
+            $("#trace-error-container").text("开始时间和结束时间需都填");
+            $("#trace-search-alert").show();
+            return false;
+        }
+
+        if (startTime === '' && endTime !== '') {
+            $("#trace-error-container").text("开始时间和结束时间需都填");
+            $("#trace-search-alert").show();
+            return false;
+        }
+
+        if (startTime !== '' && endTime !== '') {
+            const startDay = startTime.substring(0, 11);
+            const endDay = endTime.substring(0, 11);
+
+            if (startTime > endTime) {
+                $("#trace-error-container").text("开始时间不能大于结束时间");
+                $("#trace-search-alert").show();
+                return false;
             }
-        }).valid();
+
+            if (startDay !== endDay) {
+                $("#trace-error-container").text("开始时间和结束时间只能选同一天");
+                $("#trace-search-alert").show();
+                return false;
+            }
+        }
 
         $("#call-chain-results").html(loadingHtml);
         $.ajax(
@@ -72,5 +106,10 @@ $(function () {
     // 查询调用链
     $(".js-call-chain-search").on("click", function () {
         searchCallChains();
+    });
+
+    // 查询调用链错误信息隐藏
+    $(".js-close-trace-alert").on("click", function () {
+        $("#trace-search-alert").hide();
     });
 });
