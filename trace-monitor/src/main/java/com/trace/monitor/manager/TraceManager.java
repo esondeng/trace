@@ -6,7 +6,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +20,9 @@ import com.eson.common.core.util.Funs;
 import com.eson.common.core.util.JsonUtils;
 import com.eson.common.core.util.ResourceUtils;
 import com.eson.common.core.util.TimeUtils;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.trace.common.domain.IndexSpan;
 import com.trace.monitor.es.EsClient;
 import com.trace.monitor.query.TraceQuery;
@@ -29,6 +35,7 @@ import com.trace.monitor.vo.TraceVo;
  */
 @Component
 public class TraceManager {
+    private static final String APP_KEYS_QUERY = ResourceUtils.getResource("/es/appKeysQuery.txt");
     private static final String TRACE_QUERY = ResourceUtils.getResource("/es/traceQuery.txt");
     private static final String TRACE_IDS_QUERY = ResourceUtils.getResource("/es/traceIdsQuery.txt");
     private static final String TRACE_DETAIL_QUERY = ResourceUtils.getResource("/es/traceDetailQuery.txt");
@@ -38,8 +45,30 @@ public class TraceManager {
     private static final String LTE_RANGE_CLAUSE = "{\"range\":{\"${name}\":{\"lte\":\"${value}\"}}}";
     private static final String MATCH_RANGE_CLAUSE = "{\"match\":{\"${name}\":\"${value}\"}}";
 
+    private static final String APP_KEYS_CACHE_KEY = "appKeys";
+
     @Autowired
     private EsClient esClient;
+
+    private LoadingCache<String, List<String>> appKeysCache;
+
+    @PostConstruct
+    public void init() {
+        appKeysCache = CacheBuilder.newBuilder()
+                .expireAfterWrite(1, TimeUnit.DAYS)
+                .maximumSize(2000)
+                .build(new CacheLoader<String, List<String>>() {
+                    @Override
+                    public List<String> load(String key) throws Exception {
+                        String result = esClient.query(APP_KEYS_QUERY);
+                        return JsonUtils.getValues(result, "aggregations.appKeys.buckets.key", String.class);
+                    }
+                });
+    }
+
+    public List<String> getAppKeys() {
+        return appKeysCache.getUnchecked(APP_KEYS_CACHE_KEY);
+    }
 
     public List<TraceVo> getTraceVosByQuery(TraceQuery traceQuery) {
         String query = buildEsQuery(traceQuery);

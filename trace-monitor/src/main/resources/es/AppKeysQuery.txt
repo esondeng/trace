@@ -1,0 +1,11 @@
+{
+  "size":0,
+  "aggs":{
+    "appKeys":{
+      "terms":{
+        "field":"appKey",
+        "size":100
+      }
+    }
+  }
+}
