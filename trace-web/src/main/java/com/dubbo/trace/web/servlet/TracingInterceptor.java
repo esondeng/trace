@@ -26,6 +26,7 @@ public class TracingInterceptor implements HandlerInterceptor {
             if (span != null) {
                 // 入口处name记成了path
                 span.putTag(TraceConstants.HTTP_PATH_TAG_KEY, span.getName());
+                span.putTag(TraceConstants.HTTP_URL_TAG_KEY, request.getRequestURI());
                 span.putTag(TraceConstants.HTTP_METHOD_TAG_KEY, request.getMethod());
 
                 Method method = handlerMethod.getMethod();

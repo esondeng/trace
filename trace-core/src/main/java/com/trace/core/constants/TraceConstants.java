@@ -24,6 +24,8 @@ public class TraceConstants {
 
     public static final String HTTP_PATH_TAG_KEY = "httpPath";
 
+    public static final String HTTP_URL_TAG_KEY = "httpUrl";
+
     public static final String HTTP_METHOD_TAG_KEY = "method";
 
     public static final String REQUEST_TAG_KEY = "request";
