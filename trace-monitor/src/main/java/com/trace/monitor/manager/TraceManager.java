@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,7 @@ public class TraceManager {
     private static final String TERM_CLAUSE = "{\"term\":{\"${name}\":\"${value}\"}}";
     private static final String GTE_RANGE_CLAUSE = "{\"range\":{\"${name}\":{\"gte\":\"${value}\"}}}";
     private static final String LTE_RANGE_CLAUSE = "{\"range\":{\"${name}\":{\"lte\":\"${value}\"}}}";
+    private static final String MATCH_RANGE_CLAUSE = "{\"match\":{\"${name}\":\"${value}\"}}";
 
     @Autowired
     private EsClient esClient;
@@ -78,35 +80,60 @@ public class TraceManager {
             return String.join(",", clauseList);
         }
         else {
-            clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "appKey", "value", traceQuery.getApplicationName()));
-
-            if (StringUtils.isNotBlank(traceQuery.getName())) {
-                clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "name", "value", traceQuery.getName()));
-            }
-
-            if (StringUtils.isNotBlank(traceQuery.getIp())) {
-                clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "ip", "value", traceQuery.getIp()));
-            }
-
-            if (traceQuery.getMinCost() != null && traceQuery.getMinCost() > 0L) {
-                clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "minCost", "value", traceQuery.getMinCost().toString()));
-            }
-
-            if (traceQuery.getMaxCost() != null && traceQuery.getMaxCost() > 0L) {
-                clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "maxCost", "value", traceQuery.getMaxCost().toString()));
-            }
-
-            if (StringUtils.isNotBlank(traceQuery.getStartTime())) {
-                Date date = TimeUtils.parseAsDate(traceQuery.getStartTime(), TimeUtils.DATE_TIME);
-                clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "start", "value", String.valueOf(date.getTime())));
-            }
-
-            if (StringUtils.isNotBlank(traceQuery.getEndTime())) {
-                Date date = TimeUtils.parseAsDate(traceQuery.getEndTime(), TimeUtils.DATE_TIME);
-                clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(date.getTime())));
-            }
-
+            fillClauseList(clauseList, traceQuery);
             return String.join(",", clauseList);
+        }
+    }
+
+    private void fillClauseList(List<String> clauseList, TraceQuery traceQuery) {
+        // 非traceId精确查找，appKey必传
+        clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "appKey", "value", traceQuery.getApplicationName()));
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getName()),
+                () -> clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "name", "value", traceQuery.getName()))
+        );
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getIp()),
+                () -> clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "ip", "value", traceQuery.getIp()))
+        );
+
+        addCondition(
+                () -> traceQuery.getMinCost() != null && traceQuery.getMinCost() > 0L,
+                () -> clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "minCost", "value", traceQuery.getMinCost().toString()))
+        );
+
+        addCondition(
+                () -> traceQuery.getMaxCost() != null && traceQuery.getMaxCost() > 0L,
+                () -> clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "maxCost", "value", traceQuery.getMaxCost().toString()))
+        );
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getExceptionInfo()),
+                () -> clauseList.add(ResourceUtils.replace(MATCH_RANGE_CLAUSE, "name", "errorMessage", "value", traceQuery.getExceptionInfo()))
+        );
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getStartTime()),
+                () -> {
+                    Date date = TimeUtils.parseAsDate(traceQuery.getStartTime(), TimeUtils.DATE_TIME);
+                    clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "start", "value", String.valueOf(date.getTime())));
+                }
+        );
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getEndTime()),
+                () -> {
+                    Date date = TimeUtils.parseAsDate(traceQuery.getEndTime(), TimeUtils.DATE_TIME);
+                    clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(date.getTime())));
+                }
+        );
+    }
+
+    private void addCondition(Supplier<Boolean> supplier, Runnable runnable) {
+        if (supplier.get()) {
+            runnable.run();
         }
     }
 
