@@ -1,5 +1,6 @@
 # 基础设施
-1. elasticsearch 7.10.2
+##. elasticsearch 7.10.2
 mapping设置语法更新
+put http://localhost:9200/trace?pretty 设置mapping
 
-2. Nginx + lua往kafka发消息
+##. Nginx + lua往kafka发消息
