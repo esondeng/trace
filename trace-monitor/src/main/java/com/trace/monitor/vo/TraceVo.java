@@ -26,6 +26,7 @@ public class TraceVo {
 
     public static TraceVo of(IndexSpan indexSpan) {
         TraceVo vo = new TraceVo();
+        vo.setName(indexSpan.getName());
         vo.setTraceId(indexSpan.getTraceId());
         vo.setStart(TimeUtils.formatAsDateTime(new Date(indexSpan.getStart())));
         vo.setCost(indexSpan.getCost());

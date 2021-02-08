@@ -11,7 +11,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="trace : ${data.list}">
+    <tr th:each="trace : ${data}">
         <td class="css-table-text" th:text="${trace.name}"></td>
         <td class="css-table-text"><a class = "trace-list-a" th:text="${trace.traceId}" th:attr="data-trace-id=${trace.traceId}" href = "javascript:void(0);"></a></td>
         <td class="css-table-text" th:text="${trace.start}"></td>
@@ -20,14 +20,5 @@
     </tr>
     </tbody>
 </table>
-<ul class="pagination" style="margin-left:82%;">
-    <li><a href="#">&laquo;</a></li>
-    <li class="active"><a href="#">1</a></li>
-    <li class="disabled"><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li><a href="#">&raquo;</a></li>
-</ul>
 <script th:src="@{/static/js/trace-list.js}"></script>
 </html>

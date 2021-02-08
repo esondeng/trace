@@ -53,8 +53,8 @@
                     <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a></li>
                 </ul>
 
-                <div class='trace-details services' th:each="appCountVo : ${data.appKeyCountVos}">
-                    <span class='label label-default service-filter-label service-tag-filtered' th:text="${appCountVo.appKey} + ' x ' + ${appCountVo.count}"></span>
+                <div class='trace-details services'>
+                    <span class='label label-default service-filter-label service-tag-filtered' th:each="appCountVo : ${data.appKeyCountVos}" th:text="${appCountVo.appKey} + ' x ' + ${appCountVo.count}"></span>
                 </div>
             </div>
         </div>
@@ -131,14 +131,6 @@
                                             <td>类型</td>
                                             <td th:text="${spanVo.serviceType}"></td>
                                         </tr>
-                                        <div th:unless="${#maps.isEmpty(spanVo.tagMap)}">
-                                            <div>
-                                                <tr th:each="item : ${spanVo.tagMap}">
-                                                    <td th:text="${item.key}"></td>
-                                                    <td th:text="${item.value}"></td>
-                                                </tr>
-                                            </div>
-                                        </div>
                                         <tr>
                                             <td>Client AppKey</td>
                                             <td th:text="${spanVo.clientAppKey}"></td>
@@ -167,6 +159,14 @@
                                             <td>耗时</td>
                                             <td th:text="${spanVo.cost} + 'ms'"></td>
                                         </tr>
+                                        <div th:unless="${#maps.isEmpty(spanVo.tagMap)}">
+                                            <div>
+                                                <tr th:each="item : ${spanVo.tagMap}">
+                                                    <td th:text="${item.key}"></td>
+                                                    <td th:text="${item.value}"></td>
+                                                </tr>
+                                            </div>
+                                        </div>
                                     </tbody>
                                 </table>
 

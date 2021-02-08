@@ -20,8 +20,7 @@ public class TraceController {
 
     @RequestMapping(value = "/trace/search.html")
     public String traceSearch(Model model, TraceQuery traceQuery) {
-        traceQuery.validate();
-        model.addAttribute("data", traceManager.getPageVoByQuery(traceQuery));
+        model.addAttribute("data", traceManager.getTraceVosByQuery(traceQuery));
         return "trace/ajax/trace-list";
     }
 

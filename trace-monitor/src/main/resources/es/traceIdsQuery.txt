@@ -1,0 +1,18 @@
+{
+	"query": {
+		"bool": {
+		    "must": [
+		        {
+		            "bool":{
+		                "should": [
+                            ${conditions}
+                        ]
+		            }
+		        },
+		        {
+		            "term": {"id":"0"}
+		        }
+		    ]
+		}
+	}
+}

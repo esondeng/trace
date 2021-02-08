@@ -10,8 +10,15 @@
         <div class="panel-body">
             <form class="form-horizontal" role="form" id="callChainSearchForm">
                 <div class="form-row">
+                    <div class="col-md-10" style="width:85.3%">
+                        <label for="traceId">Trace Id:</label>
+                        <input class="form-control" id="traceId" name="traceId" type="text">
+                    </div>
+                </div>
+
+                <div class="form-row">
                     <div class="col-md-3">
-                        <label for="applicationName"><span style="color: red;float: left;">*</span>应用名称:</label>
+                        <label for="applicationName">应用名称:</label>
                         <div>
                             <select id="applicationName" name="applicationName" class="form-control">
                                 <option value="" selected="selected">请选择</option>
@@ -46,7 +53,7 @@
                         <span style="float: left;margin-top: 30px;margin-left: -20px">~</span>
                     </div>
                     <div class="col-md-2 mb-2">
-                        <input type="text" value="N/A" class="form-control" style="margin-left: -63%;margin-top: 25px" id="maxCost">
+                        <input type="text" placeholder="上限" class="form-control" style="margin-left: -63%;margin-top: 25px" id="maxCost">
                     </div>
                     <div class="col-md-5 mb-5" style="margin-left: -8.5%">
                         <label for="exceptionInfo">异常信息:</label>

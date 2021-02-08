@@ -1,9 +1,10 @@
 package com.trace.monitor.manager;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.eson.common.web.vo.PageVo;
 import com.trace.monitor.BaseTest;
 import com.trace.monitor.query.TraceQuery;
 import com.trace.monitor.vo.TraceDetailVo;
@@ -26,10 +27,9 @@ public class TraceManagerTest extends BaseTest {
     @Test
     void testQuery() {
         TraceQuery traceQuery = new TraceQuery();
-        traceQuery.validate();
 
         traceQuery.setApplicationName("dubbo-consumer-demo");
-        PageVo<TraceVo> tracePageVo = traceManager.getPageVoByQuery(traceQuery);
-        System.out.println(tracePageVo.getTotal());
+        List<TraceVo> traceVoList = traceManager.getTraceVosByQuery(traceQuery);
+        System.out.println(traceVoList.size());
     }
 }

@@ -4,6 +4,13 @@
             "must":[${conditions}]
         }
     },
-    "from": ${offset},
-    "size": ${pageSize}
+    "size":0,
+    "aggs":{
+        "traceIds":{
+            "terms":{
+                "field": "traceId",
+                "size": ${resultCount}
+            }
+        }
+    }
 }
