@@ -10,7 +10,6 @@ import org.apache.commons.collections4.CollectionUtils;
 
 import com.eson.common.core.constants.Constants;
 import com.eson.common.core.util.Funs;
-import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
 
 import lombok.Getter;
@@ -44,9 +43,13 @@ public class TraceDetailVo {
             return new TraceDetailVo();
         }
         else {
-            List<SpanVo> spanVos = JsonUtils.convertList(indexSpans, SpanVo.class);
+            indexSpans.sort(Comparator.comparing(IndexSpan::getId));
+            IndexSpan rootSpan = indexSpans.get(0);
+
+            List<SpanVo> spanVos = Funs.map(indexSpans, t -> SpanVo.of(t, rootSpan));
+            removeSameAppInfo(spanVos);
+
             TraceDetailVo vo = new TraceDetailVo();
-            spanVos.sort(Comparator.comparing(SpanVo::getId));
 
             SpanVo rootSpanVo = spanVos.get(0);
             vo.setTraceId(rootSpanVo.getTraceId());
@@ -70,7 +73,23 @@ public class TraceDetailVo {
 
             return vo;
         }
+    }
 
+    /**
+     * 和前一个比较，同一个appkey和ip信息隐藏
+     */
+    private static void removeSameAppInfo(List<SpanVo> spanVos) {
+        for (int i = spanVos.size() - 1; i > 1; i--) {
+            SpanVo preSpanVo = spanVos.get(i - 1);
+            SpanVo spanVo = spanVos.get(i);
+
+            boolean isSameJvm = spanVo.getAppKey().equals(preSpanVo.getAppKey())
+                    && spanVo.getIp().equals(preSpanVo.getIp());
+            if (isSameJvm) {
+                spanVo.setAppKey("-");
+                spanVo.setIp("-");
+            }
+        }
     }
 
     private static void fillCostInfo(TraceDetailVo vo, SpanVo rootSpanVo) {

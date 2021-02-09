@@ -53,17 +53,11 @@ public class SpanVo {
             vo.setErrorMessages(JsonUtils.parseList(span.getErrorMessage(), String.class));
         }
 
-        if (rootSpan != null) {
-            int left = (int) ((span.getStart() - rootSpan.getStart()) * 94 / rootSpan.getCost());
-            vo.setLeft(left);
+        int left = (int) ((span.getStart() - rootSpan.getStart()) * 94 / rootSpan.getCost());
+        vo.setLeft(left);
 
-            int width = (int) ((span.getCost()) * 94 / rootSpan.getCost());
-            vo.setWidth(width);
-        }
-        else {
-            vo.setLeft(0);
-            vo.setWidth(94);
-        }
+        int width = (int) ((span.getCost()) * 94 / rootSpan.getCost());
+        vo.setWidth(width);
 
         return vo;
     }

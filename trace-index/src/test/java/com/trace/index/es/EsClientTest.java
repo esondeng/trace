@@ -1,15 +1,13 @@
 package com.trace.index.es;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
-import com.trace.common.enums.SpanStatus;
 import com.trace.index.BaseTest;
 
 /**
@@ -23,91 +21,85 @@ public class EsClientTest extends BaseTest {
     @Test
     void bulkTest() {
         List<IndexSpan> indexSpanList = new ArrayList<>();
+        indexSpanList.addAll(JsonUtils.parseList("[{\n" +
+                "\t\"traceId\": \"198fc58b4ad74188ae1bcd44130e265e\",\n" +
+                "\t\"name\": \"ProductController.test\",\n" +
+                "\t\"id\": \"0\",\n" +
+                "\t\"depth\": 1,\n" +
+                "\t\"appKey\": \"dubbo-consumer-demo\",\n" +
+                "\t\"ip\": \"172.25.161.78\",\n" +
+                "\t\"start\": 1612869248074,\n" +
+                "\t\"end\": 1612869250910,\n" +
+                "\t\"cost\": 2836,\n" +
+                "\t\"serviceType\": \"http\",\n" +
+                "\t\"status\": \"success\",\n" +
+                "\t\"tagMap\": {\n" +
+                "\t\t\"httpPath\": \"/test/dubbo/test\",\n" +
+                "\t\t\"method\": \"GET\",\n" +
+                "\t\t\"httpUrl\": \"/test/dubbo/test\"\n" +
+                "\t}\n" +
+                "}, {\n" +
+                "\t\"traceId\": \"198fc58b4ad74188ae1bcd44130e265e\",\n" +
+                "\t\"name\": \"Test.test\",\n" +
+                "\t\"id\": \"0.1\",\n" +
+                "\t\"depth\": 2,\n" +
+                "\t\"appKey\": \"dubbo-consumer-demo\",\n" +
+                "\t\"ip\": \"172.25.161.78\",\n" +
+                "\t\"start\": 1612869248100,\n" +
+                "\t\"end\": 1612869248108,\n" +
+                "\t\"cost\": 8,\n" +
+                "\t\"serviceType\": \"inner-call\",\n" +
+                "\t\"status\": \"success\"\n" +
+                "}, {\n" +
+                "\t\"traceId\": \"198fc58b4ad74188ae1bcd44130e265e\",\n" +
+                "\t\"name\": \"ProductService.sayHello\",\n" +
+                "\t\"id\": \"0.2\",\n" +
+                "\t\"depth\": 2,\n" +
+                "\t\"appKey\": \"dubbo-consumer-demo\",\n" +
+                "\t\"ip\": \"172.25.161.78\",\n" +
+                "\t\"start\": 1612869248118,\n" +
+                "\t\"end\": 1612869250884,\n" +
+                "\t\"cost\": 2766,\n" +
+                "\t\"serviceType\": \"duubo-c\",\n" +
+                "\t\"status\": \"success\"\n" +
+                "}]", IndexSpan.class));
 
-        IndexSpan indexSpan1 = new IndexSpan();
-        indexSpan1.setTraceId("9c1dedea00464376afca73708e7d170b");
-        indexSpan1.setId("0");
-        indexSpan1.setDepth(1);
-        indexSpan1.setName("ProductController.test");
-        indexSpan1.setServiceType("http");
-        indexSpan1.setAppKey("dubbo-consumer-demo");
-        indexSpan1.setIp("172.25.166.99");
-        Map<String, String> tagMap = new HashMap<>();
-        tagMap.put("httpPath", "/test/dubbo/test");
-        indexSpan1.setTagMap(tagMap);
-        indexSpan1.setStart(1611713548329L);
-        indexSpan1.setEnd(1611713551201L);
-        indexSpan1.setCost(2872);
-        indexSpan1.setStatus(SpanStatus.SUCCESS.message());
-
-
-        IndexSpan span2 = new IndexSpan();
-        span2.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span2.setId("0.1");
-        span2.setDepth(2);
-        span2.setName("Test.test");
-        span2.setServiceType("inner-call");
-        span2.setAppKey("dubbo-consumer-demo");
-        span2.setIp("172.25.166.99");
-        span2.setStart(1611713548354L);
-        span2.setEnd(1611713548363L);
-        span2.setCost(9);
-        span2.setStatus(SpanStatus.SUCCESS.message());
-
-        IndexSpan span3 = new IndexSpan();
-        span3.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span3.setId("0.2");
-        span3.setDepth(2);
-        span3.setName("ProductService.sayHello");
-        span3.setServiceType("dubbo-c");
-        span3.setAppKey("dubbo-consumer-demo");
-        span3.setIp("172.25.166.99");
-        span3.setStart(1611713548374L);
-        span3.setEnd(1611713551176L);
-        span3.setCost(2802);
-        span3.setStatus(SpanStatus.SUCCESS.message());
-
-        IndexSpan span4 = new IndexSpan();
-        span4.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span4.setId("0.2.1");
-        span4.setDepth(3);
-        span4.setName("ProductService.sayHello");
-        span4.setServiceType("dubbo-p");
-        span4.setClientAppKey("dubbo-consumer-demo");
-        span4.setClientIp("172.25.166.99");
-        span4.setAppKey("dubbo-provider-demo");
-        span4.setIp("172.25.166.99");
-        span4.setStart(1611713548374L);
-        span4.setEnd(1611713551176L);
-        span4.setCost(2704);
-        span4.setStatus(SpanStatus.SUCCESS.message());
-
-        IndexSpan span5 = new IndexSpan();
-        span5.setTraceId("9c1dedea00464376afca73708e7d170b");
-        span5.setId("0.2.1.1");
-        span5.setDepth(4);
-        span5.setName("TestMapper.getAll");
-        span5.setServiceType("jdbc");
-        span5.setClientAppKey("dubbo-consumer-demo");
-        span5.setClientIp("172.25.166.99");
-        span5.setAppKey("dubbo-provider-demo");
-        span5.setIp("172.25.166.99");
-        span5.setStart(1611713548374L);
-        span5.setEnd(1611713551176L);
-        span5.setCost(2704);
-        span5.setStatus(SpanStatus.SUCCESS.message());
-
-        Map<String, String> tagMap1 = new HashMap<>();
-        tagMap1.put("jdbcRef", "jdbc:mysql://10.24.90.86:5002/waimai_agent");
-        tagMap1.put("sql", "select id, name, valid, ctime, utime from wm_agent_test; Total: 19");
-        span5.setTagMap(tagMap1);
-
-
-        indexSpanList.add(indexSpan1);
-        indexSpanList.add(span2);
-        indexSpanList.add(span3);
-        indexSpanList.add(span4);
-        indexSpanList.add(span5);
+        indexSpanList.addAll(JsonUtils.parseList("[{\n" +
+                "\t\"traceId\": \"198fc58b4ad74188ae1bcd44130e265e\",\n" +
+                "\t\"name\": \"ProductService.sayHello\",\n" +
+                "\t\"id\": \"0.2.1\",\n" +
+                "\t\"depth\": 3,\n" +
+                "\t\"clientAppKey\": \"dubbo-consumer-demo\",\n" +
+                "\t\"clientIp\": \"172.25.161.78\",\n" +
+                "\t\"appKey\": \"dubbo-provider-demo\",\n" +
+                "\t\"ip\": \"172.25.161.78\",\n" +
+                "\t\"start\": 1612869248273,\n" +
+                "\t\"end\": 1612869250864,\n" +
+                "\t\"cost\": 2591,\n" +
+                "\t\"serviceType\": \"dubbo-p\",\n" +
+                "\t\"status\": \"success\",\n" +
+                "\t\"tagMap\": {\n" +
+                "\t\t\"request\": \"[]\"\n" +
+                "\t}\n" +
+                "}, {\n" +
+                "\t\"traceId\": \"198fc58b4ad74188ae1bcd44130e265e\",\n" +
+                "\t\"name\": \"TestMapper.getAll\",\n" +
+                "\t\"id\": \"0.2.1.1\",\n" +
+                "\t\"depth\": 4,\n" +
+                "\t\"clientAppKey\": \"dubbo-consumer-demo\",\n" +
+                "\t\"clientIp\": \"172.25.161.78\",\n" +
+                "\t\"appKey\": \"dubbo-provider-demo\",\n" +
+                "\t\"ip\": \"172.25.161.78\",\n" +
+                "\t\"start\": 1612869250804,\n" +
+                "\t\"end\": 1612869250857,\n" +
+                "\t\"cost\": 53,\n" +
+                "\t\"serviceType\": \"jdbc\",\n" +
+                "\t\"status\": \"success\",\n" +
+                "\t\"tagMap\": {\n" +
+                "\t\t\"jdbcRef\": \"jdbc:mysql://10.24.90.86:5002/waimai_agent\",\n" +
+                "\t\t\"sql\": \"select id, name, valid, ctime, utime from wm_agent_test; Total: 19\"\n" +
+                "\t}\n" +
+                "}]", IndexSpan.class));
 
         esClient.bulkUploadSpans(indexSpanList);
     }
