@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.trace.common.domain.IndexSpan;
+import com.trace.common.enums.SpanStatus;
 import com.trace.index.BaseTest;
 
 /**
@@ -37,6 +38,7 @@ public class EsClientTest extends BaseTest {
         indexSpan1.setStart(1611713548329L);
         indexSpan1.setEnd(1611713551201L);
         indexSpan1.setCost(2872);
+        indexSpan1.setStatus(SpanStatus.SUCCESS.message());
 
 
         IndexSpan span2 = new IndexSpan();
@@ -50,6 +52,7 @@ public class EsClientTest extends BaseTest {
         span2.setStart(1611713548354L);
         span2.setEnd(1611713548363L);
         span2.setCost(9);
+        span2.setStatus(SpanStatus.SUCCESS.message());
 
         IndexSpan span3 = new IndexSpan();
         span3.setTraceId("9c1dedea00464376afca73708e7d170b");
@@ -62,6 +65,7 @@ public class EsClientTest extends BaseTest {
         span3.setStart(1611713548374L);
         span3.setEnd(1611713551176L);
         span3.setCost(2802);
+        span3.setStatus(SpanStatus.SUCCESS.message());
 
         IndexSpan span4 = new IndexSpan();
         span4.setTraceId("9c1dedea00464376afca73708e7d170b");
@@ -76,6 +80,7 @@ public class EsClientTest extends BaseTest {
         span4.setStart(1611713548374L);
         span4.setEnd(1611713551176L);
         span4.setCost(2704);
+        span4.setStatus(SpanStatus.SUCCESS.message());
 
         IndexSpan span5 = new IndexSpan();
         span5.setTraceId("9c1dedea00464376afca73708e7d170b");
@@ -90,6 +95,7 @@ public class EsClientTest extends BaseTest {
         span5.setStart(1611713548374L);
         span5.setEnd(1611713551176L);
         span5.setCost(2704);
+        span5.setStatus(SpanStatus.SUCCESS.message());
 
         Map<String, String> tagMap1 = new HashMap<>();
         tagMap1.put("jdbcRef", "jdbc:mysql://10.24.90.86:5002/waimai_agent");

@@ -61,3 +61,18 @@ g.hover-edge {
 g.hover-light rect {
     fill: #8a9eff;
 }
+
+.list-group-horizontal .list-group-item {
+    display: inline-block;
+    margin-bottom: 0;
+    width: 120px;
+    margin-right: 0;
+}
+.list-group-horizontal .list-group-item:first-child {
+    border-top-right-radius:0;
+    border-bottom-left-radius:4px;
+}
+.list-group-horizontal .list-group-item:last-child {
+    border-top-right-radius:4px;
+    border-bottom-left-radius:0;
+}

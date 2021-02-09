@@ -33,7 +33,7 @@ public class EsClient {
     @PostConstruct
     public void init() {
         // es7.x之后已经没有type，默认会在index下建一个type:_doc;一个index只有一个type
-        String spanBulkUrl = esUrl + "/trace/_bulk";
+        spanBulkUrl = esUrl + "/trace/_bulk";
     }
 
 

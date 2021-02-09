@@ -1,6 +1,9 @@
 package com.trace.monitor.manager;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,12 +23,16 @@ import com.eson.common.core.util.Funs;
 import com.eson.common.core.util.JsonUtils;
 import com.eson.common.core.util.ResourceUtils;
 import com.eson.common.core.util.TimeUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.trace.common.domain.IndexSpan;
+import com.trace.core.enums.ServiceType;
 import com.trace.monitor.es.EsClient;
+import com.trace.monitor.query.DependencyQuery;
 import com.trace.monitor.query.TraceQuery;
+import com.trace.monitor.vo.DependencyVo;
 import com.trace.monitor.vo.TraceDetailVo;
 import com.trace.monitor.vo.TraceVo;
 
@@ -39,6 +46,7 @@ public class TraceManager {
     private static final String TRACE_QUERY = ResourceUtils.getResource("/es/traceQuery.txt");
     private static final String TRACE_IDS_QUERY = ResourceUtils.getResource("/es/traceIdsQuery.txt");
     private static final String TRACE_DETAIL_QUERY = ResourceUtils.getResource("/es/traceDetailQuery.txt");
+    private static final String DEPENDENCY_QUERY = ResourceUtils.getResource("/es/dependencyQuery.txt");
 
     private static final String TERM_CLAUSE = "{\"term\":{\"${name}\":\"${value}\"}}";
     private static final String GTE_RANGE_CLAUSE = "{\"range\":{\"${name}\":{\"gte\":\"${value}\"}}}";
@@ -46,6 +54,7 @@ public class TraceManager {
     private static final String MATCH_RANGE_CLAUSE = "{\"match\":{\"${name}\":\"${value}\"}}";
 
     private static final String APP_KEYS_CACHE_KEY = "appKeys";
+    private static final List<String> LATENCY_KEYS = Arrays.asList("90.0", "99.0", "99.9", "99.99");
 
     @Autowired
     private EsClient esClient;
@@ -172,4 +181,52 @@ public class TraceManager {
         List<IndexSpan> indexSpans = JsonUtils.getValues(result, "hits.hits._source", IndexSpan.class);
         return TraceDetailVo.of(indexSpans);
     }
+
+
+    public List<DependencyVo> getDependencyVos(DependencyQuery dependencyQuery) {
+        Date startDate = TimeUtils.parseAsDate(dependencyQuery.getStartTime(), TimeUtils.DATE_TIME);
+        Date endDate = TimeUtils.parseAsDate(dependencyQuery.getEndTime(), TimeUtils.DATE_TIME);
+
+        List<String> clauseList = new ArrayList<>();
+        clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "serviceType", "value", ServiceType.DUBBO_PROVIDER.message()));
+        clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "start", "value", String.valueOf(startDate.getTime())));
+        clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(endDate.getTime())));
+
+        String query = ResourceUtils.replace(DEPENDENCY_QUERY, "conditions", String.join(",", clauseList));
+        String result = esClient.query(query);
+
+        List<JsonNode> clientKeyNodes = JsonUtils.getValues(result, "aggregations.clientAppKeys.buckets", JsonNode.class);
+        List<DependencyVo> dependencyVos = new ArrayList<>();
+
+        clientKeyNodes.get(0).forEach(clientKeyNode -> {
+            String clientAppKey = clientKeyNode.path("key").asText();
+            JsonNode appKeyNodes = clientKeyNode.path("appKeys").path("buckets");
+            for (JsonNode appKeyNode : appKeyNodes) {
+                String appKey = appKeyNode.path("key").asText();
+
+                DependencyVo dependencyVo = new DependencyVo();
+                dependencyVo.setParent(clientAppKey);
+                dependencyVo.setChild(appKey);
+                dependencyVo.setCallCount(appKeyNode.path("doc_count").asInt());
+                dependencyVo.setErrorCount(appKeyNode.path("failedCount").path("doc_count").asInt());
+                dependencyVo.setErrorRate(new BigDecimal(dependencyVo.getErrorCount())
+                        .multiply(new BigDecimal("100"))
+                        .divide(new BigDecimal(dependencyVo.getCallCount()), RoundingMode.HALF_UP)
+                        .setScale(2, RoundingMode.HALF_UP)
+                        .toString());
+
+                JsonNode latencyNode = appKeyNode.path("latency_percentiles").path("values");
+                dependencyVo.setTp90(latencyNode.get(LATENCY_KEYS.get(0)).asText());
+                dependencyVo.setTp99(latencyNode.get(LATENCY_KEYS.get(1)).asText());
+                dependencyVo.setTp999(latencyNode.get(LATENCY_KEYS.get(2)).asText());
+                dependencyVo.setTp9999(latencyNode.get(LATENCY_KEYS.get(3)).asText());
+
+                dependencyVos.add(dependencyVo);
+            }
+        });
+
+        return dependencyVos;
+    }
+
+
 }

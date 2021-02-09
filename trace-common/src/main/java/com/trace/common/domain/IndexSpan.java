@@ -1,9 +1,12 @@
 package com.trace.common.domain;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.eson.common.core.util.JsonUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.trace.common.enums.SpanStatus;
 import com.trace.core.Span;
 
 import lombok.Getter;
@@ -15,6 +18,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class IndexSpan {
     private String traceId;
     private String name;
@@ -33,6 +37,7 @@ public class IndexSpan {
     private String serviceType;
 
     private String errorMessage;
+    private String status;
 
     private Map<String, String> tagMap;
 
@@ -58,8 +63,13 @@ public class IndexSpan {
 
         indexSpan.setServiceType(span.getServiceType());
 
-        if (span.getErrorMessages() != null) {
+        List<String> errorMessages = span.getErrorMessages();
+        if (errorMessages != null && !errorMessages.isEmpty()) {
             indexSpan.setErrorMessage(JsonUtils.toJson(span.getErrorMessages()));
+            indexSpan.setStatus(SpanStatus.FAILED.message());
+        }
+        else {
+            indexSpan.setStatus(SpanStatus.SUCCESS.message());
         }
 
         if (span.getTagMap() != null) {

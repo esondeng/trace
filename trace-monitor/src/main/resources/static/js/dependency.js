@@ -1,6 +1,52 @@
 const dagre = window.dagreD3;
 
 $(function () {
+    function searchDateType(dateType) {
+        $.ajax(
+            "/dependencies.html",
+            {
+                type: 'GET',
+                async: false,
+                data: {"dateType": dateType},
+                success: data => {
+                    const links = data.data;
+                    buildServiceData(links);
+                    dependencyDataReceived(links);
+                }
+            }
+        );
+    }
+
+    /**
+     * 初始化时间类型搜索
+     */
+    // 依赖分析
+    $(".js-dependency-group").on("click", function (e) {
+
+        $(".js-dependency-self").removeClass("active");
+        if($("#dependencyQueryForm").is(":visible")){
+            $("#dependencyQueryForm").hide();
+        }
+
+        e.preventDefault();
+        $(".js-dependency-group").removeClass("active");
+        $(e.target).addClass("active");
+        const dateType = e.target.getAttribute("data-type");
+        searchDateType(dateType);
+    });
+
+    $(".js-dependency-self").on("click", function (e) {
+        e.preventDefault();
+        $("#dependencyQueryForm").show();
+
+        $(".js-dependency-group").removeClass("active");
+        $(e.target).addClass("active");
+    });
+
+    /**
+     * 初始化时间类型搜索
+     */
+    $('#firstDateType').click();
 
     /**
      * 组件时间初始化
@@ -40,13 +86,13 @@ $(function () {
     let services = {};
     let dependencies = {};
 
-    function getDependency() {
+    function getDependency(inputData) {
         $.ajax(
             "/dependencies.html",
             {
                 type: 'GET',
                 async: false,
-                data: $("#dependencyQueryForm").serialize(),
+                data: inputData,
                 success: data => {
                     const links = data.data;
                     buildServiceData(links);
@@ -55,6 +101,11 @@ $(function () {
             }
         );
     }
+
+    // 依赖分析
+    $(".js-dependency-analyze").on("click", function () {
+        getDependency($("#dependencyQueryForm").serialize());
+    });
 
     function buildServiceData(links) {
         links.forEach(link => {
@@ -70,11 +121,6 @@ $(function () {
             services[child].usedBy.push(parent);
         });
     }
-
-    // 依赖分析
-    $(".js-dependency-analyze").on("click", function () {
-        getDependency();
-    });
 
     function dependencyDataReceived(links) {
 

@@ -1,0 +1,42 @@
+{
+	"query" : {
+        "bool" : {
+            "must":[${conditions}]
+        }
+    },
+    "size":0,
+    "aggs":{
+        "clientAppKeys":{
+            "terms":{
+                "field": "clientAppKey"
+            },
+            "aggs":{
+                "appKeys": {
+                    "terms":{
+                        "field": "appKey"
+                    },
+                    "aggs":{
+                        "failedCount":{
+                            "filter": {
+                                "term": {
+                                    "status": "failed"
+                                }
+                             }
+                        },
+                        "latency_percentiles":{
+                            "percentiles": {
+                                "field": "cost",
+                                "percents": [
+                                    90,
+                                    99,
+                                    99.9,
+                                    99.99
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

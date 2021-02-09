@@ -2,11 +2,8 @@ package com.trace.monitor.vo;
 
 import java.util.Date;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.eson.common.core.util.TimeUtils;
 import com.trace.common.domain.IndexSpan;
-import com.trace.monitor.enums.SpanStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +27,7 @@ public class TraceVo {
         vo.setTraceId(indexSpan.getTraceId());
         vo.setStart(TimeUtils.formatAsDateTime(new Date(indexSpan.getStart())));
         vo.setCost(indexSpan.getCost());
-        vo.setStatus(StringUtils.isBlank(indexSpan.getErrorMessage()) ? SpanStatus.SUCCESS.message() : SpanStatus.FAILED.message());
+        vo.setStatus(indexSpan.getStatus());
 
         return vo;
     }

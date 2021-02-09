@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
-import com.trace.monitor.enums.SpanStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -53,8 +52,6 @@ public class SpanVo {
         if (StringUtils.isNotBlank(span.getErrorMessage())) {
             vo.setErrorMessages(JsonUtils.parseList(span.getErrorMessage(), String.class));
         }
-
-        vo.setStatus(CollectionUtils.isEmpty(vo.getErrorMessages()) ? SpanStatus.SUCCESS.message() : SpanStatus.FAILED.message());
 
         if (rootSpan != null) {
             int left = (int) ((span.getStart() - rootSpan.getStart()) * 94 / rootSpan.getCost());

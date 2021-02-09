@@ -7,31 +7,28 @@
 
     <div class="panel panel-default" style="width: 80%;">
         <div class="panel-body">
-            <form id="dependencyQueryForm" class="form-horizontal" role="form">
+            <div style="margin-left: 1.5%">
+                <div class="list-group list-group-horizontal">
+                    <a href="#" class="list-group-item text-center js-dependency-group" id="firstDateType" data-type="last1h">最近1小时</a>
+                    <a href="#" class="list-group-item text-center js-dependency-group" data-type="last3h">最近3小时</a>
+                    <a href="#" class="list-group-item text-center js-dependency-group" data-type="last6h">最近6小时</a>
+                    <a href="#" class="list-group-item text-center js-dependency-group" data-type="last24h">最近24小时</a>
+                    <a href="#" class="list-group-item text-center js-dependency-group" data-type="today">今天</a>
+                    <a href="#" class="list-group-item text-center js-dependency-self" >自定义</a>
+                </div>
+            </div>
+            <form id="dependencyQueryForm" class="form-horizontal" role="form" style="width:93%;display: none;">
                 <div class="form-row">
-                    <div class="col-md-3">
-                        <label for="applicationName"><span style="color: red;float: left;">*</span>应用名称:</label>
-                        <div>
-                            <select id="applicationName" name="applicationName" class="form-control">
-                                <option value="" selected="selected">请选择</option>
-                                <div th:each="applicationName : ${applicationNames}">
-                                    <option th:value="${applicationName}" th:text="${applicationName}"></option>
-                                </div>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
+                    <div class="col-md-4">
                         <label for="startTime">开始时间:</label>
                         <input class="form-control" id="startTime" name="startTime" type="text">
                     </div>
-                    <div class="col-md-3">
-                        <label for="endTime">结束时间:<p style="float: right;margin-bottom: 0px;color: red">
-                            (注意:时间段只能在同一天)</p>
-                        </label>
+                    <div class="col-md-4">
+                        <label for="endTime">结束时间:<p style="float: right;margin-bottom: 0px;color: red">(注意:时间段只能在1个月之类)</p></label>
                         <input class="form-control" id="endTime" name="endTime" type="text">
                     </div>
                     <div class="col-md-1">
-                        <button type="button" class="btn btn-default js-dependency-analyze" style="margin-top: 40%;margin-left:-3.5%;">
+                        <button type="button" class="btn btn-default js-dependency-analyze" style="margin-top: 45%;margin-left:-8.5%;">
                             依赖分析
                         </button>
                     </div>

@@ -1,10 +1,10 @@
-package com.trace.monitor.enums;
+package com.trace.common.enums;
 
 import com.eson.common.core.enums.EnumBase;
 
 /**
  * @author dengxiaolin
- * @since 2021/01/27
+ * @since 2021/02/08
  */
 public enum SpanStatus implements EnumBase {
     SUCCESS(0, "success"),
@@ -26,4 +26,5 @@ public enum SpanStatus implements EnumBase {
     @Override
     public String message() {
         return this.message;
-    }}
+    }
+}
