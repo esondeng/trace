@@ -119,11 +119,17 @@ $(function () {
     $(".js-dependency-analyze").on("click", function () {
         $("#dependency-search-alert").hide();
 
-        const startDate = $("#startTime").val();
-        const endDate = $("#endTime").val();
+        const startTime = $("#startTime").val();
+        const endTime = $("#endTime").val();
 
-        const startMonth = startDate.substring(0, 8);
-        const endMonth = endDate.substring(0, 8);
+        if (startTime === '' || endTime === '') {
+            $("#dependency-error-container").text("开始时间和结束时间需都填");
+            $("#dependency-search-alert").show();
+            return false;
+        }
+
+        const startMonth = startTime.substring(0, 8);
+        const endMonth = endTime.substring(0, 8);
 
         if(startMonth !== endMonth){
             $("#dependency-error-container").text("开始时间和结束时间只能在同一个月");
