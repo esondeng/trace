@@ -96,6 +96,7 @@ $(function () {
     let dependencies = {};
 
     function getDependency(inputData) {
+        $("#loadingContainer").html(loadingHtml);
         setTimeout(function () {
             $.ajax(
                 "/dependencies.html",
@@ -107,6 +108,7 @@ $(function () {
                         const links = data.data;
                         buildServiceData(links);
                         dependencyDataReceived(links);
+                        $("#loadingContainer").html("");
                     }
                 }
             );
@@ -115,7 +117,26 @@ $(function () {
 
     // 依赖分析
     $(".js-dependency-analyze").on("click", function () {
+        $("#dependency-search-alert").hide();
+
+        const startDate = $("#startTime").val();
+        const endDate = $("#endTime").val();
+
+        const startMonth = startDate.substring(0, 8);
+        const endMonth = endDate.substring(0, 8);
+
+        if(startMonth !== endMonth){
+            $("#dependency-error-container").text("开始时间和结束时间只能在同一个月");
+            $("#dependency-search-alert").show();
+            return false;
+        }
+
         getDependency($("#dependencyQueryForm").serialize());
+    });
+
+    // 查询调用链错误信息隐藏
+    $(".js-close-dependency-alert").on("click", function () {
+        $("#dependency-search-alert").hide();
     });
 
     function buildServiceData(links) {
