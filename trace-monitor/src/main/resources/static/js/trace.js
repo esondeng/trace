@@ -60,25 +60,33 @@ $(function () {
         const startTime = $("#startTime").val();
         const endTime = $("#endTime").val();
 
-        if (startTime === '' || endTime === '') {
+        if (startTime !== '' && endTime === '') {
             $("#trace-error-container").text("开始时间和结束时间需都填");
             $("#trace-search-alert").show();
             return false;
         }
 
-        const startDay = startTime.substring(0, 11);
-        const endDay = endTime.substring(0, 11);
-
-        if (startTime > endTime) {
-            $("#trace-error-container").text("开始时间不能大于结束时间");
+        if (startTime === '' && endTime !== '') {
+            $("#trace-error-container").text("开始时间和结束时间需都填");
             $("#trace-search-alert").show();
             return false;
         }
 
-        if (startDay !== endDay) {
-            $("#trace-error-container").text("开始时间和结束时间只能选同一天");
-            $("#trace-search-alert").show();
-            return false;
+        if (startTime !== '' && endTime !== '') {
+            const startDay = startTime.substring(0, 11);
+            const endDay = endTime.substring(0, 11);
+
+            if (startTime > endTime) {
+                $("#trace-error-container").text("开始时间不能大于结束时间");
+                $("#trace-search-alert").show();
+                return false;
+            }
+
+            if (startDay !== endDay) {
+                $("#trace-error-container").text("开始时间和结束时间只能选同一天");
+                $("#trace-search-alert").show();
+                return false;
+            }
         }
 
         $("#call-chain-results").html(loadingHtml);
