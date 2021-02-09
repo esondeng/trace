@@ -47,14 +47,12 @@ public class TraceDetailVo {
             IndexSpan rootSpan = indexSpans.get(0);
 
             List<SpanVo> spanVos = Funs.map(indexSpans, t -> SpanVo.of(t, rootSpan));
-            removeSameAppInfo(spanVos);
-
             TraceDetailVo vo = new TraceDetailVo();
 
-            SpanVo rootSpanVo = spanVos.get(0);
-            vo.setTraceId(rootSpanVo.getTraceId());
+            vo.setTraceId(rootSpan.getTraceId());
 
-            fillCostInfo(vo, rootSpanVo);
+            fillCostInfo(vo, rootSpan);
+            fillAppCountInfo(vo, spanVos);
 
             vo.setSpanVos(spanVos);
             vo.setTotalSpanCount(spanVos.size());
@@ -63,17 +61,51 @@ public class TraceDetailVo {
                     .max()
                     .orElse(0));
 
-            Map<String, Integer> appKeyCountMap = new LinkedHashMap<>(16);
-            spanVos.forEach(t -> appKeyCountMap.put(t.getAppKey(), appKeyCountMap.getOrDefault(t.getAppKey(), 0) + 1));
-
-            vo.setAppKeyCount(appKeyCountMap.size());
-            vo.setAppKeyCountVos(Funs.map(appKeyCountMap.entrySet(), entry -> AppKeyCountVo.of(entry.getKey(), entry.getValue())));
 
             fillChildrenInfo(vo);
+            removeSameAppInfo(spanVos);
 
             return vo;
         }
     }
+
+    private static void fillAppCountInfo(TraceDetailVo vo, List<SpanVo> spanVos) {
+        Map<String, Integer> appKeyCountMap = new LinkedHashMap<>(16);
+        spanVos.forEach(t -> appKeyCountMap.put(t.getAppKey(), appKeyCountMap.getOrDefault(t.getAppKey(), 0) + 1));
+
+        vo.setAppKeyCount(appKeyCountMap.size());
+        vo.setAppKeyCountVos(Funs.map(appKeyCountMap.entrySet(), entry -> AppKeyCountVo.of(entry.getKey(), entry.getValue())));
+    }
+
+
+    private static void fillCostInfo(TraceDetailVo vo, IndexSpan rootSpan) {
+        vo.setCost(rootSpan.getCost());
+
+        long costStep = rootSpan.getCost() / COST_STEP_NUM;
+
+        List<String> costSteps = new ArrayList<>();
+        costSteps.add("");
+
+        for (int i = 1; i < COST_STEP_NUM - 1; i++) {
+            costSteps.add(i * costStep + "ms");
+        }
+        costSteps.add(rootSpan.getCost() + "ms");
+        vo.setCostSteps(costSteps);
+    }
+
+    private static void fillChildrenInfo(TraceDetailVo vo) {
+        List<SpanVo> spanVos = vo.getSpanVos();
+        Map<String, SpanVo> spanVoMap = Funs.toMapQuietly(spanVos, SpanVo::getId, t -> t);
+        spanVoMap.forEach((k, v) -> {
+            String id = v.getId();
+            int lastIndex = id.lastIndexOf(Constants.POINT);
+            if (lastIndex > 0) {
+                String parentId = id.substring(0, lastIndex);
+                spanVoMap.get(parentId).addChildId(id);
+            }
+        });
+    }
+
 
     /**
      * 和前一个比较，同一个appkey和ip信息隐藏
@@ -90,34 +122,6 @@ public class TraceDetailVo {
                 spanVo.setIp("-");
             }
         }
-    }
-
-    private static void fillCostInfo(TraceDetailVo vo, SpanVo rootSpanVo) {
-        vo.setCost(rootSpanVo.getCost());
-
-        long costStep = rootSpanVo.getCost() / COST_STEP_NUM;
-
-        List<String> costSteps = new ArrayList<>();
-        costSteps.add("");
-
-        for (int i = 1; i < COST_STEP_NUM - 1; i++) {
-            costSteps.add(i * costStep + "ms");
-        }
-        costSteps.add(rootSpanVo.getCost() + "ms");
-        vo.setCostSteps(costSteps);
-    }
-
-    private static void fillChildrenInfo(TraceDetailVo vo) {
-        List<SpanVo> spanVos = vo.getSpanVos();
-        Map<String, SpanVo> spanVoMap = Funs.toMapQuietly(spanVos, SpanVo::getId, t -> t);
-        spanVoMap.forEach((k, v) -> {
-            String id = v.getId();
-            int lastIndex = id.lastIndexOf(Constants.POINT);
-            if (lastIndex > 0) {
-                String parentId = id.substring(0, lastIndex);
-                spanVoMap.get(parentId).addChildId(id);
-            }
-        });
     }
 
 }
