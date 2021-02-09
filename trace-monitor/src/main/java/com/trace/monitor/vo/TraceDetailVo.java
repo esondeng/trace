@@ -79,7 +79,7 @@ public class TraceDetailVo {
      * 和前一个比较，同一个appkey和ip信息隐藏
      */
     private static void removeSameAppInfo(List<SpanVo> spanVos) {
-        for (int i = spanVos.size() - 1; i > 1; i--) {
+        for (int i = spanVos.size() - 1; i > 0; i--) {
             SpanVo preSpanVo = spanVos.get(i - 1);
             SpanVo spanVo = spanVos.get(i);
 
