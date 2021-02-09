@@ -29,7 +29,6 @@ $(function () {
     /**
      * 初始化时间类型搜索
      */
-    // 依赖分析
     $(".js-dependency-group").on("click", function (e) {
 
         $(".js-dependency-self").removeClass("active");
