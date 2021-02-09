@@ -1,20 +1,29 @@
 const dagre = window.dagreD3;
 
 $(function () {
+    const loadingHtml =
+        "<div class='col-xs-12 text-center'>"
+        + "<img src='/static/images/loading.gif'/> 数据加载中..."
+        + "</div>";
+
     function searchDateType(dateType) {
-        $.ajax(
-            "/dependencies.html",
-            {
-                type: 'GET',
-                async: false,
-                data: {"dateType": dateType},
-                success: data => {
-                    const links = data.data;
-                    buildServiceData(links);
-                    dependencyDataReceived(links);
+        $("#loadingContainer").html(loadingHtml);
+        setTimeout(function(){
+            $.ajax(
+                "/dependencies.html",
+                {
+                    type: 'GET',
+                    async: false,
+                    data: {"dateType": dateType},
+                    success: data => {
+                        const links = data.data;
+                        buildServiceData(links);
+                        dependencyDataReceived(links);
+                        $("#loadingContainer").html("");
+                    }
                 }
-            }
-        );
+            );
+        }, 1000);
     }
 
     /**
@@ -87,19 +96,21 @@ $(function () {
     let dependencies = {};
 
     function getDependency(inputData) {
-        $.ajax(
-            "/dependencies.html",
-            {
-                type: 'GET',
-                async: false,
-                data: inputData,
-                success: data => {
-                    const links = data.data;
-                    buildServiceData(links);
-                    dependencyDataReceived(links);
+        setTimeout(function () {
+            $.ajax(
+                "/dependencies.html",
+                {
+                    type: 'GET',
+                    async: false,
+                    data: inputData,
+                    success: data => {
+                        const links = data.data;
+                        buildServiceData(links);
+                        dependencyDataReceived(links);
+                    }
                 }
-            }
-        );
+            );
+        }, 1000);
     }
 
     // 依赖分析
