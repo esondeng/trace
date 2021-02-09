@@ -43,9 +43,14 @@ public class TraceDetailVo {
             return new TraceDetailVo();
         }
         else {
-            indexSpans.sort(Comparator.comparing(IndexSpan::getId));
-            IndexSpan rootSpan = indexSpans.get(0);
+            indexSpans.sort(Comparator.comparingInt(IndexSpan::getDepth)
+                    .thenComparingInt(indexSpan -> {
+                        String id = indexSpan.getId();
+                        int lastPointIndex = id.lastIndexOf(".");
+                        return Integer.valueOf(id.substring(lastPointIndex + 1));
+                    }));
 
+            IndexSpan rootSpan = indexSpans.get(0);
             List<SpanVo> spanVos = Funs.map(indexSpans, t -> SpanVo.of(t, rootSpan));
             TraceDetailVo vo = new TraceDetailVo();
 
@@ -63,7 +68,6 @@ public class TraceDetailVo {
 
 
             fillChildrenInfo(vo);
-            removeSameAppInfo(spanVos);
 
             return vo;
         }
@@ -105,23 +109,4 @@ public class TraceDetailVo {
             }
         });
     }
-
-
-    /**
-     * 和前一个比较，同一个appkey和ip信息隐藏
-     */
-    private static void removeSameAppInfo(List<SpanVo> spanVos) {
-        for (int i = spanVos.size() - 1; i > 0; i--) {
-            SpanVo preSpanVo = spanVos.get(i - 1);
-            SpanVo spanVo = spanVos.get(i);
-
-            boolean isSameJvm = spanVo.getAppKey().equals(preSpanVo.getAppKey())
-                    && spanVo.getIp().equals(preSpanVo.getIp());
-            if (isSameJvm) {
-                spanVo.setAppKey("-");
-                spanVo.setIp("-");
-            }
-        }
-    }
-
 }
