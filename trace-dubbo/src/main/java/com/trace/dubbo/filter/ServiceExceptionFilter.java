@@ -12,6 +12,7 @@ import org.apache.dubbo.rpc.service.GenericService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.eson.common.core.constants.Constants;
 import com.eson.common.core.exception.BusinessException;
 import com.eson.common.core.exception.ServiceException;
 import com.trace.core.Span;
@@ -51,11 +52,14 @@ public class ServiceExceptionFilter implements Filter, Filter.Listener {
                 if (!isRpcException) {
                     // rpcException 需要返回调用方
                     // 其他异常消费者不关心提供者的错误堆栈
-                    ServiceException serviceException = new ServiceException(exception.getClass().getCanonicalName())
-                            .setInterfacePath(invoker.getInterface().getCanonicalName() + "." + invocation.getMethodName());
+                    ServiceException serviceException = new ServiceException(exception.getMessage())
+                            .setInterfacePath(invoker.getInterface().getCanonicalName() + "." + invocation.getMethodName())
+                            .setExceptionClass(exception.getClass().getSimpleName());
+                    serviceException.setCode(Constants.FAILED);
 
                     if (exception instanceof BusinessException) {
                         BusinessException bex = (BusinessException) exception;
+                        serviceException.setCode(bex.getCode());
                         serviceException.setTrivial(bex.isTrivial());
                         serviceException.setDetailMsg(bex.getDetailMsg());
                     }

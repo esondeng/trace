@@ -110,18 +110,27 @@ public class Span {
     }
 
     public void fillErrors(Throwable exception) {
-        StackTraceElement[] stackTraceElements = exception.getStackTrace();
-        List<String> errorStack = new ArrayList<>();
-
-        if (stackTraceElements != null && stackTraceElements.length > 0) {
-            // 最多关心前3个
-            int maxErrorNum = Math.min(stackTraceElements.length, 3);
-            for (int i = 0; i < maxErrorNum; i++) {
-                errorStack.add(stackTraceElements[i].toString());
-            }
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<>();
         }
 
-        errorMessages = errorStack;
+        errorMessages.add(exception.getClass().getCanonicalName() + ": " + exception.getMessage());
+
+        StackTraceElement[] stackTraceElements = exception.getStackTrace();
+        if (stackTraceElements != null && stackTraceElements.length > 0) {
+            // 最多关心前2个
+            int maxErrorNum = Math.min(stackTraceElements.length, 2);
+            for (int i = 0; i < maxErrorNum; i++) {
+                errorMessages.add(stackTraceElements[i].toString());
+            }
+        }
+    }
+
+    public void addError(String error) {
+        if (errorMessages == null) {
+            errorMessages = new ArrayList<>();
+        }
+        errorMessages.add(error);
     }
 
     public static Span copyAsAsyncParent(Span span) {

@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.eson.common.core.exception.ServiceException;
 import com.eson.common.web.WebResponse;
 import com.eson.common.web.handler.AppExceptionHandler;
 import com.trace.core.Span;
@@ -22,7 +23,13 @@ public class TraceAppExceptionHandler extends AppExceptionHandler {
     public WebResponse<Void> handleException(Exception e, HttpServletRequest request) {
         Span span = TraceContext.peek();
         if (span != null) {
-            span.fillErrors(e);
+            if (e instanceof ServiceException) {
+                ServiceException se = (ServiceException) e;
+                span.addError(se.getInterfacePath() + " : " + se.getExceptionClass());
+            }
+            else {
+                span.fillErrors(e);
+            }
         }
 
         return super.handleException(e, request);
