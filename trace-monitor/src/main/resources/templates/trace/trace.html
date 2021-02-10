@@ -20,7 +20,7 @@
                     <div class="col-md-3">
                         <label for="applicationName">应用名称:</label>
                         <div>
-                            <select id="applicationName" id="applicationName" name="applicationName" class="form-control">
+                            <select id="applicationName" name="applicationName" class="form-control">
                                 <option value="" selected="selected">请选择</option>
                                 <div th:each="applicationName : ${applicationNames}">
                                     <option th:value="${applicationName}" th:text="${applicationName}"></option>
