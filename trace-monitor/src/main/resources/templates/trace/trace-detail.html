@@ -133,20 +133,12 @@
                                             <td th:text="${spanVo.serviceType}"></td>
                                         </tr>
                                         <tr>
-                                            <td>Client AppKey</td>
-                                            <td th:text="${spanVo.clientAppKey}"></td>
+                                            <td>Client</td>
+                                            <td th:text="${spanVo.clientAppKey} + ' (' +${spanVo.clientIp} + ')'"></td>
                                         </tr>
                                         <tr>
-                                            <td>Client Ip</td>
-                                            <td th:text="${spanVo.clientIp}"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>AppKey</td>
-                                            <td th:text="${spanVo.appKey}"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Ip</td>
-                                            <td th:text="${spanVo.ip}"></td>
+                                            <td>Server</td>
+                                            <td th:text="${spanVo.appKey} + ' (' + ${spanVo.ip} + ')'"></td>
                                         </tr>
                                         <tr>
                                             <td>开始时间</td>

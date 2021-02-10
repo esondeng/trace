@@ -2,13 +2,7 @@
 	"query": {
 		"bool": {
 		    "must": [
-		        {
-		            "bool":{
-		                "should": [
-                            ${conditions}
-                        ]
-		            }
-		        },
+		        ${conditions},
 		        {
 		            "term": {"id":"0"}
 		        }
@@ -19,5 +13,5 @@
         "start": {
           "order": "desc"
         }
-      }
+    }
 }

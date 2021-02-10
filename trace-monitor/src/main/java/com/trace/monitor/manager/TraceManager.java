@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.eson.common.core.constants.Constants;
 import com.eson.common.core.util.Funs;
 import com.eson.common.core.util.JsonUtils;
 import com.eson.common.core.util.ResourceUtils;
@@ -49,6 +50,7 @@ public class TraceManager {
     private static final String DEPENDENCY_QUERY = ResourceUtils.getResource("/es/dependencyQuery.txt");
 
     private static final String TERM_CLAUSE = "{\"term\":{\"${name}\":\"${value}\"}}";
+    private static final String TERMS_CLAUSE = "{\"terms\":{\"${name}\": ${value}}}";
     private static final String GTE_RANGE_CLAUSE = "{\"range\":{\"${name}\":{\"gte\":\"${value}\"}}}";
     private static final String LTE_RANGE_CLAUSE = "{\"range\":{\"${name}\":{\"lte\":\"${value}\"}}}";
     private static final String MATCH_RANGE_CLAUSE = "{\"match\":{\"${name}\":\"${value}\"}}";
@@ -88,10 +90,8 @@ public class TraceManager {
             return Collections.emptyList();
         }
         else {
-            List<String> traceIdsQuery = Funs.map(
-                    traceIds,
-                    t -> ResourceUtils.replace(TERM_CLAUSE, "name", "traceId", "value", t));
-            query = ResourceUtils.replace(TRACE_IDS_QUERY, "conditions", String.join(",", traceIdsQuery));
+            String conditions = buildConditions(traceQuery, traceIds);
+            query = ResourceUtils.replace(TRACE_IDS_QUERY, "conditions", conditions);
             result = esClient.query(query);
 
             List<IndexSpan> indexSpans = JsonUtils.getValues(result, "hits.hits._source", IndexSpan.class);
@@ -115,11 +115,11 @@ public class TraceManager {
         if (StringUtils.isNotBlank(traceQuery.getTraceId())) {
             // traceId精确查询
             clauseList.add(ResourceUtils.replace(TERM_CLAUSE, "name", "traceId", "value", traceQuery.getTraceId()));
-            return String.join(",", clauseList);
+            return String.join(Constants.COMMA, clauseList);
         }
         else {
             fillClauseList(clauseList, traceQuery);
-            return String.join(",", clauseList);
+            return String.join(Constants.COMMA, clauseList);
         }
     }
 
@@ -138,18 +138,25 @@ public class TraceManager {
         );
 
         addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getExceptionInfo()),
+                () -> clauseList.add(ResourceUtils.replace(MATCH_RANGE_CLAUSE, "name", "errorMessage", "value", traceQuery.getExceptionInfo()))
+        );
+    }
+
+    private String buildConditions(TraceQuery traceQuery, List<String> traceIds) {
+        List<String> clauseList = new ArrayList<>();
+
+        String traceIdsCondition = ResourceUtils.replace(TERMS_CLAUSE, "name", "traceId", "value", JsonUtils.toJson(traceIds));
+        clauseList.add(traceIdsCondition);
+
+        addCondition(
                 () -> traceQuery.getMinCost() != null && traceQuery.getMinCost() > 0L,
-                () -> clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "minCost", "value", traceQuery.getMinCost().toString()))
+                () -> clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "cost", "value", traceQuery.getMinCost().toString()))
         );
 
         addCondition(
                 () -> traceQuery.getMaxCost() != null && traceQuery.getMaxCost() > 0L,
-                () -> clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "maxCost", "value", traceQuery.getMaxCost().toString()))
-        );
-
-        addCondition(
-                () -> StringUtils.isNotBlank(traceQuery.getExceptionInfo()),
-                () -> clauseList.add(ResourceUtils.replace(MATCH_RANGE_CLAUSE, "name", "errorMessage", "value", traceQuery.getExceptionInfo()))
+                () -> clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "cost", "value", traceQuery.getMaxCost().toString()))
         );
 
         addCondition(
@@ -167,6 +174,8 @@ public class TraceManager {
                     clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(date.getTime())));
                 }
         );
+
+        return String.join(Constants.COMMA, clauseList);
     }
 
     private void addCondition(Supplier<Boolean> supplier, Runnable runnable) {
@@ -192,7 +201,7 @@ public class TraceManager {
         clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "start", "value", String.valueOf(startDate.getTime())));
         clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(endDate.getTime())));
 
-        String query = ResourceUtils.replace(DEPENDENCY_QUERY, "conditions", String.join(",", clauseList));
+        String query = ResourceUtils.replace(DEPENDENCY_QUERY, "conditions", String.join(Constants.COMMA, clauseList));
         String result = esClient.query(query);
 
         List<JsonNode> clientKeyNodes = JsonUtils.getValues(result, "aggregations.clientAppKeys.buckets", JsonNode.class);
