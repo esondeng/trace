@@ -211,7 +211,7 @@ public class TraceManager {
                 dependencyVo.setErrorCount(appKeyNode.path("failedCount").path("doc_count").asInt());
                 dependencyVo.setErrorRate(new BigDecimal(dependencyVo.getErrorCount())
                         .multiply(new BigDecimal("100"))
-                        .divide(new BigDecimal(dependencyVo.getCallCount()), RoundingMode.HALF_UP)
+                        .divide(new BigDecimal(dependencyVo.getCallCount()), 2, RoundingMode.HALF_UP)
                         .setScale(2, RoundingMode.HALF_UP)
                         .toString());
 

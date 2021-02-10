@@ -8,7 +8,7 @@ $(function () {
 
     function searchDateType(dateType) {
         $("#loadingContainer").html(loadingHtml);
-        setTimeout(function(){
+        setTimeout(function () {
             $.ajax(
                 "/dependencies.html",
                 {
@@ -32,7 +32,7 @@ $(function () {
     $(".js-dependency-group").on("click", function (e) {
 
         $(".js-dependency-self").removeClass("active");
-        if($("#dependencyQueryForm").is(":visible")){
+        if ($("#dependencyQueryForm").is(":visible")) {
             $("#dependencyQueryForm").hide();
         }
 
@@ -130,7 +130,7 @@ $(function () {
         const startMonth = startTime.substring(0, 8);
         const endMonth = endTime.substring(0, 8);
 
-        if(startMonth !== endMonth){
+        if (startMonth !== endMonth) {
             $("#dependency-error-container").text("开始时间和结束时间只能在同一个月");
             $("#dependency-search-alert").show();
             return false;
@@ -145,6 +145,9 @@ $(function () {
     });
 
     function buildServiceData(links) {
+        services = {};
+        dependencies = {};
+
         links.forEach(link => {
             const {parent, child} = link;
 
@@ -160,11 +163,9 @@ $(function () {
     }
 
     function dependencyDataReceived(links) {
-
         const lowErrorRate = 0.01;
         const highErrorRate = 0.1;
 
-        const _this = this;
         const container = $("#dependency-container")[0];
         const rootSvg = container.querySelector('svg');
         rootSvg.textContent = null;
@@ -412,7 +413,7 @@ $(function () {
 
         $modal.find('#dependencyCallCount').text(link.callCount);
         $modal.find('#dependencyErrorCount').text(link.errorCount || 0);
-        $modal.find('#dependencyErrorRate').text(link.errorRate || '0%');
+        $modal.find('#dependencyErrorRate').text((link.errorRate || '0') + "%");
         $modal.find('#dependencyTp90').text((link.tp90 || '0') + 'ms');
         $modal.find('#dependencyTp99').text((link.tp99 || '0') + 'ms');
         $modal.find('#dependencyTp999').text((link.tp999 || '0') + 'ms');
