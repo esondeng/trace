@@ -13,7 +13,7 @@ import javassist.CtNewMethod;
  */
 public class ForkJoinTaskTransformer implements TraceTransformer {
     private static final String FORK_JOIN_TASK_CLASS_NAME = "java.constants.concurrent.ForkJoinTask";
-    private static final String TRACE_RECURSIVE_TASK_CLASS_NAME = "com.trace.core.async.TraceRecursiveTaskTask";
+    private static final String TRACE_RECURSIVE_TASK_CLASS_NAME = "com.trace.core.async.TraceRecursiveTask";
     private static final String TRACE_RECURSIVE_ACTION_CLASS_NAME = "com.trace.core.async.TraceRecursiveAction";
 
     @Override
