@@ -225,10 +225,10 @@ public class TraceManager {
                         .toString());
 
                 JsonNode latencyNode = appKeyNode.path("latency_percentiles").path("values");
-                dependencyVo.setTp90(latencyNode.get(LATENCY_KEYS.get(0)).asText());
-                dependencyVo.setTp99(latencyNode.get(LATENCY_KEYS.get(1)).asText());
-                dependencyVo.setTp999(latencyNode.get(LATENCY_KEYS.get(2)).asText());
-                dependencyVo.setTp9999(latencyNode.get(LATENCY_KEYS.get(3)).asText());
+                dependencyVo.setTp90(getTwoDecimal(latencyNode.get(LATENCY_KEYS.get(0)).asText()));
+                dependencyVo.setTp99(getTwoDecimal(latencyNode.get(LATENCY_KEYS.get(1)).asText()));
+                dependencyVo.setTp999(getTwoDecimal(latencyNode.get(LATENCY_KEYS.get(2)).asText()));
+                dependencyVo.setTp9999(getTwoDecimal(latencyNode.get(LATENCY_KEYS.get(3)).asText()));
 
                 dependencyVos.add(dependencyVo);
             }
@@ -237,5 +237,10 @@ public class TraceManager {
         return dependencyVos;
     }
 
+
+    private String getTwoDecimal(String value) {
+        BigDecimal bigDecimal = new BigDecimal(value);
+        return bigDecimal.setScale(2, BigDecimal.ROUND_FLOOR).toString();
+    }
 
 }
