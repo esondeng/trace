@@ -1,7 +1,6 @@
 package com.trace.dubbo.filter;
 
 import org.apache.dubbo.common.extension.Activate;
-import org.apache.dubbo.common.utils.ReflectUtils;
 import org.apache.dubbo.rpc.Filter;
 import org.apache.dubbo.rpc.Invocation;
 import org.apache.dubbo.rpc.Invoker;
@@ -48,37 +47,24 @@ public class ServiceExceptionFilter implements Filter, Filter.Listener {
 
                 this.logger.error("Got unchecked and undeclared exception which called by " + RpcContext.getContext().getRemoteHost() + ". service: " + invoker.getInterface().getName() + ", method: " + invocation.getMethodName() + ", exception: " + exception.getClass().getName() + ": " + exception.getMessage(), exception);
 
-                String serviceFile = ReflectUtils.getCodeBase(invoker.getInterface());
-                String exceptionFile = ReflectUtils.getCodeBase(exception.getClass());
                 boolean isRpcException = exception instanceof RpcException;
+                if (!isRpcException) {
+                    // rpcException 需要返回调用方
+                    // 其他异常消费者不关心提供者的错误堆栈
+                    ServiceException serviceException = new ServiceException(exception.getClass().getCanonicalName())
+                            .setInterfacePath(invoker.getInterface().getCanonicalName() + "." + invocation.getMethodName());
 
-                if (serviceFile != null && exceptionFile != null && !serviceFile.equals(exceptionFile)) {
-                    if (!isRpcException) {
-                        // rpcException 需要返回调用方
-                        // 其他异常消费者不关心提供者的错误堆栈
-                        StackTraceElement[] stackTraceElements = exception.getStackTrace();
-                        String msg = "";
+                    if (exception instanceof BusinessException) {
+                        BusinessException bex = (BusinessException) exception;
+                        serviceException.setTrivial(bex.isTrivial());
+                        serviceException.setDetailMsg(bex.getDetailMsg());
+                    }
 
-                        if (stackTraceElements != null && stackTraceElements.length > 0) {
-                            msg = stackTraceElements[0].toString();
-                        }
+                    appResponse.setException(serviceException);
 
-                        ServiceException serviceException = new ServiceException(exception.getMessage())
-                                .setInterfacePath(invoker.getInterface().getCanonicalName() + "." + invocation.getMethodName())
-                                .setErrorPlace(msg);
-
-                        if (exception instanceof BusinessException) {
-                            BusinessException bex = (BusinessException) exception;
-                            serviceException.setTrivial(bex.isTrivial());
-                            serviceException.setDetailMsg(bex.getDetailMsg());
-                        }
-
-                        appResponse.setException(serviceException);
-
-                        Span span = TraceContext.peek();
-                        if (span != null) {
-                            span.fillErrors(exception);
-                        }
+                    Span span = TraceContext.peek();
+                    if (span != null) {
+                        span.fillErrors(exception);
                     }
                 }
             }
