@@ -16,7 +16,10 @@
         <td class="css-table-text"><a class = "trace-list-a" th:text="${trace.traceId}" th:attr="data-trace-id=${trace.traceId}" href = "javascript:void(0);"></a></td>
         <td class="css-table-text" th:text="${trace.start}"></td>
         <td class="css-table-text" th:text="${trace.cost}"></td>
-        <td class="css-table-text" th:text="${trace.status}"></td>
+        <div th:switch="${trace.status}">
+            <td th:case="failed" class="css-table-text" style="color: #f40000" th:text="${trace.status}" ></td>
+            <td th:case="success"class="css-table-text" th:text="${trace.status}" ></td>
+        </div>
     </tr>
     </tbody>
 </table>
