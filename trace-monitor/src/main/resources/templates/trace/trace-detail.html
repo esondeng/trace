@@ -46,6 +46,11 @@
 
         <div id='trace-controls' class='panel panel-default'>
             <div class="panel-body">
+                <div style="margin-left: 1.1%;">
+                    <strong>开始时间: </strong><span th:text="${#dates.format(new java.util.Date(data.start), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
+                    <strong style="margin-left: 2%;">结束时间: </strong><span th:text="${#dates.format(new java.util.Date(data.end), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
+                </div>
+
                 <ul class='nav nav-pills'>
                     <li class=''><a href='#'><strong>Trace Id:</strong> <span class='badge' th:text="${data.traceId}"></span></a></li>
                     <li class=''><a href='#'><strong>总耗时:</strong> <span class='badge' th:text="${data.cost} + 'ms'"></span></a></li>
@@ -54,7 +59,7 @@
                     <li class=''><a href='#'><strong>Total Spans:</strong> <span class='badge' th:text="${data.totalSpanCount}"></span></a></li>
                 </ul>
 
-                <div class='trace-details services'>
+                <div class='trace-details services' style="margin-left: 0.7%;">
                     <span class='label label-default service-filter-label service-tag-filtered' th:each="appCountVo : ${data.appKeyCountVos}" th:text="${appCountVo.appKey} + ' x ' + ${appCountVo.count}"></span>
                 </div>
             </div>

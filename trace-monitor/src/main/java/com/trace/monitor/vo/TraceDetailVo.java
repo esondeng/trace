@@ -25,7 +25,10 @@ public class TraceDetailVo {
     private static final int COST_STEP_NUM = 6;
 
     private String traceId;
+    private long start;
+    private long end;
     private long cost;
+
     /**
      * 页面展示时间步长
      */
@@ -33,6 +36,7 @@ public class TraceDetailVo {
     private int appKeyCount;
     private int depth;
     private int totalSpanCount;
+
 
     private List<AppKeyCountVo> appKeyCountVos;
     private List<SpanVo> spanVos;
@@ -55,6 +59,8 @@ public class TraceDetailVo {
             TraceDetailVo vo = new TraceDetailVo();
 
             vo.setTraceId(rootSpan.getTraceId());
+            vo.setStart(rootSpan.getStart());
+            vo.setEnd(rootSpan.getEnd());
 
             fillCostInfo(vo, rootSpan);
             fillAppCountInfo(vo, spanVos);
