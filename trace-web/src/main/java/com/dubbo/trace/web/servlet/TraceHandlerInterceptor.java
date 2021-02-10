@@ -16,7 +16,7 @@ import com.trace.core.constants.TraceConstants;
  * @author dengxiaolin
  * @since 2021/01/22
  */
-public class TracingInterceptor implements HandlerInterceptor {
+public class TraceHandlerInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
