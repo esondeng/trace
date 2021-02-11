@@ -11,8 +11,10 @@ public enum ServiceType {
     DUBBO_ASYNC_CONSUMER(3, "dubbo-async-c"),
     DUBBO_PROVIDER(4, "dubbo-p"),
     INNER_CALL(5, "inner-call"),
-    ASYNC(6, "async"),
-    JDBC(6, "jdbc");
+    ASYNC(6, "async-call"),
+    JDBC(7, "jdbc"),
+    MQ_SENDER(8, "mq-p"),
+    MQ_CONSUMER(9, "mq-c");
 
     private int id;
 

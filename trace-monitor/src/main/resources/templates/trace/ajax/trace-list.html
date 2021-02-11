@@ -14,7 +14,7 @@
     <tr th:each="trace : ${data}">
         <td class="css-table-text" th:text="${trace.name}"></td>
         <td class="css-table-text"><a class = "trace-list-a" th:text="${trace.traceId}" th:attr="data-trace-id=${trace.traceId}" href = "javascript:void(0);"></a></td>
-        <td class="css-table-text" th:text="${trace.start}"></td>
+        <td class="css-table-text" th:text="${#dates.format(new java.util.Date(trace.start), 'yyyy-MM-dd HH:mm:ss:SSS')}"></td>
         <td class="css-table-text" th:text="${trace.cost}"></td>
         <div th:switch="${trace.status}">
             <td th:case="failed" class="css-table-text" style="color: #f40000" th:text="${trace.status}" ></td>
