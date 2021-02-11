@@ -66,7 +66,7 @@ public class TraceManager {
     @PostConstruct
     public void init() {
         appKeysCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(1, TimeUnit.DAYS)
+                .expireAfterWrite(10, TimeUnit.MINUTES)
                 .maximumSize(2000)
                 .build(new CacheLoader<String, List<String>>() {
                     @Override
