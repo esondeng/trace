@@ -85,8 +85,8 @@ public class TraceManager {
             throw buildException(e);
         }
         finally {
-            mdcRunnableList.get(1).run();
             TraceManager.endSpan();
+            clearMDC(mdcRunnableList);
         }
     }
 
@@ -154,8 +154,8 @@ public class TraceManager {
             throw buildException(e);
         }
         finally {
-            mdcRunnableList.get(1).run();
             TraceManager.endSpan();
+            clearMDC(mdcRunnableList);
         }
     }
 
@@ -180,35 +180,52 @@ public class TraceManager {
                                   String name,
                                   Map<String, String> tagMap,
                                   List<Runnable> mdcRunnableList) {
+        pushMDC(mdcRunnableList);
+
         Span span = Span.of(consumerContext, serviceType, name, tagMap);
         TraceContext.push(span);
-        mdcRunnableList.get(0).run();
     }
 
     private static void startSpan(ServiceType serviceType, String name, List<Runnable> mdcRunnableList) {
+        pushMDC(mdcRunnableList);
+
         Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
+
         Span span = Span.of(parentSpan, serviceType, name, null);
         TraceContext.push(span);
-        mdcRunnableList.get(0).run();
     }
 
     private static void startSpan(ServiceType serviceType, String name, Map<String, String> tagMap, List<Runnable> mdcRunnableList) {
+        pushMDC(mdcRunnableList);
+
         Span parentSpan = TraceContext.peek();
         if (parentSpan == null) {
             parentSpan = TraceConstants.DUMMY_SPAN;
 
         }
+
         Span span = Span.of(parentSpan, serviceType, name, tagMap);
         TraceContext.push(span);
-        mdcRunnableList.get(0).run();
     }
 
     private static void endSpan() {
         Span span = TraceContext.pop();
         TraceContainer.getInstance().put(span);
+    }
+
+    private static void pushMDC(List<Runnable> mdcRunnableList) {
+        if (TraceContext.isEmpty()) {
+            mdcRunnableList.get(0).run();
+        }
+    }
+
+    private static void clearMDC(List<Runnable> mdcRunnableList) {
+        if (TraceContext.isEmpty()) {
+            mdcRunnableList.get(1).run();
+        }
     }
 }

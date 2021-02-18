@@ -42,4 +42,9 @@ public class TraceContext {
 
         return span;
     }
+
+    public static boolean isEmpty() {
+        Span parentSpan = peek();
+        return parentSpan == null || parentSpan.isAsyncParent();
+    }
 }
