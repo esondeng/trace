@@ -35,6 +35,17 @@ public class TraceManager {
         return invoke(callable, mdcRunnableList);
     }
 
+    private static void startSpan(ConsumerContext consumerContext,
+                                  ServiceType serviceType,
+                                  String name,
+                                  Map<String, String> tagMap,
+                                  List<Runnable> mdcRunnableList) {
+        Span span = Span.of(consumerContext, serviceType, name, tagMap);
+        TraceContext.push(span);
+
+        pushMDC(mdcRunnableList);
+    }
+
     /**
      * Web端入口或者内部调用
      */
@@ -44,7 +55,6 @@ public class TraceManager {
                                           List<Runnable> mdcRunnableList) {
         startSpan(serviceType, name, mdcRunnableList);
         return invoke(callable, mdcRunnableList);
-
     }
 
     /**
@@ -57,7 +67,19 @@ public class TraceManager {
                                           List<Runnable> mdcRunnableList) {
         startSpan(serviceType, name, tagMap, mdcRunnableList);
         return invoke(callable, mdcRunnableList);
+    }
 
+    private static void startSpan(ServiceType serviceType, String name, Map<String, String> tagMap, List<Runnable> mdcRunnableList) {
+        Span parentSpan = TraceContext.peek();
+        if (parentSpan == null) {
+            parentSpan = TraceConstants.DUMMY_SPAN;
+
+        }
+
+        Span span = Span.of(parentSpan, serviceType, name, tagMap);
+        TraceContext.push(span);
+
+        pushMDC(mdcRunnableList);
     }
 
     private static <T> T invoke(ThrowCallable<T> callable, List<Runnable> mdcRunnableList) {
@@ -102,6 +124,66 @@ public class TraceManager {
     }
 
 
+    private static void startSpan(ServiceType serviceType, String name, List<Runnable> mdcRunnableList) {
+        Span parentSpan = TraceContext.peek();
+        if (parentSpan == null) {
+            parentSpan = TraceConstants.DUMMY_SPAN;
+
+        }
+
+        Span span = Span.of(parentSpan, serviceType, name, null);
+        TraceContext.push(span);
+
+        pushMDC(mdcRunnableList);
+    }
+
+    private static void invoke(ThrowRunnable runnable, List<Runnable> mdcRunnableList) {
+        try {
+            runnable.run();
+        }
+        catch (Throwable e) {
+            fillError(e);
+            throw buildException(e);
+        }
+        finally {
+            TraceManager.endSpan();
+            clearMDC(mdcRunnableList);
+        }
+    }
+
+    private static RuntimeException buildException(Throwable e) {
+        if (e instanceof RuntimeException) {
+            return (RuntimeException) e;
+        }
+        else {
+            return new RuntimeException(e);
+        }
+    }
+
+    private static void fillError(Throwable e) {
+        Span currentSpan = TraceContext.peek();
+        if (currentSpan != null) {
+            currentSpan.fillErrors(e);
+        }
+    }
+
+
+    private static void endSpan() {
+        Span span = TraceContext.pop();
+        TraceContainer.getInstance().put(span);
+    }
+
+    private static void pushMDC(List<Runnable> mdcRunnableList) {
+        mdcRunnableList.get(0).run();
+    }
+
+    private static void clearMDC(List<Runnable> mdcRunnableList) {
+        if (TraceContext.isEmpty()) {
+            mdcRunnableList.get(1).run();
+        }
+    }
+
+
     public static void asyncParent(TraceRunnable traceRunnable) {
         TraceContext.push(traceRunnable.getAsyncParent());
         try {
@@ -142,90 +224,6 @@ public class TraceManager {
         finally {
             // 异步的parent已经收集过，直接放弃
             TraceContext.pop();
-        }
-    }
-
-    private static void invoke(ThrowRunnable runnable, List<Runnable> mdcRunnableList) {
-        try {
-            runnable.run();
-        }
-        catch (Throwable e) {
-            fillError(e);
-            throw buildException(e);
-        }
-        finally {
-            TraceManager.endSpan();
-            clearMDC(mdcRunnableList);
-        }
-    }
-
-    private static RuntimeException buildException(Throwable e) {
-        if (e instanceof RuntimeException) {
-            return (RuntimeException) e;
-        }
-        else {
-            return new RuntimeException(e);
-        }
-    }
-
-    private static void fillError(Throwable e) {
-        Span currentSpan = TraceContext.peek();
-        if (currentSpan != null) {
-            currentSpan.fillErrors(e);
-        }
-    }
-
-    private static void startSpan(ConsumerContext consumerContext,
-                                  ServiceType serviceType,
-                                  String name,
-                                  Map<String, String> tagMap,
-                                  List<Runnable> mdcRunnableList) {
-        pushMDC(mdcRunnableList);
-
-        Span span = Span.of(consumerContext, serviceType, name, tagMap);
-        TraceContext.push(span);
-    }
-
-    private static void startSpan(ServiceType serviceType, String name, List<Runnable> mdcRunnableList) {
-        pushMDC(mdcRunnableList);
-
-        Span parentSpan = TraceContext.peek();
-        if (parentSpan == null) {
-            parentSpan = TraceConstants.DUMMY_SPAN;
-
-        }
-
-        Span span = Span.of(parentSpan, serviceType, name, null);
-        TraceContext.push(span);
-    }
-
-    private static void startSpan(ServiceType serviceType, String name, Map<String, String> tagMap, List<Runnable> mdcRunnableList) {
-        pushMDC(mdcRunnableList);
-
-        Span parentSpan = TraceContext.peek();
-        if (parentSpan == null) {
-            parentSpan = TraceConstants.DUMMY_SPAN;
-
-        }
-
-        Span span = Span.of(parentSpan, serviceType, name, tagMap);
-        TraceContext.push(span);
-    }
-
-    private static void endSpan() {
-        Span span = TraceContext.pop();
-        TraceContainer.getInstance().put(span);
-    }
-
-    private static void pushMDC(List<Runnable> mdcRunnableList) {
-        if (TraceContext.isEmpty()) {
-            mdcRunnableList.get(0).run();
-        }
-    }
-
-    private static void clearMDC(List<Runnable> mdcRunnableList) {
-        if (TraceContext.isEmpty()) {
-            mdcRunnableList.get(1).run();
         }
     }
 }
