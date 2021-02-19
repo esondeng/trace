@@ -1,0 +1,26 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<table id="trace-table" class="log-table">
+    <tbody>
+        <tr th:each="log : ${data.list}">
+            <div class="alert alert-success">
+                <div class="item-row">
+                    <div class = "item-key">Trace Id</div>
+                    <span class="item-value" th:text="${log.traceId}"></span>
+                </div>
+                <div class="item-row">
+                    <div class = "item-key">Server/时间</div>
+                    <span class="item-value" th:text="${log.appKey} + ' (' + ${log.ip} + ') ' + ${#dates.format(new java.util.Date(log.logTime), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
+                </div>
+                <div class="item-row">
+                    <div class = "item-key">thread/loggerName</div>
+                    <span class="item-value" th:text="${log.thread} + ' (' + ${log.loggerName} + ')'"></span>
+                </div>
+                <div class="item-row">
+                    <div class = "item-key">日志</div>
+                    <span class="item-value"><b th:each="message : ${log.messages}" th:text="${message}"/></span>
+                </div>
+            </div>
+        </tr>
+    </tbody>
+</table>
+</html>

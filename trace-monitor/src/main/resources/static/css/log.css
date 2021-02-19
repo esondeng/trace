@@ -9,3 +9,37 @@
     -webkit-transform: translateY(-50%);
     transform: translateY(-50%);
 }
+
+.item-row {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+.item-key {
+    min-width: 160px;
+    color: #444;
+    font-weight: 700;
+    font-family: monospace;
+}
+
+.item-row pre {
+    font-family: Lucida Console, Monaco, monospace;
+}
+
+.item-value {
+    white-space: pre-wrap;
+    word-break: break-all;
+    margin: 0;
+}
+
+.kv-table-class {
+    table-layout: fixed;
+    word-break: break-all;
+}
+
+.log-table {
+    font-size: 12px;
+    font-family: Lucida Console, Monaco, monospace;
+    border-collapse: collapse;
+}

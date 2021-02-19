@@ -71,7 +71,7 @@ public class TraceManager {
                 .build(new CacheLoader<String, List<String>>() {
                     @Override
                     public List<String> load(String key) throws Exception {
-                        String result = esClient.query(APP_KEYS_QUERY);
+                        String result = esClient.querySpan(APP_KEYS_QUERY);
                         return JsonUtils.getValues(result, "aggregations.appKeys.buckets.key", String.class);
                     }
                 });
@@ -83,7 +83,7 @@ public class TraceManager {
 
     public List<TraceVo> getTraceVosByQuery(TraceQuery traceQuery) {
         String query = buildEsQuery(traceQuery);
-        String result = esClient.query(query);
+        String result = esClient.querySpan(query);
         List<String> traceIds = JsonUtils.getValues(result, "aggregations.traceIds.buckets.key", String.class);
 
         if (CollectionUtils.isEmpty(traceIds)) {
@@ -92,7 +92,7 @@ public class TraceManager {
         else {
             String conditions = buildConditions(traceQuery, traceIds);
             query = ResourceUtils.replace(TRACE_IDS_QUERY, "conditions", conditions);
-            result = esClient.query(query);
+            result = esClient.querySpan(query);
 
             List<IndexSpan> indexSpans = JsonUtils.getValues(result, "hits.hits._source", IndexSpan.class);
             return Funs.map(indexSpans, TraceVo::of);
@@ -186,7 +186,7 @@ public class TraceManager {
 
     public TraceDetailVo getDetailByTraceId(String traceId) {
         String query = ResourceUtils.replace(TRACE_DETAIL_QUERY, "traceId", traceId);
-        String result = esClient.query(query);
+        String result = esClient.querySpan(query);
         List<IndexSpan> indexSpans = JsonUtils.getValues(result, "hits.hits._source", IndexSpan.class);
         return TraceDetailVo.of(indexSpans);
     }
@@ -202,7 +202,7 @@ public class TraceManager {
         clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(endDate.getTime())));
 
         String query = ResourceUtils.replace(DEPENDENCY_QUERY, "conditions", String.join(Constants.COMMA, clauseList));
-        String result = esClient.query(query);
+        String result = esClient.querySpan(query);
 
         List<JsonNode> clientKeyNodes = JsonUtils.getValues(result, "aggregations.clientAppKeys.buckets", JsonNode.class);
         List<DependencyVo> dependencyVos = new ArrayList<>();

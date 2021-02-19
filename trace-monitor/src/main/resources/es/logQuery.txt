@@ -6,7 +6,7 @@
 	},
 	"sort": {
         "logTime": {
-          "order": "desc"
+          "order": "asc"
         }
     },
 	"from": ${offset},

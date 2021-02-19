@@ -16,14 +16,20 @@ public class EsClient {
     @Value(value = "${elasticsearch.url}")
     private String esUrl;
 
-    private String searchUrl;
+    private String spanSearchUrl;
+    private String logSearchUrl;
 
     @PostConstruct
     public void init() {
-        searchUrl = esUrl + "/trace/_search";
+        spanSearchUrl = esUrl + "/trace/_search";
+        logSearchUrl = esUrl + "/log/_search";
     }
 
-    public String query(String query) {
-        return HttpClientUtils.post(searchUrl, query);
+    public String querySpan(String query) {
+        return HttpClientUtils.post(spanSearchUrl, query);
+    }
+
+    public String queryLog(String query) {
+        return HttpClientUtils.post(logSearchUrl, query);
     }
 }
