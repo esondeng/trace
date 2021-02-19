@@ -1,0 +1,11 @@
+.css-log-results {
+    margin-top: 30px;
+}
+
+.dsl-link-class {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}

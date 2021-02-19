@@ -24,6 +24,7 @@
         <module>trace-monitor</module>
         <module>trace-index</module>
         <module>trace-common</module>
+        <module>trace-log</module>
     </modules>
 
     <properties>

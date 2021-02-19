@@ -36,5 +36,10 @@ public class IndexController {
         return "/dependency/dependency";
     }
 
+    @RequestMapping("/log/log.html")
+    public String log(Model model) {
+        model.addAttribute("applicationNames", traceManager.getAppKeys());
+        return "/log/log";
+    }
 
 }

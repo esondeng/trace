@@ -11,6 +11,7 @@
     <link th:href="@{/static/css/trace.css}" rel="stylesheet"/>
     <link th:href="@{/static/css/trace-detail.css}" rel="stylesheet"/>
     <link th:href="@{/static/css/dependency.css}" rel="stylesheet"/>
+    <link th:href="@{/static/css/log.css}" rel="stylesheet"/>
 
     <!--- js start-->
     <script th:src="@{/static/plugins/jQuery/jQuery-2.2.0.min.js}"></script>
@@ -32,7 +33,7 @@
         <ul class="nav navbar-nav navbar-left" id="index-tab-id">
             <li><a id="traceTabId" class="js-click-tab active" data-url="/trace/trace.html" href="javascript:void(0);"><span class="glyphicon glyphicon-retweet"></span> 链路查找</a></li>
             <li><a href="javascript:void(0);" class="js-click-tab" data-url="/dependency/dependency.html"><span class="glyphicon glyphicon-circle-arrow-right"></span> 依赖关系</a></li>
-            <li><a href="javascript:void(0);"><span class="glyphicon glyphicon-eye-open"></span> 日志查询</a></li>
+            <li><a href="javascript:void(0);" class="js-click-tab" data-url="/log/log.html"><span class="glyphicon glyphicon-eye-open"></span> 日志查询</a></li>
         </ul>
     </div>
 </nav>

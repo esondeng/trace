@@ -1,0 +1,14 @@
+{
+	"query": {
+		"query_string": {
+			"query": "${condition}"
+		}
+	},
+	"sort": {
+        "logTime": {
+          "order": "desc"
+        }
+    },
+	"from": ${offset},
+	"size": ${pageSize}
+}

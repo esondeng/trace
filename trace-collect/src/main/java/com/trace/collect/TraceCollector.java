@@ -176,7 +176,8 @@ public class TraceCollector {
         }
 
         try {
-            HttpClientUtils.post(traceCollectUrl, JsonUtils.toJson(indexSpans));
+            log.info(JsonUtils.toJson(indexSpans));
+            // HttpClientUtils.post(traceCollectUrl, JsonUtils.toJson(indexSpans));
             indexSpans.clear();
         }
         catch (Exception e) {

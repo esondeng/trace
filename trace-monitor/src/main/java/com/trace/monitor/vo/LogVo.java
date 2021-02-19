@@ -1,15 +1,17 @@
-package com.trace.common.domain;
+package com.trace.monitor.vo;
+
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * @author dengxiaolin
- * @since 2021/02/18
+ * @since 2021/02/19
  */
 @Getter
 @Setter
-public class IndexLog {
+public class LogVo {
     private String appKey;
     private String ip;
     private String traceId;
@@ -17,8 +19,7 @@ public class IndexLog {
     private String loggerName;
     private String thread;
     private long logTime;
-    private String logDate;
     private String logLevel;
 
-    private String message;
+    private List<String> messages;
 }

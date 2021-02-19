@@ -9,7 +9,13 @@ import java.util.Enumeration;
  * @since 2021/01/11
  */
 public class NetworkUtils {
-    public static String getLocalIp() {
+    private static String localIp;
+
+    static {
+        localIp = buildLocalIp();
+    }
+
+    private static String buildLocalIp() {
         try {
             Enumeration<NetworkInterface> faces = NetworkInterface.getNetworkInterfaces();
             while (faces.hasMoreElements()) {
@@ -30,5 +36,9 @@ public class NetworkUtils {
         }
 
         return "127.0.0.1";
+    }
+
+    public static String getLocalIp() {
+        return localIp;
     }
 }

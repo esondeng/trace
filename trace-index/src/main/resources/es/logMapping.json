@@ -1,0 +1,31 @@
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 10,
+      "number_of_replicas": 1,
+      "refresh_interval": "1s",
+      "translog.flush_threshold_size": "1000m"
+    }
+  },
+  "mappings": {
+    "dynamic_templates": [
+      {
+        "strings": {
+          "match_mapping_type": "string",
+          "match": "*",
+          "mapping": {
+            "type": "keyword"
+          }
+        }
+      }
+    ],
+    "properties": {
+      "logTime": {
+        "type": "long"
+      },
+      "message": {
+        "type": "text"
+      }
+    }
+  }
+}
