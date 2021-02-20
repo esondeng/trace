@@ -17,6 +17,6 @@ public class LogQuery extends PageQuery {
     @Override
     public void validate() {
         super.validate();
-        condition = condition.replaceAll("\"", "\\\"");
+        condition = condition.replaceAll("\"", "\\\\\"");
     }
 }
