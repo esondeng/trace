@@ -43,3 +43,24 @@
     font-family: Lucida Console, Monaco, monospace;
     border-collapse: collapse;
 }
+
+.left-nav-class{
+    margin-top: -10px;
+    margin-bottom: 6px;
+    align-items: center;
+    line-height: 1.3;
+    font-size: 14px;
+}
+
+.hit-class{
+    font-weight: 700;
+    font-family: Open Sans, Helvetica, Arial, sans-serif;
+    margin-right: 3px;
+}
+
+.took-class {
+    font-weight: 700;
+    font-family: Open Sans, Helvetica, Arial, sans-serif;
+    margin-right: 3px;
+    margin-left: 5px;
+}

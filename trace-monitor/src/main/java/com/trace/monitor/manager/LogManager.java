@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import com.eson.common.core.util.Funs;
 import com.eson.common.core.util.JsonUtils;
 import com.eson.common.core.util.ResourceUtils;
-import com.eson.common.web.vo.PageVo;
 import com.trace.common.domain.IndexLog;
 import com.trace.monitor.es.EsClient;
 import com.trace.monitor.query.LogQuery;
+import com.trace.monitor.vo.LogPageVo;
 import com.trace.monitor.vo.LogVo;
 
 /**
@@ -27,7 +27,7 @@ public class LogManager {
     @Autowired
     private EsClient esClient;
 
-    public PageVo<LogVo> getLogVosByQuery(LogQuery logQuery) {
+    public LogPageVo<LogVo> getLogVosByQuery(LogQuery logQuery) {
         Map<String, String> map = new HashMap<>(16);
         map.put("condition", logQuery.getCondition());
         map.put("offset", String.valueOf(logQuery.getOffset()));
@@ -37,10 +37,11 @@ public class LogManager {
         String result = esClient.queryLog(esQuery);
 
         Integer total = JsonUtils.getValues(result, "hits.total.value", Integer.class).get(0);
+        long cost = JsonUtils.getValues(result, "took", Long.class).get(0);
 
         List<IndexLog> indexLogs = JsonUtils.getValues(result, "hits.hits._source", IndexLog.class);
         List<LogVo> logVos = Funs.map(indexLogs, LogVo::of);
 
-        return PageVo.of(logQuery, total, logVos);
+        return LogPageVo.of(logQuery, total, cost, logVos);
     }
 }
