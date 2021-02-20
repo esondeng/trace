@@ -1,7 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <div class="left-nav-class">
     <span class="hit-class" th:text="${#numbers.formatDecimal(data.total,1,'COMMA',0,'POINT')}"></span>
-    <span>hits</span>
+    <span>hits in</span>
     <span class="took-class" th:text="${#numbers.formatDecimal(data.cost,1,'COMMA',0,'POINT')}"></span>
     <span>ms</span>
 </div>
