@@ -25,6 +25,7 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexLog;
 import com.trace.core.TraceConfig;
+import com.trace.core.constants.TraceConstants;
 import com.trace.core.util.NetworkUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,14 @@ import lombok.extern.slf4j.Slf4j;
 public class ScribeAppender extends AbstractAppender {
     private static final int UPLOAD_SIZE = 1024;
     private static final int MAX_STACK_DEPTH = 6;
+
+    private static final String SELF_LOG_PACKAGE = "com.trace.log";
+    private static final String DEVELOP_PACKGAE = "com.dubbo.example";
+    private static final String TRACE_DUBBO_FILTER_PACKAGE = "com.trace.dubbo.filter";
+    private static final String DUBBO_FILTER_PACKAGE = "org.apache.dubbo.rpc.filter.ExceptionFilter";
+    private static final String MAIN_THREAD_NAME = "main";
+
+    private static final String SYSTEM_PROP_COLLECT_URL = "log.collect.url";
 
     private String appKey;
     private String ip;
@@ -70,11 +79,8 @@ public class ScribeAppender extends AbstractAppender {
             new ThreadPoolExecutor.CallerRunsPolicy());
 
     @PluginFactory
-    public static ScribeAppender createAppender(@PluginAttribute(value = "name", defaultString = "null") String name,
-                                                @PluginAttribute(value = "logCollectUrl", defaultString = "null") String logCollectUrl) {
-        if (StringUtils.isBlank(logCollectUrl)) {
-            logCollectUrl = System.getProperty("log.collect.url");
-        }
+    public static ScribeAppender createAppender(@PluginAttribute(value = "name") String name) {
+        String logCollectUrl = System.getProperty(SYSTEM_PROP_COLLECT_URL);
         return new ScribeAppender(name, logCollectUrl);
     }
 
@@ -83,7 +89,6 @@ public class ScribeAppender extends AbstractAppender {
 
         this.appKey = TraceConfig.getAppKey();
         this.ip = NetworkUtils.getLocalIp();
-        log.info("logCollectUrl==" + logCollectUrl);
         this.logCollectUrl = logCollectUrl;
 
         this.queue = new ArrayBlockingQueue<>(1024 * 8);
@@ -162,18 +167,18 @@ public class ScribeAppender extends AbstractAppender {
             return;
         }
 
-        if (loggerName.startsWith("com.trace.log")) {
+        if (loggerName.startsWith(SELF_LOG_PACKAGE)) {
             return;
         }
 
-        if (!loggerName.startsWith("com.dubbo.example")
-                && !loggerName.startsWith("com.trace.dubbo.filter")
-                && !loggerName.startsWith("org.apache.dubbo.rpc.filter.ExceptionFilter")) {
+        if (!loggerName.startsWith(DEVELOP_PACKGAE)
+                && !loggerName.startsWith(TRACE_DUBBO_FILTER_PACKAGE)
+                && !loggerName.startsWith(DUBBO_FILTER_PACKAGE)) {
             return;
         }
 
         String threadName = logEvent.getThreadName();
-        if ("main".equals(threadName)) {
+        if (MAIN_THREAD_NAME.equals(threadName)) {
             return;
         }
 
@@ -182,7 +187,7 @@ public class ScribeAppender extends AbstractAppender {
         indexLog.setIp(ip);
         indexLog.setLoggerName(loggerName);
         indexLog.setThread(threadName);
-        indexLog.setTraceId(logEvent.getContextData().getValue("traceId"));
+        indexLog.setTraceId(logEvent.getContextData().getValue(TraceConstants.TRACE_ID));
         indexLog.setLogTime(logEvent.getTimeMillis());
         indexLog.setLogLevel(logEvent.getLevel().toString());
         indexLog.setMessage(buildMessage(logEvent));
