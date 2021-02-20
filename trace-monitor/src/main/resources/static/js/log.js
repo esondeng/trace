@@ -89,11 +89,20 @@ $(function () {
         let dateType = undefined;
         const jsLogGroup = $(".js-log-group.active");
         if(jsLogGroup){
-            dateType = jsLogGroup.get(0).getAttribute("data-type");
+            dateType = jsLogGroup.get(0).attr("data-type");
         }
 
         const startTime = $("#startTime").val();
         const endTime = $("#endTime").val();
+
+        const jsLogSelf = $(".js-log-self.active");
+        if(jsLogSelf){
+            if(startTime === '' || endTime === ''){
+                $("#log-error-container").text("开始时间和结束时间必填");
+                $("#log-search-alert").show();
+                return false;
+            }
+        }
 
         const inputData = {
             "dateType": dateType,
