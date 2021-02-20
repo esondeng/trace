@@ -13,11 +13,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.eson.common.core.util.Funs;
 import com.trace.collect.constants.MdcTraceConstants;
+import com.trace.core.TraceContext;
+import com.trace.core.constants.TraceConstants;
 import com.trace.core.enums.ServiceType;
 import com.trace.core.manager.TraceManager;
 
@@ -72,10 +75,14 @@ public class TraceFilter implements Filter {
                 return;
             }
 
+            HttpServletResponse response = (HttpServletResponse) servletResponse;
             TraceManager.tracing(
                     ServiceType.HTTP,
                     path,
-                    () -> filterChain.doFilter(servletRequest, servletResponse),
+                    () -> {
+                        response.addHeader(TraceConstants.TRACE_ID, TraceContext.peek().getTraceId());
+                        filterChain.doFilter(servletRequest, servletResponse);
+                    },
                     MdcTraceConstants.MDC_RUNNABLE_LIST);
         }
 
