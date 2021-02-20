@@ -1,7 +1,8 @@
 {
 	"query": {
 		"query_string": {
-			"query": "${condition}"
+			"query": "${condition}",
+			"default_field":"message"
 		}
 	},
 	"sort": {

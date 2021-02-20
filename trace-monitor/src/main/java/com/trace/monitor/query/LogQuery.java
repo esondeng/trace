@@ -13,4 +13,10 @@ import lombok.Setter;
 @Setter
 public class LogQuery extends PageQuery {
     private String condition;
+
+    @Override
+    public void validate() {
+        super.validate();
+        condition = condition.replaceAll("\"", "\\\"");
+    }
 }
