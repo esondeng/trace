@@ -1,5 +1,6 @@
 package com.trace.monitor.manager;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.eson.common.core.util.Funs;
 import com.eson.common.core.util.JsonUtils;
 import com.eson.common.core.util.ResourceUtils;
+import com.eson.common.core.util.TimeUtils;
 import com.trace.common.domain.IndexLog;
 import com.trace.monitor.es.EsClient;
 import com.trace.monitor.query.LogQuery;
@@ -28,10 +30,7 @@ public class LogManager {
     private EsClient esClient;
 
     public LogPageVo<LogVo> getLogVosByQuery(LogQuery logQuery) {
-        Map<String, String> map = new HashMap<>(16);
-        map.put("condition", logQuery.getCondition());
-        map.put("offset", String.valueOf(logQuery.getOffset()));
-        map.put("pageSize", String.valueOf(logQuery.getPageSize()));
+        Map<String, String> map = buildParamMap(logQuery);
 
         String esQuery = ResourceUtils.replace(LOG_QUERY, map);
         String result = esClient.queryLog(esQuery);
@@ -43,5 +42,22 @@ public class LogManager {
         List<LogVo> logVos = Funs.map(indexLogs, LogVo::of);
 
         return LogPageVo.of(logQuery, total, cost, logVos);
+    }
+
+    private Map<String, String> buildParamMap(LogQuery logQuery) {
+        Map<String, String> map = new HashMap<>(16);
+
+        map.put("condition", logQuery.getCondition());
+
+        Date startDate = TimeUtils.parseAsDate(logQuery.getStartTime(), TimeUtils.DATE_TIME);
+        map.put("start", String.valueOf(startDate.getTime()));
+
+        Date endDate = TimeUtils.parseAsDate(logQuery.getEndTime(), TimeUtils.DATE_TIME);
+        map.put("end", String.valueOf(endDate.getTime()));
+
+        map.put("offset", String.valueOf(logQuery.getOffset()));
+        map.put("pageSize", String.valueOf(logQuery.getPageSize()));
+
+        return map;
     }
 }

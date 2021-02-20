@@ -1,8 +1,28 @@
 {
 	"query": {
-		"query_string": {
-			"query": "${condition}",
-			"default_field":"message"
+		"bool": {
+			"must": [
+			    {
+					"query_string": {
+						"query": "${condition}",
+						"default_field": "message"
+					}
+				},
+				{
+					"range": {
+						"logTime": {
+							"gte": ${start}
+						}
+					}
+				},
+				{
+					"range": {
+						"logTime": {
+							"lte": ${end}
+						}
+					}
+				}
+			]
 		}
 	},
 	"sort": {
@@ -11,5 +31,5 @@
         }
     },
 	"from": ${offset},
-	"size": ${pageSize}
+    "size": ${pageSize}
 }
