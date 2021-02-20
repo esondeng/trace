@@ -84,21 +84,28 @@ $(function () {
             return false;
         }
 
-        $("#log-results").html(loadingHtml);
-
         let dateType = undefined;
         const jsLogGroup = $(".js-log-group.active");
-        if(jsLogGroup){
-            dateType = jsLogGroup.get(0).attr("data-type");
+        if(jsLogGroup.size() > 0){
+            dateType = jsLogGroup.attr("data-type");
         }
 
         const startTime = $("#startTime").val();
         const endTime = $("#endTime").val();
 
         const jsLogSelf = $(".js-log-self.active");
-        if(jsLogSelf){
+        if(jsLogSelf.size() > 0){
             if(startTime === '' || endTime === ''){
                 $("#log-error-container").text("开始时间和结束时间必填");
+                $("#log-search-alert").show();
+                return false;
+            }
+
+            const start = Date.parse(startTime);
+            const end = Date.parse(endTime);
+
+            if(end - start > 30 * 24 * 3600 * 1000){
+                $("#log-error-container").text("开始时间和结束时间只能在1个月之内");
                 $("#log-search-alert").show();
                 return false;
             }
@@ -111,6 +118,7 @@ $(function () {
             "condition": condition
         }
 
+        $("#log-results").html(loadingHtml);
         $.ajax(
             "/log/search.html",
             {

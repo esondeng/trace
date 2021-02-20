@@ -127,11 +127,11 @@ $(function () {
             return false;
         }
 
-        const startMonth = startTime.substring(0, 8);
-        const endMonth = endTime.substring(0, 8);
+        const start = Date.parse(startTime);
+        const end = Date.parse(endTime);
 
-        if (startMonth !== endMonth) {
-            $("#dependency-error-container").text("开始时间和结束时间只能在同一个月");
+        if(end - start > 30 * 24 * 3600 * 1000){
+            $("#dependency-error-container").text("开始时间和结束时间只能在1个月之内");
             $("#dependency-search-alert").show();
             return false;
         }
