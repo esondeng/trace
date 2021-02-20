@@ -70,8 +70,11 @@ public class ScribeAppender extends AbstractAppender {
             new ThreadPoolExecutor.CallerRunsPolicy());
 
     @PluginFactory
-    public static ScribeAppender createAppender(@PluginAttribute(value = "name", defaultString = "null") final String name,
-                                                @PluginAttribute(value = "logCollectUrl", defaultString = "null") final String logCollectUrl) {
+    public static ScribeAppender createAppender(@PluginAttribute(value = "name", defaultString = "null") String name,
+                                                @PluginAttribute(value = "logCollectUrl", defaultString = "null") String logCollectUrl) {
+        if (StringUtils.isBlank(logCollectUrl)) {
+            logCollectUrl = System.getProperty("log.collect.url");
+        }
         return new ScribeAppender(name, logCollectUrl);
     }
 
@@ -80,7 +83,7 @@ public class ScribeAppender extends AbstractAppender {
 
         this.appKey = TraceConfig.getAppKey();
         this.ip = NetworkUtils.getLocalIp();
-        System.out.println("logCollectUrl==" + logCollectUrl);
+        log.info("logCollectUrl==" + logCollectUrl);
         this.logCollectUrl = logCollectUrl;
 
         this.queue = new ArrayBlockingQueue<>(1024 * 8);
