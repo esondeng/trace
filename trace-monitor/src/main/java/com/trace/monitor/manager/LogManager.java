@@ -55,6 +55,11 @@ public class LogManager {
         Date endDate = TimeUtils.parseAsDate(logQuery.getEndTime(), TimeUtils.DATE_TIME);
         map.put("end", String.valueOf(endDate.getTime()));
 
+        map.put("interval", logQuery.getInterval());
+        map.put("format", logQuery.getFormat());
+        map.put("minBounds", logQuery.getMinBounds());
+        map.put("maxBounds", logQuery.getMaxBounds());
+
         map.put("offset", String.valueOf(logQuery.getOffset()));
         map.put("pageSize", String.valueOf(logQuery.getPageSize()));
 

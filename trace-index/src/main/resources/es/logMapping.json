@@ -23,6 +23,10 @@
       "logTime": {
         "type": "long"
       },
+      "logDate": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss"
+      },
       "message": {
         "type": "text",
         "analyzer": "ik_max_word",

@@ -71,7 +71,7 @@ public class EsClient {
             sb.append(BULK_WITHOUT_ID);
             sb.append(Constants.NEW_LINE);
 
-            indexSpan.setLogDate(TimeUtils.formatAsDate(new Date(indexSpan.getLogTime())));
+            indexSpan.setLogDate(TimeUtils.formatAsDateTime(new Date(indexSpan.getLogTime())));
             sb.append(JsonUtils.toJson(indexSpan));
             sb.append(Constants.NEW_LINE);
         });
