@@ -184,7 +184,7 @@ public class Span {
 
         if (parentSpan == TraceConstants.DUMMY_SPAN) {
             span.setServiceType(serviceType.message());
-            span.setTraceId(TraceUtils.buildTranceId());
+            span.setTraceId(TraceUtils.buildTraceId());
 
             span.setId(TraceConstants.ROOT_SPAN_ID);
             span.setDepth(1);
