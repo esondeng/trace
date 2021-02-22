@@ -1,0 +1,44 @@
+{
+	"query": {
+		"bool": {
+			"must": [
+			    {
+					"query_string": {
+						"query": "${condition}",
+						"default_field": "message"
+					}
+				},
+				{
+					"range": {
+						"logTime": {
+							"gte": ${start}
+						}
+					}
+				},
+				{
+					"range": {
+						"logTime": {
+							"lte": ${end}
+						}
+					}
+				}
+			]
+		}
+	},
+	"aggs": {
+        "dateArray": {
+            "date_histogram": {
+                "field": "logDate",
+                "interval": "${interval}",
+                "format": "${format}",
+                "min_doc_count": 0,
+                "extended_bounds": {
+                    "min": "${minBounds}",
+                    "max": "${maxBounds}"
+                }
+
+            }
+        }
+    },
+    "size": 0
+}

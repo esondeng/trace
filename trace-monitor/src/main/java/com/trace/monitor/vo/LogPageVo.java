@@ -18,7 +18,11 @@ import lombok.Setter;
 public class LogPageVo<T> extends PageVo<T> {
     private long cost;
 
-    public static <T> LogPageVo<T> of(PageQuery pageQuery, int total, long cost, List<T> list) {
+
+    public static <T> LogPageVo<T> of(PageQuery pageQuery,
+                                      int total,
+                                      long cost,
+                                      List<T> list) {
         LogPageVo<T> vo = new LogPageVo<>();
         vo.setTotal(total);
         vo.setCost(cost);

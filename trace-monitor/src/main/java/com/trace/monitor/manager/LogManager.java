@@ -12,9 +12,12 @@ import com.eson.common.core.util.Funs;
 import com.eson.common.core.util.JsonUtils;
 import com.eson.common.core.util.ResourceUtils;
 import com.eson.common.core.util.TimeUtils;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.trace.common.domain.IndexLog;
 import com.trace.monitor.es.EsClient;
 import com.trace.monitor.query.LogQuery;
+import com.trace.monitor.vo.AggregationVo;
+import com.trace.monitor.vo.LogAggregationsVo;
 import com.trace.monitor.vo.LogPageVo;
 import com.trace.monitor.vo.LogVo;
 
@@ -25,6 +28,7 @@ import com.trace.monitor.vo.LogVo;
 @Component
 public class LogManager {
     private static final String LOG_QUERY = ResourceUtils.getResource("/es/logQuery.txt");
+    private static final String LOG_AGGS_QUERY = ResourceUtils.getResource("/es/logAggsQuery.txt");
 
     @Autowired
     private EsClient esClient;
@@ -42,6 +46,30 @@ public class LogManager {
         List<LogVo> logVos = Funs.map(indexLogs, LogVo::of);
 
         return LogPageVo.of(logQuery, total, cost, logVos);
+    }
+
+    public LogAggregationsVo getLogAggsByQuery(LogQuery logQuery) {
+        Map<String, String> map = buildParamMap(logQuery);
+
+        String esQuery = ResourceUtils.replace(LOG_AGGS_QUERY, map);
+        String result = esClient.queryLog(esQuery);
+
+        List<JsonNode> aggs = JsonUtils.getValues(result, "aggregations.dateArray.buckets", JsonNode.class);
+        List<AggregationVo> aggregationVos = Funs.map(
+                JsonUtils.convertList(aggs.get(0), JsonNode.class),
+                jsonNode -> {
+                    String name = jsonNode.get("key_as_string").asText();
+                    long count = jsonNode.get("doc_count").asLong();
+
+                    return AggregationVo.of(name, count);
+                });
+        long max = aggregationVos.stream()
+                .mapToLong(AggregationVo::getCount)
+                .max()
+                .orElse(0L);
+        double tickInterval = (double) max / 10;
+
+        return LogAggregationsVo.of(aggregationVos, tickInterval);
     }
 
     private Map<String, String> buildParamMap(LogQuery logQuery) {
@@ -65,4 +93,6 @@ public class LogManager {
 
         return map;
     }
+
+
 }

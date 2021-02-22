@@ -75,10 +75,10 @@ $(function () {
         let count = 0;
         for (let i = 0; i < condition.length; i++) {
             if (condition[i] === "\"")
-                count ++;
+                count++;
         }
 
-        if(count %2 !== 0){
+        if (count % 2 !== 0) {
             $("#log-error-container").text("引号个数不对");
             $("#log-search-alert").show();
             return false;
@@ -86,7 +86,7 @@ $(function () {
 
         let dateType = undefined;
         const jsLogGroup = $(".js-log-group.active");
-        if(jsLogGroup.size() > 0){
+        if (jsLogGroup.size() > 0) {
             dateType = jsLogGroup.attr("data-type");
         }
 
@@ -94,8 +94,8 @@ $(function () {
         const endTime = $("#endTime").val();
 
         const jsLogSelf = $(".js-log-self.active");
-        if(jsLogSelf.size() > 0){
-            if(startTime === '' || endTime === ''){
+        if (jsLogSelf.size() > 0) {
+            if (startTime === '' || endTime === '') {
                 $("#log-error-container").text("开始时间和结束时间必填");
                 $("#log-search-alert").show();
                 return false;
@@ -104,7 +104,7 @@ $(function () {
             const start = Date.parse(startTime);
             const end = Date.parse(endTime);
 
-            if(end - start > 30 * 24 * 3600 * 1000){
+            if (end - start > 30 * 24 * 3600 * 1000) {
                 $("#log-error-container").text("开始时间和结束时间只能在1个月之内");
                 $("#log-search-alert").show();
                 return false;
@@ -127,49 +127,42 @@ $(function () {
                 data: inputData,
                 success: data => {
                     $("#log-results").html(data);
-                    draw();
+
+                    $.ajax(
+                        "/log/aggs.html",
+                        {
+                            type: 'GET',
+                            async: false,
+                            data: inputData,
+                            success: data => {
+                                draw(data);
+                            }
+                        }
+                    );
                 }
             }
         );
     }
 
-    function draw(){
-        const data = [{
-            year: '1951 年',
-            sales: 38
-        }, {
-            year: '1952 年',
-            sales: 52
-        }, {
-            year: '1956 年',
-            sales: 61
-        }, {
-            year: '1957 年',
-            sales: 145
-        }, {
-            year: '1958 年',
-            sales: 48
-        }, {
-            year: '1959 年',
-            sales: 38
-        }, {
-            year: '1960 年',
-            sales: 38
-        }, {
-            year: '1962 年',
-            sales: 38
-        }];
+    function draw(aggs) {
+        const data = aggs.aggregations;
         const chart = new G2.Chart({
             container: 'mountNode',
             forceFit: true,
-            width: 1000,
+            width: 800,
             height: 300
         });
         chart.source(data);
-        chart.scale('sales', {
-            tickInterval: 20
+        chart.scale('count', {
+            tickInterval: aggs.tickInterval
         });
-        chart.interval().position('year*sales');
+        chart.axis('name', {
+            label: {
+                autoHide: false,
+                autoEllipsis: false
+            }
+        });
+        chart.interval().position('name*count');
         chart.render();
     }
 
