@@ -150,7 +150,7 @@ $(function () {
         const chart = new G2.Chart({
             container: 'mountNode',
             forceFit: true,
-            width: 800,
+            width: 1000,
             height: 300
         });
         chart.source(data);

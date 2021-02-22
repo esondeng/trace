@@ -73,17 +73,11 @@ $(function () {
         }
 
         if (startTime !== '' && endTime !== '') {
-            const startDay = startTime.substring(0, 11);
-            const endDay = endTime.substring(0, 11);
+            const start = Date.parse(startTime);
+            const end = Date.parse(endTime);
 
-            if (startTime > endTime) {
-                $("#trace-error-container").text("开始时间不能大于结束时间");
-                $("#trace-search-alert").show();
-                return false;
-            }
-
-            if (startDay !== endDay) {
-                $("#trace-error-container").text("开始时间和结束时间只能选同一天");
+            if (end - start > 30 * 24 * 3600 * 1000) {
+                $("#trace-error-container").text("开始时间和结束时间只能在1个月之内");
                 $("#trace-search-alert").show();
                 return false;
             }
