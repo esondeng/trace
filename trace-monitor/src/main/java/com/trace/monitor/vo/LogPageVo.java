@@ -17,7 +17,8 @@ import lombok.Setter;
 @Setter
 public class LogPageVo<T> extends PageVo<T> {
     private long cost;
-
+    private int startIndex;
+    private int endIndex;
 
     public static <T> LogPageVo<T> of(PageQuery pageQuery,
                                       int total,
@@ -27,9 +28,13 @@ public class LogPageVo<T> extends PageVo<T> {
         vo.setTotal(total);
         vo.setCost(cost);
 
-        vo.setPageNum(pageQuery.getPageNum());
+        int pageNum = pageQuery.getPageNum();
         int pageSize = pageQuery.getPageSize();
+        vo.setPageNum(pageNum);
         vo.setPageSize(pageSize);
+
+        vo.setStartIndex((pageNum - 1) * pageSize + 1);
+        vo.setEndIndex(Math.min(pageNum * pageSize, total));
 
         vo.setTotalPage((int) Math.ceil((double) total / (double) pageSize));
         vo.setList(list == null ? Collections.emptyList() : list);

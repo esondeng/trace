@@ -22,7 +22,7 @@ public class LogController {
     @GetMapping(value = "/log/search.html")
     public String logSearch(Model model, LogQuery logQuery) {
         logQuery.validate();
-        model.addAttribute("data", logManager.getLogVosByQuery(logQuery));
+        model.addAttribute("data", logManager.getLogPageVoByQuery(logQuery));
         return "log/ajax/log-list";
     }
 

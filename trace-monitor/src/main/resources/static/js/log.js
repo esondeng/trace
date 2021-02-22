@@ -64,6 +64,7 @@ $(function () {
 
     function searchLogs() {
         $("#log-search-alert").hide();
+        $("#mountNode").html('');
 
         const condition = $("#condition").val();
         if (condition === '') {

@@ -33,7 +33,7 @@ public class LogManager {
     @Autowired
     private EsClient esClient;
 
-    public LogPageVo<LogVo> getLogVosByQuery(LogQuery logQuery) {
+    public LogPageVo<LogVo> getLogPageVoByQuery(LogQuery logQuery) {
         Map<String, String> map = buildParamMap(logQuery);
 
         String esQuery = ResourceUtils.replace(LOG_QUERY, map);

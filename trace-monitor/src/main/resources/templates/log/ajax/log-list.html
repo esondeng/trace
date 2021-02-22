@@ -1,6 +1,4 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<div id="mountNode"></div>
-
 <div class="left-nav-class">
     <span class="hit-class" th:text="${#numbers.formatDecimal(data.total,1,'COMMA',0,'POINT')}"></span>
     <span>hits in</span>
@@ -31,4 +29,16 @@
     </tr>
     </tbody>
 </table>
+<div  class="search-pagination">
+    <div  class="page-detail" th:text="'Showing ' + ${#numbers.formatDecimal(data.startIndex,1,'COMMA',0,'POINT')} + ' to ' + ${#numbers.formatDecimal(data.endIndex,1,'COMMA',0,'POINT')} + ' of ' + ${#numbers.formatDecimal(data.total,1,'COMMA',0,'POINT')} ">
+    </div>
+    <ul class="pager">
+        <li id = "logPrev" th:if="${data.pageNum} gt 1"><a th:attr="data-page=${data.pageNum - 1}" href="javascript:void(0);">Previous</a></li>
+        <li id = "logPrev" class="disabled" th:if="${data.pageNum} eq 1"><a href="javascript:void(0);">Previous</a></li>
+        <li class="active"><a href="javascript:void(0);" th:text="${data.pageNum}"></a></li>
+        <li id = "logNext" th:if="${data.pageNum < data.totalPage}"><a th:attr="data-page=${data.pageNum + 1}" href="javascript:void(0);">Next</a></li>
+        <li id = "logNext" class="disabled" th:if="${data.pageNum == data.totalPage}"><a href="javascript:void(0);">Next</a></li>
+    </ul>
+</div>
+<script th:src="@{/static/js/log-list.js}"></script>
 </html>

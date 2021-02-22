@@ -64,3 +64,14 @@
     margin-right: 3px;
     margin-left: 5px;
 }
+
+.search-pagination {
+    display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+}、
+
+.search-pagination .page-detail {
+    line-height: 48px;
+    padding-left: 20px;
+}
