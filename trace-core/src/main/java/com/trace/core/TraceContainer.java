@@ -11,11 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TraceContainer {
 
     private AtomicInteger failCounter;
-
-
     private BlockingQueue<Span> queue;
-
-
     private volatile boolean isActive = true;
 
     private TraceContainer() {
