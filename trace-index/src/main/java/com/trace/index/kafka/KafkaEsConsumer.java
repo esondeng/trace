@@ -65,7 +65,7 @@ public class KafkaEsConsumer {
 
     @PostConstruct
     public void init() {
-        log.info("启动kafka监听");
+        log.info("启动kafka监听,topic=" + topic);
 
 //        Properties props = new Properties();
 //        props.put("bootstrap.servers", brokerList);
