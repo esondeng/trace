@@ -1,10 +1,13 @@
 package com.trace.index.spring;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+
+import com.trace.index.kafka.KafkaEsConsumer;
 
 /**
  * @author dengxiaolin
@@ -19,5 +22,17 @@ public class IndexConfig {
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "span")
+    public KafkaEsConsumer spanKafkaConsumer() {
+        return new KafkaEsConsumer();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "log")
+    public KafkaEsConsumer logKafkaConsumer() {
+        return new KafkaEsConsumer();
     }
 }

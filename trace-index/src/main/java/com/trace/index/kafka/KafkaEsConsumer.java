@@ -5,7 +5,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -19,7 +18,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
@@ -31,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author dengxiaolin
  * @since 2021/02/05
  */
-@Component
 @Slf4j
 public class KafkaEsConsumer {
     @Value("${kafka.broker.list}")
