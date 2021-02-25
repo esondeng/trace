@@ -33,8 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 public class KafkaEsConsumer {
     private String brokerList;
-    private String groupId;
     private String topic;
+    private String groupId;
 
     @Autowired
     private EsClient esClient;
@@ -61,7 +61,7 @@ public class KafkaEsConsumer {
 
     @PostConstruct
     public void init() {
-        log.info("启动kafka监听,brokerList= {}, topic={}", brokerList, topic);
+        log.info("启动kafka监听,brokerList= {}, topic={}， groupId={}", brokerList, topic, groupId);
 
 //        Properties props = new Properties();
 //        props.put("bootstrap.servers", brokerList);
