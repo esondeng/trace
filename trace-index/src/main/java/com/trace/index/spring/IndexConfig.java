@@ -1,6 +1,6 @@
 package com.trace.index.spring;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +18,11 @@ import com.trace.index.kafka.KafkaEsConsumer;
 @PropertySource("classpath:config/${spring.profiles.active:dev}/elasticsearch.properties")
 @PropertySource("classpath:config/${spring.profiles.active:dev}/kafka.properties")
 public class IndexConfig {
+    @Value("span.kafka.broker.list")
+    private String spanBrokerList;
+
+    @Value("log.kafka.broker.list")
+    private String logBrokerList;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
@@ -25,14 +30,20 @@ public class IndexConfig {
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "span")
     public KafkaEsConsumer spanKafkaConsumer() {
-        return new KafkaEsConsumer();
+        KafkaEsConsumer spanKafkaEsConsumer = new KafkaEsConsumer();
+        spanKafkaEsConsumer.setBrokerList(spanBrokerList);
+        spanKafkaEsConsumer.setGroupId("spanGroup");
+        spanKafkaEsConsumer.setTopic("span");
+        return spanKafkaEsConsumer;
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "log")
     public KafkaEsConsumer logKafkaConsumer() {
-        return new KafkaEsConsumer();
+        KafkaEsConsumer logKafkaEsConsumer = new KafkaEsConsumer();
+        logKafkaEsConsumer.setBrokerList(logBrokerList);
+        logKafkaEsConsumer.setGroupId("logGroup");
+        logKafkaEsConsumer.setTopic("log");
+        return logKafkaEsConsumer;
     }
 }

@@ -17,12 +17,12 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
 import com.trace.index.es.EsClient;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,14 +30,10 @@ import lombok.extern.slf4j.Slf4j;
  * @since 2021/02/05
  */
 @Slf4j
+@Setter
 public class KafkaEsConsumer {
-    @Value("${kafka.broker.list}")
     private String brokerList;
-
-    @Value("${kafka.consumer.group}")
     private String groupId;
-
-    @Value("${kafka.topic}")
     private String topic;
 
     @Autowired
@@ -65,7 +61,7 @@ public class KafkaEsConsumer {
 
     @PostConstruct
     public void init() {
-        log.info("启动kafka监听,topic=" + topic);
+        log.info("启动kafka监听,brokerList= " + brokerList + ", topic=" + topic);
 
 //        Properties props = new Properties();
 //        props.put("bootstrap.servers", brokerList);
