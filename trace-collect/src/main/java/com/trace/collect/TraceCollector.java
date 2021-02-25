@@ -11,7 +11,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.eson.common.core.util.HttpClientUtils;
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexSpan;
 import com.trace.core.Span;
@@ -114,7 +113,7 @@ public class TraceCollector {
 
     private void addShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            // upload worker 停止工作
+            // container不再收集数据
             traceContainer.setActive(false);
 
             List<Span> spans = new ArrayList<Span>(UPLOAD_SIZE);
