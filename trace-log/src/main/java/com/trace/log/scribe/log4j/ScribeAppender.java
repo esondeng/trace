@@ -41,7 +41,7 @@ public class ScribeAppender extends AbstractAppender {
     private static final int MAX_STACK_DEPTH = 6;
 
     private static final String SELF_LOG_PACKAGE = "com.trace.log";
-    private static final String DEVELOP_PACKGAE = "com.dubbo.example";
+    private static final String DEVELOP_PACKAGE = "com.dubbo.example";
     private static final String TRACE_DUBBO_FILTER_PACKAGE = "com.trace.dubbo.filter";
     private static final String DUBBO_FILTER_PACKAGE = "org.apache.dubbo.rpc.filter.ExceptionFilter";
     private static final String MAIN_THREAD_NAME = "main";
@@ -171,7 +171,7 @@ public class ScribeAppender extends AbstractAppender {
             return;
         }
 
-        if (!loggerName.startsWith(DEVELOP_PACKGAE)
+        if (!loggerName.startsWith(DEVELOP_PACKAGE)
                 && !loggerName.startsWith(TRACE_DUBBO_FILTER_PACKAGE)
                 && !loggerName.startsWith(DUBBO_FILTER_PACKAGE)) {
             return;
