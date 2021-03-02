@@ -37,7 +37,7 @@
         <li id = "logPrev" class="disabled" th:if="${data.pageNum} eq 1"><a href="javascript:void(0);">Previous</a></li>
         <li class="active"><a href="javascript:void(0);" th:text="${data.pageNum}"></a></li>
         <li id = "logNext" th:if="${data.pageNum < data.totalPage}"><a th:attr="data-page=${data.pageNum + 1}" href="javascript:void(0);">Next</a></li>
-        <li id = "logNext" class="disabled" th:if="${data.pageNum == data.totalPage}"><a href="javascript:void(0);">Next</a></li>
+        <li id = "logNext" class="disabled" th:if="${data.pageNum >= data.totalPage}"><a href="javascript:void(0);">Next</a></li>
     </ul>
 </div>
 <script th:src="@{/static/js/log-list.js}"></script>
