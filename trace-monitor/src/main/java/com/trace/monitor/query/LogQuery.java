@@ -38,8 +38,16 @@ public class LogQuery extends PageQuery {
     @Override
     public void validate() {
         super.validate();
+        fillDataTypeInfo();
+        // ES语法
+        condition = condition.replaceAll("\"", "\\\\\"");
+    }
 
-        if (StringUtils.isNotBlank(dateType)) {
+    private void fillDataTypeInfo() {
+        if (StringUtils.isBlank(dateType)) {
+            fillStatisticsInfo(startTime, endTime);
+        }
+        else {
             DateType dateTypeEnum = EnumBase.ofMessage(DateType.class, dateType);
 
             Date now = new Date();
@@ -71,9 +79,8 @@ public class LogQuery extends PageQuery {
                     break;
             }
         }
-
-        condition = condition.replaceAll("\"", "\\\\\"");
     }
+
 
     private void fillHourInfo(Instant start, Date now) {
         startTime = TimeUtils.formatAsDateTime(start);
@@ -89,5 +96,13 @@ public class LogQuery extends PageQuery {
         format = TimeUtils.DATE;
         minBounds = TimeUtils.formatAsDate(start);
         maxBounds = TimeUtils.formatAsDate(now);
+    }
+
+    private void fillStatisticsInfo(String startTime, String endTime) {
+        interval = EsConstants.INTERVAL_DAY;
+        format = TimeUtils.DATE;
+
+        minBounds = TimeUtils.formatAsDate(TimeUtils.parseAsDate(startTime));
+        maxBounds = TimeUtils.formatAsDate(TimeUtils.parseAsDate(endTime));
     }
 }
