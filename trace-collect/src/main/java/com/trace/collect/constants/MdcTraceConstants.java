@@ -14,6 +14,9 @@ import com.trace.core.constants.TraceConstants;
  */
 public class MdcTraceConstants {
 
+    /**
+     * 使用的地方一定有span，不会NPE
+     */
     public static List<Runnable> MDC_RUNNABLE_LIST = Arrays.asList(
             () -> MDC.put(TraceConstants.TRACE_ID, TraceContext.peek().getTraceId()),
             () -> MDC.remove(TraceConstants.TRACE_ID));
