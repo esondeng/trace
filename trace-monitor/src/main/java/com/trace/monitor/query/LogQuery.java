@@ -53,7 +53,6 @@ public class LogQuery extends PageQuery {
             Date now = new Date();
             endTime = TimeUtils.formatAsDateTime(now);
 
-
             switch (dateTypeEnum) {
                 case LAST_3_HOUR:
                     Instant start = TimeUtils.ofDate(now).minusHours(3L).toInstant();
