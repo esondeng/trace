@@ -117,7 +117,5 @@ public class LogQuery extends PageQuery {
             minBounds = TimeUtils.formatAsDate(startDate);
             maxBounds = TimeUtils.formatAsDate(endDate);
         }
-
-
     }
 }
