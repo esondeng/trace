@@ -98,10 +98,26 @@ public class LogQuery extends PageQuery {
     }
 
     private void fillStatisticsInfo(String startTime, String endTime) {
-        interval = EsConstants.INTERVAL_DAY;
-        format = TimeUtils.DATE;
+        Date startDate = TimeUtils.parseAsDate(startTime);
+        Date endDate = TimeUtils.parseAsDate(endTime);
+        long days = TimeUtils.daysBetween(startDate, endDate);
 
-        minBounds = TimeUtils.formatAsDate(TimeUtils.parseAsDate(startTime));
-        maxBounds = TimeUtils.formatAsDate(TimeUtils.parseAsDate(endTime));
+        // 时间间隔在一天以内使用小时，否则使用天
+        if (days <= 1) {
+            interval = EsConstants.INTERVAL_HOUR;
+            format = TimeUtils.DATE_HOUR;
+
+            minBounds = TimeUtils.formatAsHour(startDate);
+            maxBounds = TimeUtils.formatAsHour(endDate);
+        }
+        else {
+            interval = EsConstants.INTERVAL_DAY;
+            format = TimeUtils.DATE;
+
+            minBounds = TimeUtils.formatAsDate(startDate);
+            maxBounds = TimeUtils.formatAsDate(endDate);
+        }
+
+
     }
 }
