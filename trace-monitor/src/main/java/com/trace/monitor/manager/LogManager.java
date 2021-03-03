@@ -39,8 +39,8 @@ public class LogManager {
         String esQuery = ResourceUtils.replace(LOG_QUERY, map);
         String result = esClient.queryLog(esQuery);
 
-        Integer total = JsonUtils.getValues(result, "hits.total.value", Integer.class).get(0);
-        long cost = JsonUtils.getValues(result, "took", Long.class).get(0);
+        Integer total = JsonUtils.getValue(result, "hits.total.value", Integer.class);
+        long cost = JsonUtils.getValue(result, "took", Long.class);
 
         List<IndexLog> indexLogs = JsonUtils.getValues(result, "hits.hits._source", IndexLog.class);
         List<LogVo> logVos = Funs.map(indexLogs, LogVo::of);
@@ -54,9 +54,9 @@ public class LogManager {
         String esQuery = ResourceUtils.replace(LOG_AGGS_QUERY, map);
         String result = esClient.queryLog(esQuery);
 
-        List<JsonNode> aggs = JsonUtils.getValues(result, "aggregations.dateArray.buckets", JsonNode.class);
+        JsonNode dateArrayAggs = JsonUtils.getValue(result, "aggregations.dateArray.buckets", JsonNode.class);
         List<AggregationVo> aggregationVos = Funs.map(
-                JsonUtils.convertList(aggs.get(0), JsonNode.class),
+                JsonUtils.convertList(dateArrayAggs, JsonNode.class),
                 jsonNode -> {
                     String name = jsonNode.get("key_as_string").asText();
                     long count = jsonNode.get("doc_count").asLong();
