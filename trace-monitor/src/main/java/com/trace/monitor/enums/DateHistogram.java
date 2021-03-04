@@ -10,6 +10,8 @@ import com.trace.monitor.constants.EsConstants;
 import lombok.Getter;
 
 /**
+ * ES时间统计类型
+ *
  * @author dengxiaolin
  * @since 2021/03/04
  */
