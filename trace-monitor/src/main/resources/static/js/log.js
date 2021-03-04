@@ -162,7 +162,8 @@ $(function () {
         chart.axis('name', {
             label: {
                 autoHide: false,
-                autoEllipsis: false
+                autoEllipsis: false,
+                autoRotate: true
             }
         });
         chart.render();

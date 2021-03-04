@@ -59,6 +59,9 @@ public class LogManager {
                 JsonUtils.convertList(dateArrayAggs, JsonNode.class),
                 jsonNode -> {
                     String name = jsonNode.get("key_as_string").asText();
+                    if (name.length() == TimeUtils.DATE_TIME.length()) {
+                        name = name.substring(name.indexOf(" "));
+                    }
                     long count = jsonNode.get("doc_count").asLong();
 
                     return AggregationVo.of(name, count);
