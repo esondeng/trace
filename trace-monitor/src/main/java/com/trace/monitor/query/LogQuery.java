@@ -1,6 +1,5 @@
 package com.trace.monitor.query;
 
-import java.time.Instant;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.eson.common.core.enums.EnumBase;
 import com.eson.common.core.util.TimeUtils;
 import com.eson.common.web.query.PageQuery;
-import com.trace.monitor.constants.EsConstants;
+import com.trace.monitor.enums.DateHistogram;
 import com.trace.monitor.enums.DateType;
 
 import lombok.Getter;
@@ -44,10 +43,7 @@ public class LogQuery extends PageQuery {
     }
 
     private void fillDataTypeInfo() {
-        if (StringUtils.isBlank(dateType)) {
-            fillStatisticsInfo(startTime, endTime);
-        }
-        else {
+        if (StringUtils.isNotBlank(dateType)) {
             DateType dateTypeEnum = EnumBase.ofMessage(DateType.class, dateType);
 
             Date now = new Date();
@@ -55,67 +51,38 @@ public class LogQuery extends PageQuery {
 
             switch (dateTypeEnum) {
                 case LAST_3_HOUR:
-                    Instant start = TimeUtils.ofDate(now).minusHours(3L).toInstant();
-                    fillHourInfo(start, now);
+                    startTime = TimeUtils.formatAsDateTime(TimeUtils.ofDate(now).minusHours(3L).toInstant());
                     break;
                 case LAST_6_HOUR:
-                    start = TimeUtils.ofDate(now).minusHours(6L).toInstant();
-                    fillHourInfo(start, now);
+                    startTime = TimeUtils.formatAsDateTime(TimeUtils.ofDate(now).minusHours(6L).toInstant());
                     break;
                 case LAST_24_HOUR:
-                    start = TimeUtils.ofDate(now).minusHours(24L).toInstant();
-                    fillHourInfo(start, now);
+                    startTime = TimeUtils.formatAsDateTime(TimeUtils.ofDate(now).minusHours(24L).toInstant());
                     break;
                 case TODAY:
-                    start = TimeUtils.ofDate(now).with(TimeUtils.START_OF_DAY).toInstant();
-                    fillHourInfo(start, now);
+                    startTime = TimeUtils.formatAsDateTime(TimeUtils.ofDate(now).with(TimeUtils.START_OF_DAY).toInstant());
                     break;
                 case CURRENT_MONTH:
-                    start = TimeUtils.getMonthStartDate(now).toInstant();
-                    fillDayInfo(start, now);
+                    startTime = TimeUtils.formatAsDateTime(TimeUtils.getMonthStartDate(now).toInstant());
                     break;
                 default:
                     break;
             }
         }
+
+        fillStatisticsInfo();
     }
 
-
-    private void fillHourInfo(Instant start, Date now) {
-        startTime = TimeUtils.formatAsDateTime(start);
-        interval = EsConstants.INTERVAL_HOUR;
-        format = TimeUtils.DATE_HOUR;
-        minBounds = TimeUtils.formatAsHour(start);
-        maxBounds = TimeUtils.formatAsHour(now);
-    }
-
-    private void fillDayInfo(Instant start, Date now) {
-        startTime = TimeUtils.formatAsDateTime(start);
-        interval = EsConstants.INTERVAL_DAY;
-        format = TimeUtils.DATE;
-        minBounds = TimeUtils.formatAsDate(start);
-        maxBounds = TimeUtils.formatAsDate(now);
-    }
-
-    private void fillStatisticsInfo(String startTime, String endTime) {
+    private void fillStatisticsInfo() {
         Date startDate = TimeUtils.parseAsDate(startTime);
         Date endDate = TimeUtils.parseAsDate(endTime);
-        long days = TimeUtils.daysBetween(startDate, endDate);
 
-        // 时间间隔在一天以内使用小时，否则使用天
-        if (days <= 1) {
-            interval = EsConstants.INTERVAL_HOUR;
-            format = TimeUtils.DATE_HOUR;
+        long secondsInterval = (endDate.getTime() - startDate.getTime()) / (10 * 1000);
+        DateHistogram dateHistogram = DateHistogram.of(secondsInterval);
 
-            minBounds = TimeUtils.formatAsHour(startDate);
-            maxBounds = TimeUtils.formatAsHour(endDate);
-        }
-        else {
-            interval = EsConstants.INTERVAL_DAY;
-            format = TimeUtils.DATE;
-
-            minBounds = TimeUtils.formatAsDate(startDate);
-            maxBounds = TimeUtils.formatAsDate(endDate);
-        }
+        interval = dateHistogram.getInterval();
+        format = dateHistogram.getFormat();
+        minBounds = TimeUtils.format(startDate, format);
+        maxBounds = TimeUtils.format(endDate, format);
     }
 }

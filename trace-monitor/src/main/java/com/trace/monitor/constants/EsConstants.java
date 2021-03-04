@@ -7,4 +7,6 @@ package com.trace.monitor.constants;
 public class EsConstants {
     public static final String INTERVAL_DAY = "day";
     public static final String INTERVAL_HOUR = "hour";
+    public static final String INTERVAL_MINUTE = "minute";
+    public static final String INTERVAL_SECOND = "second";
 }
