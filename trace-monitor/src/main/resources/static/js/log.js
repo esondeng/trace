@@ -147,10 +147,11 @@ $(function () {
 
     function draw(aggs) {
         const data = aggs.aggregations;
+        console.log(data);
         const chart = new G2.Chart({
             container: 'mountNode',
             forceFit: true,
-            width: 1000,
+            width: 2000,
             height: 300
         });
         chart.source(data);
@@ -165,6 +166,8 @@ $(function () {
         });
         chart.interval().position('name*count');
         chart.render();
+
+        $("[id^='canvas']").attr("width", 2860);
     }
 
     // 查询日志
