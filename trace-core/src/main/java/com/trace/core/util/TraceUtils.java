@@ -20,6 +20,9 @@ public class TraceUtils {
     }
 
     public static String buildTraceId() {
-        return UUID.randomUUID().toString().replace("-", "").toLowerCase();
+        return UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .toLowerCase();
     }
 }
