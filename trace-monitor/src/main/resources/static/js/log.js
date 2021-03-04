@@ -158,13 +158,13 @@ $(function () {
         chart.scale('count', {
             tickInterval: aggs.tickInterval
         });
+        chart.interval().position('name*count');
         chart.axis('name', {
             label: {
                 autoHide: false,
                 autoEllipsis: false
             }
         });
-        chart.interval().position('name*count');
         chart.render();
 
         $("[id^='canvas']").attr("width", 2860);
