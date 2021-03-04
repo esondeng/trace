@@ -102,7 +102,7 @@ $(function () {
                 return false;
             }
 
-            const now = new Date().getMilliseconds();
+            const now = new Date().getTime();
             const start = Date.parse(startTime);
 
             if (now - start > 30 * 24 * 3600 * 1000) {

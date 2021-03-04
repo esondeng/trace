@@ -74,9 +74,14 @@ $(function () {
 
         if (startTime !== '' && endTime !== '') {
             const start = Date.parse(startTime);
-            const now = new Date().getMilliseconds();
+            const now = new Date().getTime();
+
+            console.log(now);
+            console.log(start);
 
             if (now - start > 30 * 24 * 3600 * 1000) {
+
+
                 $("#trace-error-container").text("开始时间只能在1个月之内");
                 $("#trace-search-alert").show();
                 return false;
