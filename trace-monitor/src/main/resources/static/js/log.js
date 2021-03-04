@@ -102,11 +102,11 @@ $(function () {
                 return false;
             }
 
+            const now = new Date().getMilliseconds();
             const start = Date.parse(startTime);
-            const end = Date.parse(endTime);
 
-            if (end - start > 30 * 24 * 3600 * 1000) {
-                $("#log-error-container").text("开始时间和结束时间只能在1个月之内");
+            if (now - start > 30 * 24 * 3600 * 1000) {
+                $("#log-error-container").text("开始时间只能在1个月之内");
                 $("#log-search-alert").show();
                 return false;
             }
