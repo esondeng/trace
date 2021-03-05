@@ -41,9 +41,9 @@ public enum DateHistogram implements EnumBase {
     private String message;
 
     @Getter
-    private long min;
+    private long minSeconds;
     @Getter
-    private long max;
+    private long maxSeconds;
 
     @Getter
     private String interval;
@@ -51,10 +51,10 @@ public enum DateHistogram implements EnumBase {
     private String format;
 
 
-    DateHistogram(int id, long min, long max, String interval, String format, String message) {
+    DateHistogram(int id, long minSeconds, long maxSeconds, String interval, String format, String message) {
         this.id = id;
-        this.min = min;
-        this.max = max;
+        this.minSeconds = minSeconds;
+        this.maxSeconds = maxSeconds;
         this.interval = interval;
         this.format = format;
         this.message = message;
@@ -72,7 +72,7 @@ public enum DateHistogram implements EnumBase {
 
     public static DateHistogram of(long interval) {
         DateHistogram dateHistogram = Arrays.stream(DateHistogram.values())
-                .filter(t -> t.getMin() <= interval && interval <= t.getMax())
+                .filter(t -> t.getMinSeconds() <= interval && interval <= t.getMaxSeconds())
                 .findFirst()
                 .orElse(null);
         Assert.throwIfNull(dateHistogram, "{}没有DateHistogram区间", interval);

@@ -60,7 +60,7 @@ public class LogManager {
                 jsonNode -> {
                     String name = jsonNode.get("key_as_string").asText();
                     if (name.length() == TimeUtils.DATE_TIME.length()) {
-                        name = name.substring(name.indexOf(" "));
+                        name = name.substring(name.indexOf(" ") + 1);
                     }
                     long count = jsonNode.get("doc_count").asLong();
 
