@@ -10,12 +10,8 @@
     <tr th:each="log : ${data.list}">
         <div class="alert alert-info">
             <div class="item-row">
-                <div class="item-key">Trace Id</div>
-                <span class="item-value" th:text="${log.traceId}"></span>
-            </div>
-            <div class="item-row">
-                <div class="item-key">Trace Id/Server/thread/时间</div>
-                <span class="item-value" th:text="${log.traceId} + ' / '+${log.appKey} + ' (' + ${log.ip} + ')  / '+ ${log.thread} + ' / '+ ${#dates.format(new java.util.Date(log.logTime), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
+                <div class="item-key">TraceId/Server/Thread/时间</div>
+                <span class="item-value" th:text="' ' + ${log.traceId} + ' / '+${log.appKey} + ' (' + ${log.ip} + ')  / '+ ${log.thread} + ' / '+ ${#dates.format(new java.util.Date(log.logTime), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
             </div>
             <div class="item-row">
                 <div class="item-key">loggerName</div>
