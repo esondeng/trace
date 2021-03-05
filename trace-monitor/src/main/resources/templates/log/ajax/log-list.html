@@ -14,12 +14,12 @@
                 <span class="item-value" th:text="${log.traceId}"></span>
             </div>
             <div class="item-row">
-                <div class="item-key">Server/时间</div>
-                <span class="item-value" th:text="${log.appKey} + ' (' + ${log.ip} + ')  / ' + ${#dates.format(new java.util.Date(log.logTime), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
+                <div class="item-key">Trace Id/Server/thread/时间</div>
+                <span class="item-value" th:text="${log.traceId} + ' / '+${log.appKey} + ' (' + ${log.ip} + ')  / '+ ${log.thread} + ' / '+ ${#dates.format(new java.util.Date(log.logTime), 'yyyy-MM-dd HH:mm:ss:SSS')}"></span>
             </div>
             <div class="item-row">
-                <div class="item-key">thread/loggerName</div>
-                <span class="item-value" th:text="${log.thread} + ' / ' + ${log.loggerName}"></span>
+                <div class="item-key">loggerName</div>
+                <span class="item-value" th:text="${log.loggerName} + ' : '"></span>
             </div>
             <div class="item-row">
                 <div class="item-key">日志</div>
