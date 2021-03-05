@@ -141,6 +141,22 @@ public class TraceManager {
                 () -> StringUtils.isNotBlank(traceQuery.getExceptionInfo()),
                 () -> clauseList.add(ResourceUtils.replace(MATCH_RANGE_CLAUSE, "name", "errorMessage", "value", traceQuery.getExceptionInfo()))
         );
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getStartTime()),
+                () -> {
+                    Date date = TimeUtils.parseAsDate(traceQuery.getStartTime(), TimeUtils.DATE_TIME);
+                    clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "start", "value", String.valueOf(date.getTime())));
+                }
+        );
+
+        addCondition(
+                () -> StringUtils.isNotBlank(traceQuery.getEndTime()),
+                () -> {
+                    Date date = TimeUtils.parseAsDate(traceQuery.getEndTime(), TimeUtils.DATE_TIME);
+                    clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(date.getTime())));
+                }
+        );
     }
 
     private String buildConditions(TraceQuery traceQuery, List<String> traceIds) {
@@ -157,22 +173,6 @@ public class TraceManager {
         addCondition(
                 () -> traceQuery.getMaxCost() != null && traceQuery.getMaxCost() > 0L,
                 () -> clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "cost", "value", traceQuery.getMaxCost().toString()))
-        );
-
-        addCondition(
-                () -> StringUtils.isNotBlank(traceQuery.getStartTime()),
-                () -> {
-                    Date date = TimeUtils.parseAsDate(traceQuery.getStartTime(), TimeUtils.DATE_TIME);
-                    clauseList.add(ResourceUtils.replace(GTE_RANGE_CLAUSE, "name", "start", "value", String.valueOf(date.getTime())));
-                }
-        );
-
-        addCondition(
-                () -> StringUtils.isNotBlank(traceQuery.getEndTime()),
-                () -> {
-                    Date date = TimeUtils.parseAsDate(traceQuery.getEndTime(), TimeUtils.DATE_TIME);
-                    clauseList.add(ResourceUtils.replace(LTE_RANGE_CLAUSE, "name", "end", "value", String.valueOf(date.getTime())));
-                }
         );
 
         return String.join(Constants.COMMA, clauseList);
