@@ -1,5 +1,11 @@
 package com.trace.monitor.query;
 
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.eson.common.core.util.TimeUtils;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,4 +29,11 @@ public class TraceQuery {
      * 默认20条记录
      */
     private int resultCount = 20;
+
+    public void validate() {
+        // 默认只能查询最近一个月的
+        if (StringUtils.isBlank(startTime)) {
+            startTime = TimeUtils.formatAsDateTime(new Date());
+        }
+    }
 }
