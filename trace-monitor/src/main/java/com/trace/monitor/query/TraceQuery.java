@@ -1,6 +1,6 @@
 package com.trace.monitor.query;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +33,8 @@ public class TraceQuery {
     public void validate() {
         // 默认只能查询最近一个月的
         if (StringUtils.isBlank(startTime)) {
-            startTime = TimeUtils.formatAsDateTime(new Date());
+            ZonedDateTime monthBefore = TimeUtils.now().minusMonths(1L);
+            startTime = TimeUtils.formatAsDateTime(monthBefore.toInstant());
         }
     }
 }
