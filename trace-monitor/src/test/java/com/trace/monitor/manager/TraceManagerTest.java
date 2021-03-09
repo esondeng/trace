@@ -29,6 +29,7 @@ public class TraceManagerTest extends BaseTest {
     @Test
     void testQuery() {
         TraceQuery traceQuery = new TraceQuery();
+        traceQuery.validate();
 
         traceQuery.setApplicationName("dubbo-consumer-demo");
         List<TraceVo> traceVoList = traceManager.getTraceVosByQuery(traceQuery);
