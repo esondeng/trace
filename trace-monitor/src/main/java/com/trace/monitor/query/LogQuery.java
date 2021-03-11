@@ -77,8 +77,8 @@ public class LogQuery extends PageQuery {
         Date startDate = TimeUtils.parseAsDate(startTime);
         Date endDate = TimeUtils.parseAsDate(endTime);
 
-        long secondsInterval = (endDate.getTime() - startDate.getTime()) / (10 * 1000);
-        DateHistogram dateHistogram = DateHistogram.of(secondsInterval);
+        long seconds = (endDate.getTime() - startDate.getTime()) / 1000;
+        DateHistogram dateHistogram = DateHistogram.of(seconds);
 
         interval = dateHistogram.getInterval();
         format = dateHistogram.getFormat();
