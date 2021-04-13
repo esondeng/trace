@@ -22,7 +22,6 @@ public class ThreadPoolTransformer implements TraceTransformer {
         TRANSFER_CLASS_SET.add("java.constants.concurrent.ThreadPoolExecutor");
         TRANSFER_CLASS_SET.add("java.constants.concurrent.ScheduledThreadPoolExecutor");
         TRANSFER_CLASS_SET.add("java.constants.concurrent.ForkJoinPool");
-        TRANSFER_CLASS_SET.add("java.lang.Thread");
     }
 
     private static Map<String, String> CLASS_NAME_MAP = new HashMap<>();
@@ -35,7 +34,6 @@ public class ThreadPoolTransformer implements TraceTransformer {
         METHOD_NAME_SET.add("schedule");
         METHOD_NAME_SET.add("scheduleAtFixedRate");
         METHOD_NAME_SET.add("scheduleWithFixedDelay");
-        METHOD_NAME_SET.add("Thread");
     }
 
     static {
