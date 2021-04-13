@@ -21,9 +21,8 @@ public class ThreadPoolTransformer implements TraceTransformer {
     static {
         TRANSFER_CLASS_SET.add("java.constants.concurrent.ThreadPoolExecutor");
         TRANSFER_CLASS_SET.add("java.constants.concurrent.ScheduledThreadPoolExecutor");
-        TRANSFER_CLASS_SET.add("java.constants.concurrent.CompletableFuture");
-        TRANSFER_CLASS_SET.add("java.constants.concurrent.CompletionService");
         TRANSFER_CLASS_SET.add("java.constants.concurrent.ForkJoinPool");
+        TRANSFER_CLASS_SET.add("java.lang.Thread");
     }
 
     private static Map<String, String> CLASS_NAME_MAP = new HashMap<>();
@@ -36,14 +35,7 @@ public class ThreadPoolTransformer implements TraceTransformer {
         METHOD_NAME_SET.add("schedule");
         METHOD_NAME_SET.add("scheduleAtFixedRate");
         METHOD_NAME_SET.add("scheduleWithFixedDelay");
-        METHOD_NAME_SET.add("supplyAsync");
-        METHOD_NAME_SET.add("runAsync");
-        METHOD_NAME_SET.add("thenRun");
-        METHOD_NAME_SET.add("thenRunAsync");
-        METHOD_NAME_SET.add("runAfterBoth");
-        METHOD_NAME_SET.add("runAfterBothAsync");
-        METHOD_NAME_SET.add("runAfterEither");
-        METHOD_NAME_SET.add("runAfterEitherAsync");
+        METHOD_NAME_SET.add("Thread");
     }
 
     static {
@@ -83,6 +75,7 @@ public class ThreadPoolTransformer implements TraceTransformer {
                 String paraTypeName = paraType.getName();
 
                 if (CLASS_NAME_MAP.containsKey(paraTypeName)) {
+                    // 第一个参数是this，因此这里序号+1
                     int paramIndex = i + 1;
                     String replaceCode = String.format("$%d = %s.getInstance($%d);", paramIndex, CLASS_NAME_MAP.get(paraTypeName), paramIndex);
                     sb.append(replaceCode);
