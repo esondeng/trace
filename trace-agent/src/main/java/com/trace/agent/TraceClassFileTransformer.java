@@ -57,8 +57,8 @@ public class TraceClassFileTransformer implements ClassFileTransformer {
         return null;
     }
 
-    private String toClassName(final String classFile) {
-        return classFile.replace('/', '.');
+    private String toClassName(final String className) {
+        return className.replace('/', '.');
     }
 
     private CtClass getCtClass(byte[] classFileBuffer, ClassLoader classLoader) throws IOException {
