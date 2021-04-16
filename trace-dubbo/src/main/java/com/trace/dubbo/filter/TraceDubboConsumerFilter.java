@@ -9,6 +9,7 @@ import org.apache.dubbo.rpc.Invoker;
 import org.apache.dubbo.rpc.Result;
 import org.apache.dubbo.rpc.RpcException;
 
+import com.eson.common.core.exception.ServiceException;
 import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.ConsumerContext;
 import com.trace.core.Span;
@@ -48,6 +49,18 @@ public class TraceDubboConsumerFilter implements Filter {
                         log.info("RequestParam: " + Arrays.toString(invocation.getArguments()));
                         Result result = invoker.invoke(invocation);
                         log.info("Response: " + result.get());
+
+                        Throwable throwable = result.getException();
+                        if (throwable != null) {
+                            Span currentSpan = TraceContext.peek();
+                            if (throwable instanceof ServiceException) {
+                                ServiceException se = (ServiceException) throwable;
+                                currentSpan.addError(se.getInterfacePath() + " : " + se.getExceptionClass());
+                            }
+                            else {
+                                span.fillErrors(throwable);
+                            }
+                        }
 
                         return result;
                     },
