@@ -17,7 +17,6 @@ import org.apache.ibatis.plugin.Signature;
 import org.apache.ibatis.session.ResultHandler;
 
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.pool.DruidPooledPreparedStatement;
 import com.eson.common.core.util.ReflectUtils;
 import com.trace.collect.constants.MdcTraceConstants;
 import com.trace.core.TraceContext;
@@ -31,9 +30,9 @@ import com.trace.core.util.TraceUtils;
  * @since 2021/01/14
  */
 @Intercepts({
-        @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
-        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+    @Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
+    @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
+    @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
 public class TraceMybatisInterceptor implements Interceptor {
     /**
      * sql 最大长度
@@ -48,15 +47,15 @@ public class TraceMybatisInterceptor implements Interceptor {
             return invocation.proceed();
         }
         else {
-            DruidPooledPreparedStatement preparedStatement = (DruidPooledPreparedStatement) invocation.getArgs()[0];
-            StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
-            PreparedStatementHandler preparedStatementHandler = (PreparedStatementHandler) ReflectUtils.getFieldValueByName(statementHandler, "delegate");
-            MappedStatement mappedStatement = (MappedStatement) ReflectUtils.getFieldValueByName(preparedStatementHandler, "mappedStatement");
-
+            PreparedStatement preparedStatement = (PreparedStatement) invocation.getArgs()[0];
             String sql = cutLongSql(showSql(preparedStatement));
 
             Map<String, String> tagMap = new HashMap<>(16);
             tagMap.put(TraceConstants.SQL_TAG_KEY, sql);
+
+            StatementHandler statementHandler = (StatementHandler) invocation.getTarget();
+            PreparedStatementHandler preparedStatementHandler = (PreparedStatementHandler) ReflectUtils.getFieldValueByName(statementHandler, "delegate");
+            MappedStatement mappedStatement = (MappedStatement) ReflectUtils.getFieldValueByName(preparedStatementHandler, "mappedStatement");
 
             DruidDataSource druidDataSource = (DruidDataSource) mappedStatement.getConfiguration().getEnvironment().getDataSource();
             tagMap.put(TraceConstants.JDBC_REF_TAG_KEY, druidDataSource.getRawJdbcUrl());
@@ -65,11 +64,11 @@ public class TraceMybatisInterceptor implements Interceptor {
             String name = TraceUtils.getSimpleName(sqlId);
 
             return TraceManager.tracingWithReturn(
-                    ServiceType.JDBC,
-                    name,
-                    tagMap,
-                    invocation::proceed,
-                    MdcTraceConstants.MDC_RUNNABLE_LIST
+                ServiceType.JDBC,
+                name,
+                tagMap,
+                invocation::proceed,
+                MdcTraceConstants.MDC_RUNNABLE_LIST
             );
         }
     }
