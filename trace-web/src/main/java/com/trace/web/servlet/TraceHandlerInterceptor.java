@@ -1,4 +1,4 @@
-package com.dubbo.trace.web.servlet;
+package com.trace.web.servlet;
 
 import java.lang.reflect.Method;
 

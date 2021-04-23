@@ -1,4 +1,4 @@
-package com.dubbo.trace.web.filter;
+package com.trace.web.filter;
 
 import java.io.IOException;
 import java.util.Arrays;

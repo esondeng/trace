@@ -1,4 +1,4 @@
-package com.dubbo.trace.web.spring;
+package com.trace.web.spring;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.dubbo.trace.web.filter.TraceFilter;
-import com.dubbo.trace.web.servlet.TraceHandlerInterceptor;
+import com.trace.web.filter.TraceFilter;
+import com.trace.web.servlet.TraceHandlerInterceptor;
 import com.trace.collect.spring.TraceCollectConfig;
 
 /**
