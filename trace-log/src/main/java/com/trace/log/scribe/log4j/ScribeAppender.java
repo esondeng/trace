@@ -22,6 +22,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
+import com.eson.common.core.constants.Constants;
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexLog;
 import com.trace.core.TraceConfig;
@@ -196,20 +197,8 @@ public class ScribeAppender extends AbstractAppender {
     }
 
     private String buildMessage(LogEvent logEvent) {
-        List<String> messages = new ArrayList<>();
         String message = this.layout.toSerializable(logEvent);
-        messages.add(message);
-
-        Throwable throwable = logEvent.getThrown();
-        if (throwable != null) {
-            StackTraceElement[] stackTraceElements = throwable.getStackTrace();
-            int stackDepth = Math.min(stackTraceElements.length, MAX_STACK_DEPTH);
-
-            for (int i = 0; i < stackDepth; i++) {
-                messages.add(stackTraceElements[i].toString());
-            }
-        }
-
-        return JsonUtils.toJson(messages);
+        String[] messages = message.split(Constants.NEW_LINE, MAX_STACK_DEPTH);
+        return StringUtils.join(messages, Constants.NEW_LINE);
     }
 }

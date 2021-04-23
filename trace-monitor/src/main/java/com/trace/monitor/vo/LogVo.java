@@ -1,9 +1,5 @@
 package com.trace.monitor.vo;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexLog;
 
@@ -26,16 +22,9 @@ public class LogVo {
     private long logTime;
     private String logLevel;
 
-    private List<String> messages;
+    private String message;
 
     public static LogVo of(IndexLog indexLog) {
-        LogVo vo = JsonUtils.convertValue(indexLog, LogVo.class);
-
-        if (StringUtils.isNotBlank(indexLog.getMessage())) {
-            vo.setMessages(JsonUtils.parseList(indexLog.getMessage(), String.class));
-        }
-
-        return vo;
-
+        return JsonUtils.convertValue(indexLog, LogVo.class);
     }
 }
