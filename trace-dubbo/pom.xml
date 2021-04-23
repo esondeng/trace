@@ -16,14 +16,22 @@
             <artifactId>trace-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.trace</groupId>
             <artifactId>trace-collect</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.trace</groupId>
             <artifactId>trace-mybatis</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.trace</groupId>
+            <artifactId>trace-log</artifactId>
             <version>${project.version}</version>
         </dependency>
 
