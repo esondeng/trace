@@ -198,7 +198,20 @@ public class ScribeAppender extends AbstractAppender {
 
     private String buildMessage(LogEvent logEvent) {
         String message = this.layout.toSerializable(logEvent);
+        if (StringUtils.isBlank(message)) {
+            return message;
+        }
+
         String[] messages = message.split(Constants.NEW_LINE, MAX_STACK_DEPTH);
-        return StringUtils.join(messages, Constants.NEW_LINE);
+        if (messages.length == 1) {
+            return message;
+        }
+
+        StringBuilder sb = new StringBuilder(2000);
+        for (int i = 0; i < messages.length - 1; i++) {
+            sb.append(messages[i]).append(Constants.NEW_LINE);
+        }
+        sb.delete(sb.length() - 1, sb.length());
+        return sb.toString();
     }
 }
