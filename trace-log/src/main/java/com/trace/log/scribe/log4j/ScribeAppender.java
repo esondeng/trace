@@ -22,7 +22,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
-import com.eson.common.core.constants.Constants;
 import com.eson.common.core.util.JsonUtils;
 import com.trace.common.domain.IndexLog;
 import com.trace.core.TraceConfig;
@@ -40,6 +39,12 @@ import lombok.extern.slf4j.Slf4j;
 public class ScribeAppender extends AbstractAppender {
     private static final int UPLOAD_SIZE = 1024;
     private static final int MAX_STACK_DEPTH = 6;
+
+    /**
+     * message中是\\n, 正则表达式是\\\\n
+     */
+    private static final String MESSAGE_LINE = "\\\\n";
+    private static final String MESSAGE_LINE_SPLIT_REG = "\\\\n";
 
     private static final String SELF_LOG_PACKAGE = "com.trace.log";
     private static final String DEVELOP_PACKAGE = "com.dubbo.example";
@@ -198,7 +203,7 @@ public class ScribeAppender extends AbstractAppender {
 
     private String buildMessage(LogEvent logEvent) {
         String message = this.layout.toSerializable(logEvent);
-        String[] messages = message.split(Constants.NEW_LINE, MAX_STACK_DEPTH);
-        return StringUtils.join(messages, Constants.NEW_LINE);
+        String[] messages = message.split(MESSAGE_LINE_SPLIT_REG, MAX_STACK_DEPTH);
+        return StringUtils.join(messages, MESSAGE_LINE);
     }
 }
