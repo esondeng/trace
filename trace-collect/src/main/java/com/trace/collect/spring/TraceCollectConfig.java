@@ -13,7 +13,7 @@ import com.trace.collect.aop.TraceAspect;
  */
 @Configuration
 @PropertySource("classpath:config/${spring.profiles.active:dev}/trace.properties")
-public class TraceCollectAutoConfig {
+public class TraceCollectConfig {
 
     /**
      * 启动trace aop扫描
