@@ -15,11 +15,15 @@
             </div>
             <div class="item-row">
                 <div class="item-key">loggerName</div>
-                <span class="item-value" th:text="${log.loggerName} + ' : '"></span>
+                <span class="item-value" th:text="${log.loggerName}"></span>
+            </div>
+            <div class="item-row">
+                <div class="item-key">logLevel</div>
+                <span class="item-value" th:text="${log.logLevel}"></span>
             </div>
             <div class="item-row">
                 <div class="item-key">日志</div>
-                <span class="item-value"><b th:text="${log.message}"/></span>
+                <span class="item-value"><b th:if="${log.logLevel == 'ERROR'}" style="color: #f40000" th:text="${log.message}"/><b th:unless="${log.logLevel == 'ERROR'}" th:text="${log.message}"/></span>
             </div>
         </div>
     </tr>
