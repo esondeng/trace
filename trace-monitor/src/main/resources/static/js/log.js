@@ -176,6 +176,13 @@ $(function () {
         searchLogs();
     });
 
+    $("#logSearchForm #condition").on("keydown", function (e) {
+        if (e.which == 13) {
+            e.preventDefault();
+            searchLogs();
+        }
+    });
+
     // 错误信息隐藏
     $(".js-close-log-alert").on("click", function () {
         $("#log-search-alert").hide();
