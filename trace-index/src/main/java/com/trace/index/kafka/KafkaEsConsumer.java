@@ -2,25 +2,18 @@ package com.trace.index.kafka;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.eson.common.core.util.JsonUtils;
-import com.trace.common.domain.IndexSpan;
-import com.trace.index.es.EsClient;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +29,7 @@ public class KafkaEsConsumer {
     private String topic;
     private String groupId;
 
-    @Autowired
-    private EsClient esClient;
-
     private KafkaConsumer<String, String> consumer;
-
     private Duration timeout = Duration.of(60, ChronoUnit.SECONDS);
 
     private ThreadPoolExecutor consumerExecutor = new ThreadPoolExecutor(
@@ -50,7 +39,7 @@ public class KafkaEsConsumer {
             TimeUnit.MINUTES,
             new SynchronousQueue<>(),
             new ThreadFactory() {
-                private AtomicInteger atomicInteger = new AtomicInteger(1);
+                private final AtomicInteger atomicInteger = new AtomicInteger(1);
 
                 @Override
                 public Thread newThread(Runnable r) {
@@ -58,6 +47,8 @@ public class KafkaEsConsumer {
                 }
             },
             new ThreadPoolExecutor.CallerRunsPolicy());
+
+    private Consumer<ConsumerRecords<String, String>> messageConsumer;
 
     @PostConstruct
     public void init() {
@@ -81,15 +72,11 @@ public class KafkaEsConsumer {
                 consumer.subscribe(Arrays.asList(topic));
                 while (true) {
                     ConsumerRecords<String, String> records = consumer.poll(timeout);
-                    List<IndexSpan> indexSpans = new ArrayList<>();
-                    for (ConsumerRecord<String, String> record : records) {
-                        indexSpans.add(JsonUtils.convertValue(record.value(), IndexSpan.class));
-                    }
                     try {
-                        esClient.bulkUploadSpans(indexSpans);
+                        messageConsumer.accept(records);
                     }
                     catch (Exception e) {
-                        log.error("消费kafak消息失败", e);
+                        log.error("消费kafka消息失败", e);
                     }
                     finally {
                         consumer.commitSync();

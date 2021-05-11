@@ -1,5 +1,7 @@
 package com.trace.index.spring;
 
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -7,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
+import com.trace.index.es.EsClient;
 import com.trace.index.kafka.KafkaEsConsumer;
 
 /**
@@ -24,6 +27,9 @@ public class IndexConfig {
     @Value("log.kafka.broker.list")
     private String logBrokerList;
 
+    @Autowired
+    private EsClient esClient;
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
@@ -35,6 +41,7 @@ public class IndexConfig {
         spanKafkaEsConsumer.setBrokerList(spanBrokerList);
         spanKafkaEsConsumer.setGroupId("spanGroup");
         spanKafkaEsConsumer.setTopic("span");
+        spanKafkaEsConsumer.setMessageConsumer((ConsumerRecords<String, String> records) -> esClient.bulkUploadSpans(records));
         return spanKafkaEsConsumer;
     }
 
@@ -44,6 +51,7 @@ public class IndexConfig {
         logKafkaEsConsumer.setBrokerList(logBrokerList);
         logKafkaEsConsumer.setGroupId("logGroup");
         logKafkaEsConsumer.setTopic("log");
+        logKafkaEsConsumer.setMessageConsumer((ConsumerRecords<String, String> records) -> esClient.bulkUploadLogs(records));
         return logKafkaEsConsumer;
     }
 }

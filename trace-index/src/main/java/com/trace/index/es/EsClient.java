@@ -1,11 +1,14 @@
 package com.trace.index.es;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -43,10 +46,22 @@ public class EsClient {
         logBulkUrl = esUrl + "/log/_bulk";
     }
 
+    public void bulkUploadSpans(ConsumerRecords<String, String> records) {
+        if (records.isEmpty()) {
+            return;
+        }
 
-    public boolean bulkUploadSpans(List<IndexSpan> indexSpanList) {
+        List<IndexSpan> indexSpans = new ArrayList<>();
+        for (ConsumerRecord<String, String> record : records) {
+            indexSpans.add(JsonUtils.convertValue(record.value(), IndexSpan.class));
+        }
+        bulkUploadSpans(indexSpans);
+    }
+
+
+    public void bulkUploadSpans(List<IndexSpan> indexSpanList) {
         if (CollectionUtils.isEmpty(indexSpanList)) {
-            return true;
+            return;
         }
 
         StringBuilder sb = new StringBuilder(100000);
@@ -58,12 +73,23 @@ public class EsClient {
         });
 
         HttpClientUtils.post(spanBulkUrl, sb.toString());
-        return true;
     }
 
-    public boolean bulkUploadLogs(List<IndexLog> indexLogList) {
+    public void bulkUploadLogs(ConsumerRecords<String, String> records) {
+        if (records.isEmpty()) {
+            return;
+        }
+
+        List<IndexLog> indexLogs = new ArrayList<>();
+        for (ConsumerRecord<String, String> record : records) {
+            indexLogs.add(JsonUtils.convertValue(record.value(), IndexLog.class));
+        }
+        bulkUploadLogs(indexLogs);
+    }
+
+    public void bulkUploadLogs(List<IndexLog> indexLogList) {
         if (CollectionUtils.isEmpty(indexLogList)) {
-            return true;
+            return;
         }
 
         StringBuilder sb = new StringBuilder(100000);
@@ -77,6 +103,5 @@ public class EsClient {
         });
 
         HttpClientUtils.post(logBulkUrl, sb.toString());
-        return true;
     }
 }
