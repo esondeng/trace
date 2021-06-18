@@ -13,8 +13,8 @@
     <artifactId>trace-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
-    <modules>
 
+    <modules>
         <module>trace-core</module>
         <module>trace-web</module>
         <module>trace-dubbo</module>
