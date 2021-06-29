@@ -7,7 +7,7 @@ package com.trace.core.enums;
  */
 public enum ServiceType {
     HTTP(0, "http"),
-    DUBBO_CONSUMER(2, "duubo-c"),
+    DUBBO_CONSUMER(2, "dubbo-c"),
     DUBBO_ASYNC_CONSUMER(3, "dubbo-async-c"),
     DUBBO_PROVIDER(4, "dubbo-p"),
     INNER_CALL(5, "inner-call"),

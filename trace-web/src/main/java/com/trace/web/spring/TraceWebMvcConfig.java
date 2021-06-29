@@ -6,22 +6,17 @@ import java.util.Map;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.trace.web.filter.TraceFilter;
 import com.trace.web.servlet.TraceHandlerInterceptor;
-import com.trace.collect.spring.TraceCollectConfig;
 
 /**
  * @author dengxiaolin
  * @since 2021/01/22
  */
 @Configuration
-@Import({
-        TraceCollectConfig.class
-})
 public class TraceWebMvcConfig implements WebMvcConfigurer {
 
     @Override

@@ -25,6 +25,8 @@
         <module>trace-index</module>
         <module>trace-common</module>
         <module>trace-log</module>
+        <module>trace-dubbo-starter</module>
+        <module>trace-web-starter</module>
     </modules>
 
     <properties>
