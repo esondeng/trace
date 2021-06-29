@@ -7,11 +7,14 @@ import com.eson.common.core.enums.EnumBase;
  * @since 2021/02/08
  */
 public enum SpanStatus implements EnumBase {
+    /**
+     * Span 状态：0-成功，1-失败
+     */
     SUCCESS(0, "success"),
     FAILED(1, "failed");
 
-    private int id;
-    private String message;
+    private final int id;
+    private final String message;
 
     SpanStatus(int id, String message) {
         this.id = id;
